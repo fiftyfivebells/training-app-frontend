@@ -1,6 +1,6 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { authClient, CreateUserRequest, SuccessResponse } from "../api/authApi";
-import { ApiError } from "../../../lib/api/error";
+import { ApiError } from "@lib/api/error";
 import { useRouter } from "expo-router";
 
 export function useRegister(

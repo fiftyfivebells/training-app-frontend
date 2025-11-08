@@ -15,8 +15,8 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useRegister } from '../hooks';
 import type { CreateUserRequest } from '../api/authApi';
-import { Input, Button, Select } from '../../../components/ui'
-import { colors, spacing, typography } from '../../../theme'
+import { Input, Button, Select } from '@components/ui'
+import { colors, spacing, typography } from '@theme/index'
 import * as Localization from 'expo-localization';
 
 interface RegisterFormData extends CreateUserRequest {

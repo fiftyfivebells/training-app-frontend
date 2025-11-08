@@ -18,6 +18,9 @@
       ],
       "@theme/*": [
         "src/theme/*"
+      ],
+      "@generated/*": [
+        "src/generated/*"
       ]
     }
   },

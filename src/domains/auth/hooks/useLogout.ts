@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, useQueryClient } from "@tanstack/react-query";
-import { ApiError } from "../../../lib/api/error";
+import { ApiError } from "@lib/api/error";
 import { useRouter } from "expo-router";
 import { tokenStorage } from "../utils/tokenStorage";
 

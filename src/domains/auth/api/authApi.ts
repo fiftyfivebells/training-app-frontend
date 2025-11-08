@@ -1,5 +1,5 @@
-import { BaseApiClient } from "../../../lib/api/base"
-import type { components } from "../../../generated/api/types"
+import { BaseApiClient } from "@lib/api/base"
+import type { components } from "@generated/api/types"
 
 export type CreateUserRequest = components['schemas']['CreateUserRequest']
 export type LoginRequest = components['schemas']['LoginRequest']

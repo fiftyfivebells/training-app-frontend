@@ -1,4 +1,4 @@
-import { setSecureValue, getSecureValue, deleteSecureValue } from "../../../lib/storage/secureStorage";
+import { setSecureValue, getSecureValue, deleteSecureValue } from "@lib/storage/secureStorage";
 
 const ACCESS_TOKEN_KEY = 'auth.accessToken';
 

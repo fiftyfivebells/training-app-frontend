@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { colors, spacing, typography } from '../../theme';
+import { colors, spacing, typography } from '@theme/index';
 
 export interface SelectOption {
   label: string;
