@@ -1,28 +1,33 @@
 import { tokenStorage } from "../../domains/auth/utils/tokenStorage";
 import { ApiError } from "./error";
+import Constants from "expo-constants"
+
+const API_BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl ?? 'http://localhost:8080';
 
 export abstract class BaseApiClient {
   protected baseUrl: string;
+  protected apiVersion: string;
 
-  constructor(baseUrl: string = '/api/v1') {
+  constructor(baseUrl: string = API_BASE_URL, apiVersion: string = '/api/v1') {
     this.baseUrl = baseUrl;
+    this.apiVersion = apiVersion;
   }
 
   protected async makeRequest<T>(
     path: string,
     options?: RequestInit
   ): Promise<T> {
-    const url = `${this.baseUrl}/${path}`;
-
+    const url = `${this.baseUrl}${this.apiVersion}/${path}`;
     const accessToken = await tokenStorage.getAccessToken();
+
     if (accessToken) {
-        options = {
-            ...options,
-            headers: {
-                ...options?.headers,
-                'Authorization': `Bearer ${accessToken}`
-            }
-        };
+      options = {
+        ...options,
+        headers: {
+          ...options?.headers,
+          'Authorization': `Bearer ${accessToken}`
+        }
+      };
     }
 
     const response = await fetch(url, {
