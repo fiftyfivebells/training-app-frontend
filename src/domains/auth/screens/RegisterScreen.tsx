@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  StyleSheet, 
-  KeyboardAvoidingView, 
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  KeyboardAvoidingView,
   Platform,
-  Alert, 
   Pressable
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -15,7 +14,7 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useRegister } from '../hooks';
 import type { CreateUserRequest } from '../api/authApi';
-import { Input, Button, Select } from '@components/ui'
+import { Input, Button, Select, useAlert } from '@components/ui'
 import { colors, spacing, typography } from '@theme/index'
 import * as Localization from 'expo-localization';
 
@@ -25,6 +24,7 @@ interface RegisterFormData extends CreateUserRequest {
 
 export function RegisterScreen() {
   const router = useRouter();
+  const { alert } = useAlert();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const {
@@ -47,7 +47,7 @@ export function RegisterScreen() {
 
   const registerMutation = useRegister({
     onSuccess: (data, variables) => {
-      Alert.alert(
+      alert(
         'Account Created!',
         'Please check your email to verify your account.',
         [
@@ -64,8 +64,8 @@ export function RegisterScreen() {
       );
     },
     onError: (error) => {
-      Alert.alert(
-        'Registration Failed', 
+      alert(
+        'Registration Failed',
         error.message || 'Something went wrong. Please try again.'
       );
     }
@@ -75,7 +75,6 @@ export function RegisterScreen() {
   const dateOfBirth = watch('dateOfBirth')
 
   const onSubmit = (data: RegisterFormData) => {
-    console.log("Submitting registration data:", data);
     const { confirmPassword, ...createUserData } = data;
 
     const timeZone = Localization.getCalendars()[0]?.timeZone || 'America/New_York';

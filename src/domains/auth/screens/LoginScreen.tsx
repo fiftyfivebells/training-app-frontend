@@ -6,14 +6,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useLogin } from '@domains/auth/hooks';
-import { Button, Input } from '@components/ui'
+import { Button, Input, useAlert } from '@components/ui'
 import { colors, spacing, typography } from '@theme/index';
 import type { LoginRequest } from '@domains/auth/api/authApi';
 import { getDeviceInfo } from '../utils/deviceInfoHelper';
@@ -25,6 +24,7 @@ interface LoginFormData extends LoginRequest {
 
 export function LoginScreen() {
   const router = useRouter();
+  const { alert } = useAlert();
 
   const {
     control,
@@ -43,7 +43,7 @@ export function LoginScreen() {
       console.log('Login successful');
     },
     onError: (error) => {
-      Alert.alert(
+      alert(
         'Login Failed',
         error.message || 'Invalid email or password. Please try again.'
       );
