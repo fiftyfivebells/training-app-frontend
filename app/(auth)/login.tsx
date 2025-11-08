@@ -1,0 +1,1 @@
+export { LoginScreen as default } from '@domains/auth/screens/LoginScreen';

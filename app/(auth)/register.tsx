@@ -1,0 +1,1 @@
+export { RegisterScreen as default } from '@domains/auth/screens/RegisterScreen';
