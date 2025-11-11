@@ -38,10 +38,6 @@ export function LoginScreen() {
   });
 
   const loginMutation = useLogin({
-    onSuccess: () => {
-      // Navigation handled by useLogin hook
-      console.log('Login successful');
-    },
     onError: (error) => {
       alert(
         'Login Failed',
@@ -97,6 +93,7 @@ export function LoginScreen() {
                     value={value}
                     error={errors.email?.message}
                     disabled={isLoading}
+                    onSubmitEditing={handleSubmit(onSubmit)}
                   />
                 )}
               />
@@ -123,6 +120,7 @@ export function LoginScreen() {
                     value={value}
                     error={errors.password?.message}
                     disabled={isLoading}
+                    onSubmitEditing={handleSubmit(onSubmit)}
                   />
                 )}
               />
