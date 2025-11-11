@@ -6,7 +6,7 @@ import { tokenStorage } from "../utils/tokenStorage";
 import { useRouter } from "expo-router";
 
 export function useLogin(
-  options?: UseMutationOptions<AuthResponse, ApiError, LoginRequest>
+  options?: Omit<UseMutationOptions<AuthResponse, ApiError, LoginRequest, unknown>, 'mutationFn' | 'onSuccess'>
 ) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -17,7 +17,7 @@ export function useLogin(
       await tokenStorage.setAccessToken(data.accessToken)
       queryClient.setQueryData(authKeys.user(), data.user);
 
-      router.replace('/(tabs)')
+      router.replace('/(tabs)');
     },
     ...options
   })
