@@ -5,6 +5,7 @@ export type CreateUserRequest = components['schemas']['CreateUserRequest']
 export type LoginRequest = components['schemas']['LoginRequest']
 export type SuccessResponse = components['schemas']['SuccessResponse']
 export type AuthResponse = components['schemas']['AuthResponse']
+export type UserResponse = components['schemas']['UserResponse']
 
 export class AuthClient extends BaseApiClient {
   private baseAuthRoute = "auth"
