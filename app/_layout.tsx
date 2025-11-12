@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AlertProvider } from '@components/ui';
 import { AuthProvider } from '@domains/auth/context/AuthContext';
+import { SessionChecker } from '@/domains/auth/components/SessionChecker';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,12 +18,13 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
-  // Remove useEffect and router logic - just render!
+
   return (
     <SafeAreaProvider>
       <AlertProvider>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
+            <SessionChecker />
             <StatusBar style="dark" />
             <Stack
               screenOptions={{
