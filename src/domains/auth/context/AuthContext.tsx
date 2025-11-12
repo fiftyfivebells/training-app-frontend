@@ -13,7 +13,8 @@ import { userResponseToUser, type User } from '@domains/users/users.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { getDeviceInfo } from '../utils/deviceInfoHelper';
 import { authClient } from '../api/authApi';
-import { useLogin } from '../hooks';
+import { useLogin, useSessionChecker } from '../hooks';
+import { registerLogoutHandler } from './authEvents';
 
 
 type AuthContextType = {
@@ -36,7 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const {
     data: currentUser,
     refetch: refetchCurrentUser,
-    isFetching: isFetchingCurrentUser,
   } = useGetCurrentUser({ enabled: false });
 
   useEffect(() => {
@@ -84,6 +84,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     router.replace('/(auth)/login');
   }, []);
 
+  useEffect(() => {
+    registerLogoutHandler(logout)
+  }, [logout]);
+
   const refetchUser = useCallback(async () => {
     const { data } = await refetchCurrentUser();
     if (data) setUser(data);
@@ -94,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         isAuthenticated: !!user,
-        isLoading: isLoading || isFetchingCurrentUser,
+        isLoading: isLoading,
         login,
         logout,
         refetchUser,
