@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   View,
   Text,
@@ -6,32 +5,34 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Pressable
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useRegister } from '../hooks';
 import type { CreateUserRequest } from '../api/authApi';
-import { Input, Button, Select, useAlert } from '@components/ui'
+import { Input, Button, Select, DatePicker, useAlert } from '@components/ui'
 import { colors, spacing, typography } from '@theme/index'
 import * as Localization from 'expo-localization';
 
-interface RegisterFormData extends CreateUserRequest {
+interface RegisterFormData {
+  email: string;
+  password: string;
   confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  preferredUnits: 'imperial' | 'metric';
+  dateOfBirth: Date;
 }
 
 export function RegisterScreen() {
   const router = useRouter();
   const { alert } = useAlert();
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const {
     control,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors }
   } = useForm<RegisterFormData>({
     defaultValues: {
@@ -41,7 +42,7 @@ export function RegisterScreen() {
       firstName: '',
       lastName: '',
       preferredUnits: 'imperial',
-      dateOfBirth: '2000-01-01'
+      dateOfBirth: new Date(2000, 0, 1)
     }
   });
 
@@ -72,46 +73,22 @@ export function RegisterScreen() {
   });
 
   const password = watch('password');
-  const dateOfBirth = watch('dateOfBirth')
 
   const onSubmit = (data: RegisterFormData) => {
-    const { confirmPassword, ...createUserData } = data;
+    const { confirmPassword, dateOfBirth, ...rest } = data;
 
     const timeZone = Localization.getCalendars()[0]?.timeZone || 'America/New_York';
 
     const completeUserData: CreateUserRequest = {
-      ...createUserData,
-      timeZone: timeZone
-    }
+      ...rest,
+      dateOfBirth: formatDateForApi(dateOfBirth),
+      timeZone,
+    };
 
     registerMutation.mutate(completeUserData);
   };
 
   const isLoading = registerMutation.isPending;
-
-  // TODO: dates need to be broken out into their own component, and these
-  // helpers can go with it
-  const stringToDate = (dateString: string): Date => {
-    const date = new Date(dateString);
-    return isNaN(date.getTime()) ? new Date(2000, 0, 1) : date;
-  };
-
-  const dateToString = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate() + 1).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-  };
-
-  const formatDateForDisplay = (dateString: string): string => {
-    const date = stringToDate(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  };
 
   // Calculate age from date of birth
   const calculateAge = (birthDate: Date): number => {
@@ -122,6 +99,13 @@ export function RegisterScreen() {
       age--;
     }
     return age;
+  };
+
+  const formatDateForApi = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
 
@@ -235,70 +219,25 @@ export function RegisterScreen() {
               name="dateOfBirth"
               rules={{
                 required: 'Date of birth is required',
-                pattern: {
-                  value: /^\d{4}-\d{2}-\d{2}$/,
-                  message: 'Invalid date format'
-                },
                 validate: {
-                  notFuture: (value) => {
-                    const input = stringToDate(value);
-                    return input <= new Date() || 'Date of birth cannot be in the future';
-                  },
-                  minimumAge: (value) => {
-                    const age = calculateAge(stringToDate(value));
-                    return age >= 13 || 'You must be at least 13 years old';
-                  },
-                  maximumAge: (value) => {
-                    const age = calculateAge(stringToDate(value));
-                    return age <= 120 || 'Please enter a valid date of birth';
-                  }
-                }
+                  notFuture: (value) =>
+                    value <= new Date() || 'Date of birth cannot be in the future',
+                  minimumAge: (value) =>
+                    calculateAge(value) >= 13 || 'You must be at least 13 years old',
+                  maximumAge: (value) =>
+                    calculateAge(value) <= 120 || 'Please enter a valid date of birth',
+                },
               }}
-              render={({ field: { value } }) => (
-                <View>
-                  <Text style={styles.label}>Date of Birth</Text>
-                  <Pressable
-                    onPress={() => !isLoading && setShowDatePicker(true)}
-                    disabled={isLoading}
-                    style={[
-                      styles.dateInput,
-          isLoading && styles.dateInputDisabled,
-          errors.dateOfBirth && styles.dateInputError
-                    ]}
-                  >
-                    <Text style={[
-                                styles.dateText,
-          isLoading && styles.dateTextDisabled
-                    ]}>
-                      {formatDateForDisplay(value)}
-                    </Text>
-                  </Pressable>
-                  {errors.dateOfBirth && (
-                    <Text style={styles.errorText}>{errors.dateOfBirth.message}</Text>
-                  )}
-                  
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={stringToDate(value)}
-                      mode="date"
-                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                      onChange={(event, selectedDate) => {
-                        setShowDatePicker(Platform.OS === 'ios');
-                        if (selectedDate) {
-                          setValue('dateOfBirth', dateToString(selectedDate), { shouldValidate: true });
-                        }
-                      }}
-                      maximumDate={new Date()}
-                      minimumDate={new Date(1900, 0, 1)}
-                    />
-                  )}
-                  {Platform.OS === 'ios' && showDatePicker && (
-                    <Button
-                      title="Done"
-                      onPress={() => setShowDatePicker(false)}
-                    />
-                  )}
-                </View>
+              render={({ field: { value, onChange } }) => (
+                <DatePicker
+                  label="Date of Birth"
+                  value={value}
+                  onChange={onChange}
+                  minimumDate={new Date(1900, 0, 1)}
+                  maximumDate={new Date()}
+                  disabled={isLoading}
+                  error={errors.dateOfBirth?.message}
+                />
               )}
             />
 
@@ -450,42 +389,4 @@ const styles = StyleSheet.create({
     color: colors.primary.DEFAULT,
     fontWeight: typography.weights.semibold,
   },
-  label: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
-    color: colors.charcoal,
-    marginBottom: spacing.xs,
-  },
-  dateInput: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: colors.sand,
-    borderRadius: 8,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-    minHeight: 48,
-    justifyContent: 'center',
-  },
-  dateInputDisabled: {
-    backgroundColor: '#F9FAFB',
-    opacity: 0.6,
-  },
-  dateInputError: {
-    borderColor: '#DC2626',
-  },
-  dateText: {
-    fontSize: typography.sizes.base,
-    color: colors.charcoal,
-  },
-  dateTextDisabled: {
-    color: '#9CA3AF',
-  },
-  errorText: {
-    fontSize: typography.sizes.sm,
-    color: '#DC2626',
-    marginTop: spacing.xs,
-  },
 });
-
-
-

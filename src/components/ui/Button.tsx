@@ -1,10 +1,11 @@
-import { 
-  Pressable, 
-  Text, 
-  StyleSheet, 
+import {
+  Pressable,
+  Text,
+  StyleSheet,
   ActivityIndicator,
   type ViewStyle,
   type TextStyle,
+  type StyleProp,
 } from 'react-native';
 import { colors, spacing, typography } from '@theme/index';
 
@@ -15,7 +16,7 @@ interface ButtonProps {
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   disabled?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Button({ 
