@@ -16,6 +16,7 @@ import { Button, Input, useAlert } from '@components/ui'
 import { colors, spacing, typography } from '@theme/index';
 import type { LoginRequest } from '@domains/auth/api/authApi';
 import { getDeviceInfo } from '../utils/deviceInfoHelper';
+import { useAuthContext } from '../context/AuthContext';
 
 interface LoginFormData extends LoginRequest {
   email: string;
@@ -25,6 +26,7 @@ interface LoginFormData extends LoginRequest {
 export function LoginScreen() {
   const router = useRouter();
   const { alert } = useAlert();
+  const { login, isLoading } = useAuthContext();
 
   const {
     control,
@@ -37,24 +39,16 @@ export function LoginScreen() {
     },
   });
 
-  const loginMutation = useLogin({
-    onError: (error) => {
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await login(data.email, data.password);
+    } catch (err: any) {
       alert(
         'Login Failed',
-        error.message || 'Invalid email or password. Please try again.'
-      );
-    },
-  });
-
-  const onSubmit = (data: LoginFormData) => {
-    const loginRequest = {
-      ...data,
-      deviceInfo: getDeviceInfo()
+        err?.message || 'Invalid email or password. Please try again.'
+      )
     }
-    loginMutation.mutate(loginRequest);
   };
-
-  const isLoading = loginMutation.isPending;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
