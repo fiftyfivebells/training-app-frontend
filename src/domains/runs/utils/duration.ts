@@ -1,0 +1,30 @@
+export function toInt(value: string): number {
+  const n = parseInt(value, 10)
+  return isNaN(n) ? 0 : n
+}
+
+export function durationToTotalSeconds(
+  hours: string,
+  minutes: string,
+  seconds: string,
+): number {
+  const h = toInt(hours)
+  const m = toInt(minutes)
+  const s = toInt(seconds)
+  return h * 3600 + m * 60 + s
+}
+
+export function normalizeDuration(totalSeconds: number) {
+  const h = Math.floor(totalSeconds / 3600)
+  const m = Math.floor((totalSeconds % 3600) / 60)
+  const s = totalSeconds % 60
+
+  return {
+    hours: h.toString().padStart(2, '0'),
+    minutes: m.toString().padStart(2, '0'),
+    seconds: s.toString().padStart(2, '0'),
+    formatted: `${h.toString().padStart(2, '0')}:${m
+      .toString()
+      .padStart(2, '0')}:${s.toString().padStart(2, '0')}`,
+  }
+}
