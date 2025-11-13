@@ -7,7 +7,12 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "generate-api": "openapi-typescript http://localhost:8080/openapi/docs/openapi.json --output src/generated/api/types.ts"
+    "generate-api": "openapi-typescript http://localhost:8080/openapi/docs/openapi.json --output src/generated/api/types.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:cycles": "madge --circular --extensions ts,tsx src"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -35,12 +40,31 @@
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@react-native-community/eslint-config": "^3.2.0",
     "@types/react": "~19.1.0",
     "@types/react-native": "^0.72.8",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
     "babel-plugin-module-resolver": "^5.0.2",
     "babel-preset-expo": "^54.0.6",
+    "eslint": "^9.39.1",
+    "eslint-config-expo": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-boundaries": "^5.1.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-access": "^3.1.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-native": "^5.0.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "madge": "^8.0.0",
     "openapi-typescript": "^7.10.1",
-    "typescript": "~5.9.2"
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.46.4"
   },
   "private": true
 }
