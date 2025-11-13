@@ -1,4 +1,10 @@
 export const typography = {
+  primary: {
+    regular: 'Manrope',
+    medium: 'ManropeMedium',
+    semibold: 'ManropeSemiBold',
+    bold: 'ManropeBold',
+  },
   sizes: {
     xs: 12,
     sm: 14,
