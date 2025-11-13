@@ -22,7 +22,6 @@ interface RegisterFormData {
   confirmPassword: string
   firstName: string
   lastName: string
-  preferredUnits: 'imperial' | 'metric'
   dateOfBirth: Date
 }
 
@@ -42,7 +41,6 @@ export function RegisterScreen() {
       confirmPassword: '',
       firstName: '',
       lastName: '',
-      preferredUnits: 'imperial',
       dateOfBirth: new Date(2000, 0, 1),
     },
   })
@@ -234,24 +232,6 @@ export function RegisterScreen() {
                   maximumDate={new Date()}
                   disabled={isLoading}
                   error={errors.dateOfBirth?.message}
-                />
-              )}
-            />
-
-            {/* Preferred Units */}
-            <Controller
-              control={control}
-              name="preferredUnits"
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  label="Preferred Units"
-                  value={value as string}
-                  onValueChange={onChange}
-                  options={[
-                    { label: 'Metric (km)', value: 'metric' },
-                    { label: 'Imperial (miles)', value: 'imperial' },
-                  ]}
-                  disabled={isLoading}
                 />
               )}
             />
