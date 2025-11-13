@@ -25,7 +25,7 @@ export default function Index() {
         // User is not logged in - go to auth
         router.replace('/(auth)/login')
       }
-    } catch (error) {
+    } catch (_) {
       // Error checking auth - default to login
       router.replace('/(auth)/login')
     }
