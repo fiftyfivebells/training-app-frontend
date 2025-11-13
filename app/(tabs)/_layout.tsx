@@ -1,7 +1,17 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { colors } from '../../src/theme';
+import { Text } from 'react-native';
+import { useAuthContext } from '@/domains/auth/context/AuthContext';
 
 export default function TabLayout() {
+  const { isAuthenticated, isLoading } = useAuthContext();
+
+  if (isLoading) return null;
+
+  if (!isAuthenticated) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
   return (
     <Tabs
       screenOptions={{
@@ -62,7 +72,7 @@ export default function TabLayout() {
   );
 }
 
-// Simple icon component (we'll use text emojis for MVP)
+// Simple icon component
 function TabBarIcon({ name, color, size }: { name: string; color: string; size: number }) {
   const icons = {
     home: '🏠',
@@ -77,5 +87,3 @@ function TabBarIcon({ name, color, size }: { name: string; color: string; size: 
     </Text>
   );
 }
-
-import { Text } from 'react-native';

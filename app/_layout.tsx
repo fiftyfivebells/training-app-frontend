@@ -1,10 +1,10 @@
 // app/_layout.tsx
-import { Stack } from 'expo-router';
+import { Redirect, Slot, Stack, usePathname } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AlertProvider } from '@components/ui';
-import { AuthProvider } from '@domains/auth/context/AuthContext';
+import { AuthProvider, useAuthContext } from '@domains/auth/context/AuthContext';
 import { SessionChecker } from '@/domains/auth/components/SessionChecker';
 
 const queryClient = new QueryClient({
@@ -16,6 +16,25 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+function AuthGate() {
+  const { isAuthenticated, isLoading } = useAuthContext();
+  const pathname = usePathname();
+
+  if (isLoading) return null;
+
+  const inAuthGroup = pathname.startsWith("/(auth)");
+
+  if (!isAuthenticated && !inAuthGroup) {
+    return <Redirect href={"/(auth)/login"} />;
+  }
+
+  if (isAuthenticated && inAuthGroup) {
+    return <Redirect href={"/(tabs)"} />;
+  }
+
+  return <Slot />
+}
 
 export default function RootLayout() {
 
@@ -32,9 +51,10 @@ export default function RootLayout() {
                 contentStyle: { backgroundColor: '#FAF8F5' },
               }}
             >
-              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <AuthGate />
+              {/*               <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
             </Stack>
           </AuthProvider>
         </QueryClientProvider>
