@@ -4,7 +4,7 @@ import { AppState } from 'react-native'
 
 import { useAuthContext } from '../context/AuthContext'
 
-const CHECK_SESSION_INTERVAL_MS = 6000 // 60 seconds. TODO: move this somewhere central?
+const CHECK_SESSION_INTERVAL_MS = 60000 // 60 seconds. TODO: move this somewhere central?
 
 export function useSessionChecker() {
   const { isAuthenticated, refetchUser, logout } = useAuthContext()
@@ -15,7 +15,6 @@ export function useSessionChecker() {
     if (!isAuthenticated) return
 
     async function validateSession() {
-      console.log('validating the session')
       const now = Date.now()
 
       if (now - lastCheck.current < CHECK_SESSION_INTERVAL_MS) return
