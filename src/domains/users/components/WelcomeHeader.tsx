@@ -1,13 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, typography } from '@theme/index';
+import { colors, spacing, typography } from '@theme/index'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 interface WelcomeHeaderProps {
-  userName: string;
+  userName: string
   currentBlock?: {
-    name: string;
-    daysRemaining: number;
-  };
+    name: string
+    daysRemaining: number
+  }
 }
 
 export function WelcomeHeader({ userName, currentBlock }: WelcomeHeaderProps) {
@@ -20,7 +20,7 @@ export function WelcomeHeader({ userName, currentBlock }: WelcomeHeaderProps) {
         </Text>
       )}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
     color: colors.stone.DEFAULT,
     fontWeight: typography.weights.medium,
   },
-});
+})

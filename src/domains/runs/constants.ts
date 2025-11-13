@@ -2,10 +2,10 @@ export const runsKeys = {
   all: ['runs'] as const,
   lists: () => [...runsKeys.all, 'list'] as const,
   list: (filters?: {
-    startDate?: string;
-    endDate?: string;
-    moodIds?: string[];
-    moodCategories?: string[];
+    startDate?: string
+    endDate?: string
+    moodIds?: string[]
+    moodCategories?: string[]
   }) => [...runsKeys.lists(), { filters }] as const,
   details: () => [...runsKeys.all, 'detail'] as const,
   detail: (runId: string) => [...runsKeys.details(), runId] as const,

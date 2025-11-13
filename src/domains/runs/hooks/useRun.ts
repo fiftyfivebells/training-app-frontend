@@ -1,10 +1,11 @@
-import { UseBaseQueryOptions, useQuery } from "@tanstack/react-query";
-import { RunResponse, runsClient } from "../api/runsApi";
-import { runsKeys } from "../constants";
+import { UseBaseQueryOptions, useQuery } from '@tanstack/react-query'
+
+import { RunResponse, runsClient } from '../api/runsApi'
+import { runsKeys } from '../constants'
 
 export function useRun(
   runId: string,
-  options?: Omit<UseBaseQueryOptions<RunResponse>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseBaseQueryOptions<RunResponse>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery<RunResponse>({
     queryKey: runsKeys.detail(runId),

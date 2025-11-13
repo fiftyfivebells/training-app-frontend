@@ -1,41 +1,42 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Platform,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
 import DateTimePicker, {
   type AndroidNativeProps,
   type DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
-import { colors, spacing, typography } from '@theme/index';
-import { Button } from './Button';
+} from '@react-native-community/datetimepicker'
+import { colors, spacing, typography } from '@theme/index'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Platform,
+  Pressable,
+  type StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  type ViewStyle,
+} from 'react-native'
+
+import { Button } from './Button'
 
 export interface DatePickerProps {
-  label?: string;
-  value?: Date | null;
-  onChange: (date: Date) => void;
-  minimumDate?: Date;
-  maximumDate?: Date;
-  disabled?: boolean;
-  error?: string;
-  helperText?: string;
-  placeholder?: string;
-  displayFormatOptions?: Intl.DateTimeFormatOptions;
-  confirmLabel?: string;
-  mode?: AndroidNativeProps['mode'];
-  style?: StyleProp<ViewStyle>;
+  label?: string
+  value?: Date | null
+  onChange: (date: Date) => void
+  minimumDate?: Date
+  maximumDate?: Date
+  disabled?: boolean
+  error?: string
+  helperText?: string
+  placeholder?: string
+  displayFormatOptions?: Intl.DateTimeFormatOptions
+  confirmLabel?: string
+  mode?: AndroidNativeProps['mode']
+  style?: StyleProp<ViewStyle>
 }
 
 const defaultFormat: Intl.DateTimeFormatOptions = {
   month: 'short',
   day: 'numeric',
   year: 'numeric',
-};
+}
 
 export function DatePicker({
   label,
@@ -52,64 +53,64 @@ export function DatePicker({
   mode = 'date',
   style,
 }: DatePickerProps) {
-  const [showPicker, setShowPicker] = useState(false);
-  const isWeb = Platform.OS === 'web';
+  const [showPicker, setShowPicker] = useState(false)
+  const isWeb = Platform.OS === 'web'
   const [webInputValue, setWebInputValue] = useState(() =>
-    value ? formatDateForInput(value) : ''
-  );
-  const isEditingWebInput = useRef(false);
+    value ? formatDateForInput(value) : '',
+  )
+  const isEditingWebInput = useRef(false)
 
   const formatter = useMemo(
     () => new Intl.DateTimeFormat(undefined, displayFormatOptions),
-    [displayFormatOptions]
-  );
+    [displayFormatOptions],
+  )
 
-  const selectedDate = value ?? new Date();
-  const hasValue = Boolean(value);
-  const formattedValue = hasValue ? formatter.format(selectedDate) : placeholder;
+  const selectedDate = value ?? new Date()
+  const hasValue = Boolean(value)
+  const formattedValue = hasValue ? formatter.format(selectedDate) : placeholder
 
   const handleChange = (event: DateTimePickerEvent, selected?: Date) => {
     if (Platform.OS === 'android') {
-      setShowPicker(false);
+      setShowPicker(false)
     }
 
     if (event.type === 'dismissed') {
-      return;
+      return
     }
 
     if (selected) {
-      onChange(selected);
+      onChange(selected)
     }
-  };
+  }
 
   useEffect(() => {
     if (!isWeb) {
-      return;
+      return
     }
     if (isEditingWebInput.current) {
-      return;
+      return
     }
-    setWebInputValue(value ? formatDateForInput(value) : '');
-  }, [value, isWeb]);
+    setWebInputValue(value ? formatDateForInput(value) : '')
+  }, [value, isWeb])
 
   const handleWebInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const nextValue = event.target.value;
-    setWebInputValue(nextValue);
+    const nextValue = event.target.value
+    setWebInputValue(nextValue)
     if (isCompleteDateInput(nextValue)) {
-      onChange(parseInputDate(nextValue));
+      onChange(parseInputDate(nextValue))
     }
-  };
+  }
 
   const handleWebInputBlur = () => {
-    isEditingWebInput.current = false;
+    isEditingWebInput.current = false
     if (!isCompleteDateInput(webInputValue)) {
-      setWebInputValue(value ? formatDateForInput(value) : '');
+      setWebInputValue(value ? formatDateForInput(value) : '')
     }
-  };
+  }
 
   const handleWebInputFocus = () => {
-    isEditingWebInput.current = true;
-  };
+    isEditingWebInput.current = true
+  }
 
   return (
     <View style={style}>
@@ -163,7 +164,13 @@ export function DatePicker({
                 maximumDate={maximumDate}
               />
               {Platform.OS === 'ios' && (
-                <Button title={confirmLabel} onPress={() => setShowPicker(false)} style={styles.doneButton} />
+                <Button
+                  title={confirmLabel}
+                  onPress={() => {
+                    setShowPicker(false)
+                  }}
+                  style={styles.doneButton}
+                />
               )}
             </View>
           )}
@@ -172,7 +179,7 @@ export function DatePicker({
       {helperText && !error && <Text style={styles.helperText}>{helperText}</Text>}
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -230,7 +237,7 @@ const styles = StyleSheet.create({
   doneButton: {
     marginTop: spacing.sm,
   },
-});
+})
 
 const webInputStyle: React.CSSProperties = {
   width: '100%',
@@ -245,31 +252,31 @@ const webInputStyle: React.CSSProperties = {
   color: colors.charcoal,
   minHeight: 48,
   boxSizing: 'border-box',
-};
+}
 
 const webInputDisabledStyle: React.CSSProperties = {
   opacity: 0.6,
   cursor: 'not-allowed',
   backgroundColor: colors.sand,
-};
+}
 
 const webInputErrorStyle: React.CSSProperties = {
   borderColor: colors.error,
   borderWidth: 2,
-};
+}
 
 function formatDateForInput(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 function parseInputDate(value: string) {
-  const [year, month, day] = value.split('-').map((part) => parseInt(part, 10));
-  return new Date(year, (month || 1) - 1, day || 1);
+  const [year, month, day] = value.split('-').map((part) => parseInt(part, 10))
+  return new Date(year, (month || 1) - 1, day || 1)
 }
 
 function isCompleteDateInput(value: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+  return /^\d{4}-\d{2}-\d{2}$/.test(value)
 }

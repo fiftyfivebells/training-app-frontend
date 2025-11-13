@@ -1,28 +1,30 @@
 // app/(auth)/verify-email.tsx
-import { View, Text, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Button } from '@components/ui';
-import { colors, spacing, typography } from '@theme/index';
+import { Button } from '@components/ui'
+import { colors, spacing, typography } from '@theme/index'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import { StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function VerifyEmailScreen() {
-  const router = useRouter();
-  const params = useLocalSearchParams<{ email?: string }>();
+  const router = useRouter()
+  const params = useLocalSearchParams<{ email?: string }>()
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Verify Email</Text>
         <Text style={styles.subtitle}>Check your email: {params.email}</Text>
-        
+
         <Button
           title="Go to Login"
-          onPress={() => router.push('/(auth)/login')}
+          onPress={() => {
+            router.push('/(auth)/login')
+          }}
           style={styles.button}
         />
       </View>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -51,4 +53,4 @@ const styles = StyleSheet.create({
   button: {
     width: 200,
   },
-});
+})

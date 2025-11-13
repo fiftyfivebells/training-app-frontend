@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
 import { colors } from '@theme/colors'
+import { Stack } from 'expo-router'
 
 export default function AuthLayout() {
   return (
@@ -12,24 +12,24 @@ export default function AuthLayout() {
         animation: 'slide_from_right',
       }}
     >
-      <Stack.Screen 
+      <Stack.Screen
         name="login"
         options={{
           title: 'Login',
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="register"
         options={{
           title: 'Register',
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="verify-email"
         options={{
           title: 'Verify Email',
         }}
       />
     </Stack>
-  );
+  )
 }

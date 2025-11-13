@@ -1,1 +1,1 @@
-export { LoginScreen as default } from '@domains/auth/screens/LoginScreen';
+export { LoginScreen as default } from '@domains/auth/screens/LoginScreen'

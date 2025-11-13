@@ -1,17 +1,23 @@
-import React, { ReactNode } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, typography } from '@theme/index';
+import { colors, spacing, typography } from '@theme/index'
+import React, { ReactNode } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 interface StatCardProps {
-  icon: ReactNode;
-  label: string;
-  value: string | number;
-  subtext?: string;
-  variant?: 'default' | 'accent';
+  icon: ReactNode
+  label: string
+  value: string | number
+  subtext?: string
+  variant?: 'default' | 'accent'
 }
 
-export function StatCard({ icon, label, value, subtext, variant = 'default' }: StatCardProps) {
-  const isAccent = variant === 'accent';
+export function StatCard({
+  icon,
+  label,
+  value,
+  subtext,
+  variant = 'default',
+}: StatCardProps) {
+  const isAccent = variant === 'accent'
 
   return (
     <View style={[styles.card, isAccent && styles.cardAccent]}>
@@ -20,7 +26,7 @@ export function StatCard({ icon, label, value, subtext, variant = 'default' }: S
       <Text style={styles.label}>{label}</Text>
       {subtext && <Text style={styles.subtext}>{subtext}</Text>}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -57,4 +63,4 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     textAlign: 'center',
   },
-});
+})

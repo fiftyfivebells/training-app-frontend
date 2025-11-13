@@ -1,15 +1,15 @@
-import { UserResponse } from "./api/userApi";
+import { UserResponse } from './api/userApi'
 
 export type User = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;  // TODO: should I make this a Date type?
-  timeZone: string;
-  accountStatus: 'active' | 'inactive' | 'suspended';
-  isVerified: boolean;
-};
+  id: string
+  email: string
+  firstName: string
+  lastName: string
+  dateOfBirth: string // TODO: should I make this a Date type?
+  timeZone: string
+  accountStatus: 'active' | 'inactive' | 'suspended'
+  isVerified: boolean
+}
 
 export function userResponseToUser(ur: UserResponse): User {
   return {

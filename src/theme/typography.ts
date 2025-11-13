@@ -14,4 +14,4 @@ export const typography = {
     semibold: '600' as const,
     bold: '700' as const,
   },
-} as const;
+} as const

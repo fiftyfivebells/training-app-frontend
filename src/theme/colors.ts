@@ -9,7 +9,7 @@ export const colors = {
     DEFAULT: '#8B4513',
     dark: '#704010',
   },
-  
+
   // Neutrals
   cream: '#FAF8F5',
   sand: '#E8DDD0',
@@ -18,7 +18,7 @@ export const colors = {
     DEFAULT: '#6B5D4F',
     light: '#8B7D6B',
   },
-  
+
   // Mood quadrants
   mood: {
     highGreat: {
@@ -42,17 +42,17 @@ export const colors = {
       text: '#4B5563',
     },
   },
-  
+
   // Semantic colors
   success: '#6B8E23',
   error: '#DC2626',
   warning: '#F59E0B',
   info: '#3B82F6',
-  
+
   // Common
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
-} as const;
+} as const
 
-export type ColorKey = keyof typeof colors;
+export type ColorKey = keyof typeof colors

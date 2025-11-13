@@ -1,2 +1,2 @@
-export { useGetCurrentUser } from './useGetCurrentUser';
-export { useGetUserById } from './useGetUserById';
+export { useGetCurrentUser } from './useGetCurrentUser'
+export { useGetUserById } from './useGetUserById'

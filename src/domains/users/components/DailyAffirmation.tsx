@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, typography } from '@theme/index';
+import { colors, spacing, typography } from '@theme/index'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 interface DailyAffirmationProps {
-  affirmation: string;
-  blockName?: string;
+  affirmation: string
+  blockName?: string
 }
 
 export function DailyAffirmation({ affirmation, blockName }: DailyAffirmationProps) {
@@ -13,7 +13,7 @@ export function DailyAffirmation({ affirmation, blockName }: DailyAffirmationPro
       <Text style={styles.affirmation}>{affirmation}</Text>
       {blockName && <Text style={styles.blockName}>{blockName}</Text>}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -36,4 +36,4 @@ const styles = StyleSheet.create({
     color: colors.stone.DEFAULT,
     fontWeight: typography.weights.medium,
   },
-});
+})

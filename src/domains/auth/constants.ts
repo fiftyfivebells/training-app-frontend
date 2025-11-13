@@ -1,8 +1,8 @@
-import type { components } from "@/generated/api/types";
+import type { components } from '@/generated/api/types'
 
 export const authKeys = {
   all: ['auth'] as const,
-  user: () => [...authKeys.all, 'user'] as const
-};
+  user: () => [...authKeys.all, 'user'] as const,
+}
 
-export type DeviceInfo = components['schemas']['DeviceInfo'];
+export type DeviceInfo = components['schemas']['DeviceInfo']

@@ -1,35 +1,34 @@
+import { colors, spacing, typography } from '@theme/index'
 import {
-  Pressable,
-  Text,
-  StyleSheet,
   ActivityIndicator,
-  type ViewStyle,
-  type TextStyle,
+  Pressable,
   type StyleProp,
-} from 'react-native';
-import { colors, spacing, typography } from '@theme/index';
+  StyleSheet,
+  Text,
+  type ViewStyle,
+} from 'react-native'
 
 interface ButtonProps {
-  title: string;
-  onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
-  loading?: boolean;
-  disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
+  title: string
+  onPress: () => void
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  size?: 'sm' | 'md' | 'lg'
+  loading?: boolean
+  disabled?: boolean
+  style?: StyleProp<ViewStyle>
 }
 
-export function Button({ 
-  title, 
-  onPress, 
+export function Button({
+  title,
+  onPress,
   variant = 'primary',
   size = 'md',
   loading = false,
   disabled = false,
   style,
 }: ButtonProps) {
-  const isDisabled = disabled || loading;
-  
+  const isDisabled = disabled || loading
+
   return (
     <Pressable
       style={({ pressed }) => [
@@ -44,16 +43,14 @@ export function Button({
       disabled={isDisabled}
     >
       {loading ? (
-        <ActivityIndicator 
-          color={variant === 'outline' ? colors.primary.DEFAULT : colors.white} 
+        <ActivityIndicator
+          color={variant === 'outline' ? colors.primary.DEFAULT : colors.white}
         />
       ) : (
-        <Text style={[styles.text, textStyles[variant], textStyles[size]]}>
-          {title}
-        </Text>
+        <Text style={[styles.text, textStyles[variant], textStyles[size]]}>{title}</Text>
       )}
     </Pressable>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -105,7 +102,7 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: typography.weights.semibold,
   },
-});
+})
 
 const textStyles = StyleSheet.create({
   // Variant text colors
@@ -131,4 +128,4 @@ const textStyles = StyleSheet.create({
   lg: {
     fontSize: typography.sizes.lg,
   },
-});
+})

@@ -1,15 +1,17 @@
-import { Redirect, Tabs } from 'expo-router';
-import { colors } from '../../src/theme';
-import { Text } from 'react-native';
-import { useAuthContext } from '@/domains/auth/context/AuthContext';
+import { Redirect, Tabs } from 'expo-router'
+import { Text } from 'react-native'
+
+import { useAuthContext } from '@/domains/auth/context/AuthContext'
+
+import { colors } from '../../src/theme'
 
 export default function TabLayout() {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isAuthenticated, isLoading } = useAuthContext()
 
-  if (isLoading) return null;
+  if (isLoading) return null
 
   if (!isAuthenticated) {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href="/(auth)/login" />
   }
 
   return (
@@ -69,21 +71,29 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-  );
+  )
 }
 
 // Simple icon component
-function TabBarIcon({ name, color, size }: { name: string; color: string; size: number }) {
+function TabBarIcon({
+  name,
+  color,
+  size,
+}: {
+  name: string
+  color: string
+  size: number
+}) {
   const icons = {
     home: '🏠',
     'plus-circle': '➕',
     calendar: '📅',
     user: '👤',
-  };
+  }
 
   return (
     <Text style={{ fontSize: size, color }}>
       {icons[name as keyof typeof icons] || '•'}
     </Text>
-  );
+  )
 }

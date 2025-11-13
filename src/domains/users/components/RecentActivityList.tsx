@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, typography } from '@theme/index';
-import type { DashboardActivity } from '@domains/users/utils/dashboard';
+import type { DashboardActivity } from '@domains/users/utils/dashboard'
+import { colors, spacing, typography } from '@theme/index'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 interface RecentActivityListProps {
-  activities: DashboardActivity[];
+  activities: DashboardActivity[]
 }
 
 export function RecentActivityList({ activities }: RecentActivityListProps) {
@@ -16,7 +16,7 @@ export function RecentActivityList({ activities }: RecentActivityListProps) {
           <Text style={styles.emptyText}>No recent activities</Text>
         </View>
       </View>
-    );
+    )
   }
 
   return (
@@ -37,7 +37,7 @@ export function RecentActivityList({ activities }: RecentActivityListProps) {
         ))}
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.base,
     color: colors.stone.DEFAULT,
   },
-});
+})

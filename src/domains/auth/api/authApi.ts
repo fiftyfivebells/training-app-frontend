@@ -1,5 +1,5 @@
-import { BaseApiClient } from "@lib/api/base"
-import type { components } from "@generated/api/types"
+import type { components } from '@generated/api/types'
+import { BaseApiClient } from '@lib/api/base'
 
 export type CreateUserRequest = components['schemas']['CreateUserRequest']
 export type LoginRequest = components['schemas']['LoginRequest']
@@ -8,7 +8,7 @@ export type AuthResponse = components['schemas']['AuthResponse']
 export type UserResponse = components['schemas']['UserResponse']
 
 export class AuthClient extends BaseApiClient {
-  private baseAuthRoute = "auth"
+  private baseAuthRoute = 'auth'
 
   async registerUser(body: CreateUserRequest) {
     return this.post<SuccessResponse>(`${this.baseAuthRoute}/register`, body)

@@ -1,51 +1,52 @@
-import { useEffect, useRef } from "react";
-import { useAuthContext } from "../context/AuthContext";
-import { getNetworkStateAsync } from "expo-network";
-import { AppState } from "react-native";
+import { getNetworkStateAsync } from 'expo-network'
+import { useEffect, useRef } from 'react'
+import { AppState } from 'react-native'
 
-const CHECK_SESSION_INTERVAL_MS = 6000; // 60 seconds. TODO: move this somewhere central?
+import { useAuthContext } from '../context/AuthContext'
+
+const CHECK_SESSION_INTERVAL_MS = 6000 // 60 seconds. TODO: move this somewhere central?
 
 export function useSessionChecker() {
-  const { isAuthenticated, refetchUser, logout } = useAuthContext();
+  const { isAuthenticated, refetchUser, logout } = useAuthContext()
 
-  const lastCheck = useRef<number>(0);
+  const lastCheck = useRef<number>(0)
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) return
 
     async function validateSession() {
-      console.log("validating the session");
-      const now = Date.now();
+      console.log('validating the session')
+      const now = Date.now()
 
-      if (now - lastCheck.current < CHECK_SESSION_INTERVAL_MS) return;
+      if (now - lastCheck.current < CHECK_SESSION_INTERVAL_MS) return
 
-      lastCheck.current = now;
+      lastCheck.current = now
 
       try {
         const state = await getNetworkStateAsync()
-        if (!state.isConnected) return;  // if the session is offline, don't check anything
+        if (!state.isConnected) return // if the session is offline, don't check anything
 
-        await refetchUser();
+        await refetchUser()
       } catch (err: any) {
         if (err?.status === 401 || err?.response?.status === 401) {
-          await logout();
+          await logout()
         }
       }
     }
 
-    validateSession();
+    validateSession()
 
-    const sub = AppState.addEventListener('change', nextState => {
+    const sub = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
-        validateSession();
+        validateSession()
       }
-    });
+    })
 
-    const interval = setInterval(validateSession, CHECK_SESSION_INTERVAL_MS);
+    const interval = setInterval(validateSession, CHECK_SESSION_INTERVAL_MS)
 
     return () => {
-      sub.remove();
-      clearInterval(interval);
+      sub.remove()
+      clearInterval(interval)
     }
   }, [isAuthenticated, refetchUser, logout])
 }

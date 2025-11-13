@@ -1,23 +1,24 @@
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { authClient, CreateUserRequest, SuccessResponse } from "../api/authApi";
-import { ApiError } from "@lib/api/error";
-import { useRouter } from "expo-router";
+import { ApiError } from '@lib/api/error'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { useRouter } from 'expo-router'
+
+import { authClient, CreateUserRequest, SuccessResponse } from '../api/authApi'
 
 export function useRegister(
-  options?: UseMutationOptions<SuccessResponse, ApiError, CreateUserRequest>
+  options?: UseMutationOptions<SuccessResponse, ApiError, CreateUserRequest>,
 ) {
-  const router = useRouter();
+  const router = useRouter()
 
   return useMutation({
     mutationFn: (body: CreateUserRequest) => authClient.registerUser(body),
     onSuccess: (data: SuccessResponse, variables) => {
-      console.log("Registration successful:", data.message)
+      console.log('Registration successful:', data.message)
 
       router.push({
         pathname: '/(auth)/verify-email',
-        params: { email: variables.email }
+        params: { email: variables.email },
       })
     },
-    ...options
+    ...options,
   })
 }

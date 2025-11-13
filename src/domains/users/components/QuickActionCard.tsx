@@ -1,27 +1,30 @@
-import React, { ReactNode } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, spacing, typography } from '@theme/index';
+import { colors, spacing, typography } from '@theme/index'
+import React, { ReactNode } from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 interface QuickActionCardProps {
-  icon: ReactNode;
-  label: string;
-  description: string;
-  onPress: () => void;
+  icon: ReactNode
+  label: string
+  description: string
+  onPress: () => void
 }
 
-export function QuickActionCard({ icon, label, description, onPress }: QuickActionCardProps) {
+export function QuickActionCard({
+  icon,
+  label,
+  description,
+  onPress,
+}: QuickActionCardProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.iconContainer}>
-        {icon}
-      </View>
+      <View style={styles.iconContainer}>{icon}</View>
       <View style={styles.content}>
         <Text style={styles.label}>{label}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>
       <Text style={styles.arrow}>›</Text>
     </TouchableOpacity>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -61,4 +64,4 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes['3xl'],
     color: colors.stone.DEFAULT,
   },
-});
+})

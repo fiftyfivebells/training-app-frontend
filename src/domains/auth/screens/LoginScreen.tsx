@@ -1,32 +1,30 @@
-import { useState } from 'react';
+import { Button, Input, useAlert } from '@components/ui'
+import type { LoginRequest } from '@domains/auth/api/authApi'
+import { colors, spacing, typography } from '@theme/index'
+import { useRouter } from 'expo-router'
+import { Controller, useForm } from 'react-hook-form'
 import {
-  View,
-  Text,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Pressable,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { useLogin } from '@domains/auth/hooks';
-import { Button, Input, useAlert } from '@components/ui'
-import { colors, spacing, typography } from '@theme/index';
-import type { LoginRequest } from '@domains/auth/api/authApi';
-import { getDeviceInfo } from '../utils/deviceInfoHelper';
-import { useAuthContext } from '../context/AuthContext';
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { useAuthContext } from '../context/AuthContext'
 
 interface LoginFormData extends LoginRequest {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export function LoginScreen() {
-  const router = useRouter();
-  const { alert } = useAlert();
-  const { login, isLoading } = useAuthContext();
+  const router = useRouter()
+  const { alert } = useAlert()
+  const { login, isLoading } = useAuthContext()
 
   const {
     control,
@@ -37,18 +35,18 @@ export function LoginScreen() {
       email: '',
       password: '',
     },
-  });
+  })
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data.email, data.password);
+      await login(data.email, data.password)
     } catch (err: any) {
       alert(
         'Login Failed',
-        err?.message || 'Invalid email or password. Please try again.'
+        err?.message || 'Invalid email or password. Please try again.',
       )
     }
-  };
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -131,7 +129,9 @@ export function LoginScreen() {
             <View style={styles.footer}>
               <Text style={styles.footerText}>Don't have an account? </Text>
               <Pressable
-                onPress={() => router.push('/(auth)/register')}
+                onPress={() => {
+                  router.push('/(auth)/register')
+                }}
                 disabled={isLoading}
               >
                 <Text style={styles.linkText}>Create Account</Text>
@@ -141,7 +141,7 @@ export function LoginScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -194,4 +194,4 @@ const styles = StyleSheet.create({
     color: colors.brown.DEFAULT,
     fontWeight: typography.weights.semibold,
   },
-});
+})

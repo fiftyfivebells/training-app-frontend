@@ -1,20 +1,23 @@
 // app/test-components.tsx (temporary file for testing)
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { Input, Button, Select } from '../src/components/ui'
-import { colors, spacing } from '../src/theme';
+import { useState } from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { Button, Input, Select } from '../src/components/ui'
+import { colors, spacing } from '../src/theme'
 
 export default function TestComponentsScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [units, setUnits] = useState('metric');
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [units, setUnits] = useState('metric')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = () => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
-  };
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,32 +50,28 @@ export default function TestComponentsScreen() {
           ]}
         />
 
-        <Button
-          title="Primary Button"
-          onPress={handleSubmit}
-          loading={loading}
-        />
+        <Button title="Primary Button" onPress={handleSubmit} loading={loading} />
 
         <Button
           title="Secondary Button"
-          onPress={() => console.log('secondary')}
+          onPress={() => {
+            console.log('secondary')
+          }}
           variant="secondary"
         />
 
         <Button
           title="Outline Button"
-          onPress={() => console.log('outline')}
+          onPress={() => {
+            console.log('outline')
+          }}
           variant="outline"
         />
 
-        <Button
-          title="Disabled Button"
-          onPress={() => {}}
-          disabled
-        />
+        <Button title="Disabled Button" onPress={() => {}} disabled />
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -86,4 +85,4 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.lg,
   },
-});
+})

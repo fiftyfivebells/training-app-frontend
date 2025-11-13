@@ -1,81 +1,85 @@
-import React, { useMemo, useCallback, ReactNode } from 'react';
+import { useAuth } from '@domains/auth/hooks/useAuth'
+import { useRuns } from '@domains/runs/hooks/useRuns'
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
+  calculateDashboardStats,
+  formatRunsAsActivities,
+} from '@domains/users/utils/dashboard'
+import { Feather } from '@expo/vector-icons'
+import { colors, spacing, typography } from '@theme/index'
+import { useRouter } from 'expo-router'
+import React, { ReactNode, useCallback, useMemo } from 'react'
+import {
   ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { Feather } from '@expo/vector-icons';
-import { colors, spacing, typography } from '@theme/index';
-import { useAuth } from '@domains/auth/hooks/useAuth';
-import { useRuns } from '@domains/runs/hooks/useRuns';
+  View,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
 import {
-  WelcomeHeader,
   DailyAffirmation,
-  StatCard,
   QuickActionCard,
   RecentActivityList,
-} from '../components';
-import { calculateDashboardStats, formatRunsAsActivities } from '@domains/users/utils/dashboard';
+  StatCard,
+  WelcomeHeader,
+} from '../components'
 
 type StatCardConfig = {
-  key: string;
-  icon: ReactNode;
-  label: string;
-  value: string | number;
-  variant?: 'default' | 'accent';
-  subtext?: string;
-};
+  key: string
+  icon: ReactNode
+  label: string
+  value: string | number
+  variant?: 'default' | 'accent'
+  subtext?: string
+}
 
 export function UserDashboard() {
-  const router = useRouter();
-  const { user, isLoading: isLoadingAuth } = useAuth();
+  const router = useRouter()
+  const { user, isLoading: isLoadingAuth } = useAuth()
   const {
     data: runs,
     isLoading: isLoadingRuns,
     isError: isRunsError,
     error: runsError,
     refetch: refetchRuns,
-  } = useRuns();
+  } = useRuns()
 
-  const stats = useMemo(() => calculateDashboardStats(runs), [runs]);
-  const recentActivities = useMemo(() => formatRunsAsActivities(runs), [runs]);
+  const stats = useMemo(() => calculateDashboardStats(runs), [runs])
+  const recentActivities = useMemo(() => formatRunsAsActivities(runs), [runs])
 
   const affirmation = useMemo(() => {
     if (stats.totalRuns === 0) {
       return {
         text: 'Every journey starts with a single run. Log your first session to begin tracking progress.',
         blockName: undefined,
-      };
+      }
     }
 
-    const weeklyRunsLabel = stats.weeklyRuns === 1 ? 'run' : 'runs';
+    const weeklyRunsLabel = stats.weeklyRuns === 1 ? 'run' : 'runs'
     const streakText =
       stats.currentStreak > 0
         ? `${stats.currentStreak}-day streak`
-        : 'Start your streak today';
+        : 'Start your streak today'
 
     return {
       text: `You've logged ${stats.weeklyRuns} ${weeklyRunsLabel} this week covering ${stats.weeklyDistance} km.`,
       blockName: streakText,
-    };
-  }, [stats]);
+    }
+  }, [stats])
 
   const handleLogRun = useCallback(() => {
-    router.push('/(tabs)/log-run');
-  }, [router]);
+    router.push('/(tabs)/log-run')
+  }, [router])
 
   const handleViewRuns = useCallback(() => {
-    router.push('/runs');
-  }, [router]);
+    router.push('/runs')
+  }, [router])
 
   const handleManageBlocks = useCallback(() => {
-    router.push('/(tabs)/blocks');
-  }, [router]);
+    router.push('/(tabs)/blocks')
+  }, [router])
 
   const quickActions = useMemo(
     () => [
@@ -98,8 +102,8 @@ export function UserDashboard() {
         onPress: handleManageBlocks,
       },
     ],
-    [handleLogRun, handleViewRuns, handleManageBlocks]
-  );
+    [handleLogRun, handleViewRuns, handleManageBlocks],
+  )
 
   const statCards: StatCardConfig[] = useMemo(
     () => [
@@ -129,10 +133,10 @@ export function UserDashboard() {
         value: stats.totalRuns,
       },
     ],
-    [stats]
-  );
+    [stats],
+  )
 
-  const hasRuns = Boolean(runs && runs.length > 0);
+  const hasRuns = Boolean(runs && runs.length > 0)
 
   if (isLoadingAuth || isLoadingRuns) {
     return (
@@ -142,12 +146,14 @@ export function UserDashboard() {
           <Text style={styles.loadingText}>Loading dashboard...</Text>
         </View>
       </SafeAreaView>
-    );
+    )
   }
 
   if (isRunsError) {
     const errorMessage =
-      runsError instanceof Error ? runsError.message : 'Unable to load your training data right now.';
+      runsError instanceof Error
+        ? runsError.message
+        : 'Unable to load your training data right now.'
 
     return (
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
@@ -159,7 +165,7 @@ export function UserDashboard() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-    );
+    )
   }
 
   return (
@@ -172,7 +178,10 @@ export function UserDashboard() {
         <WelcomeHeader userName={user?.firstName || 'Runner'} />
 
         <View style={styles.section}>
-          <DailyAffirmation affirmation={affirmation.text} blockName={affirmation.blockName} />
+          <DailyAffirmation
+            affirmation={affirmation.text}
+            blockName={affirmation.blockName}
+          />
         </View>
 
         <View style={styles.statsGrid}>
@@ -221,7 +230,7 @@ export function UserDashboard() {
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -323,4 +332,4 @@ const styles = StyleSheet.create({
     color: colors.stone.DEFAULT,
     marginBottom: spacing.md,
   },
-});
+})

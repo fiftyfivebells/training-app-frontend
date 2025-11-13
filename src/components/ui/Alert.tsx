@@ -1,63 +1,63 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { colors, spacing, typography } from '@theme/index'
+import React, { createContext, ReactNode, useContext, useState } from 'react'
 import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  Pressable,
-  Platform,
   Alert as RNAlert,
-} from 'react-native';
-import { colors, spacing, typography } from '@theme/index';
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 
 export interface AlertButton {
-  text: string;
-  onPress?: () => void;
-  style?: 'default' | 'cancel' | 'destructive';
+  text: string
+  onPress?: () => void
+  style?: 'default' | 'cancel' | 'destructive'
 }
 
 interface AlertConfig {
-  title: string;
-  message?: string;
-  buttons?: AlertButton[];
+  title: string
+  message?: string
+  buttons?: AlertButton[]
 }
 
 interface AlertContextType {
-  alert: (title: string, message?: string, buttons?: AlertButton[]) => void;
+  alert: (title: string, message?: string, buttons?: AlertButton[]) => void
 }
 
-const AlertContext = createContext<AlertContextType | null>(null);
+const AlertContext = createContext<AlertContextType | null>(null)
 
 export function AlertProvider({ children }: { children: ReactNode }) {
-  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null)
 
   const alert = (title: string, message?: string, buttons?: AlertButton[]) => {
     if (Platform.OS === 'web') {
-      setAlertConfig({ title, message, buttons });
+      setAlertConfig({ title, message, buttons })
     } else {
-      const nativeButtons = buttons?.map(button => ({
+      const nativeButtons = buttons?.map((button) => ({
         text: button.text,
         onPress: button.onPress,
         style: button.style,
-      })) || [{ text: 'OK' }];
+      })) || [{ text: 'OK' }]
 
-      RNAlert.alert(title, message, nativeButtons);
+      RNAlert.alert(title, message, nativeButtons)
     }
-  };
+  }
 
   const handleButtonPress = (button: AlertButton) => {
-    setAlertConfig(null);
-    button.onPress?.();
-  };
+    setAlertConfig(null)
+    button.onPress?.()
+  }
 
   const handleBackdropPress = () => {
-    const cancelButton = alertConfig?.buttons?.find(b => b.style === 'cancel');
+    const cancelButton = alertConfig?.buttons?.find((b) => b.style === 'cancel')
     if (cancelButton) {
-      handleButtonPress(cancelButton);
+      handleButtonPress(cancelButton)
     } else {
-      setAlertConfig(null);
+      setAlertConfig(null)
     }
-  };
+  }
 
   return (
     <AlertContext.Provider value={{ alert }}>
@@ -71,7 +71,12 @@ export function AlertProvider({ children }: { children: ReactNode }) {
           onRequestClose={handleBackdropPress}
         >
           <Pressable style={styles.backdrop} onPress={handleBackdropPress}>
-            <Pressable style={styles.alertContainer} onPress={(e) => e.stopPropagation()}>
+            <Pressable
+              style={styles.alertContainer}
+              onPress={(e) => {
+                e.stopPropagation()
+              }}
+            >
               <View style={styles.alertCard}>
                 <Text style={styles.title}>{alertConfig.title}</Text>
                 {alertConfig.message && (
@@ -88,7 +93,9 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                         button.style === 'destructive' && styles.buttonDestructive,
                         pressed && styles.buttonPressed,
                       ]}
-                      onPress={() => handleButtonPress(button)}
+                      onPress={() => {
+                        handleButtonPress(button)
+                      }}
                     >
                       <Text
                         style={[
@@ -108,15 +115,15 @@ export function AlertProvider({ children }: { children: ReactNode }) {
         </Modal>
       )}
     </AlertContext.Provider>
-  );
+  )
 }
 
 export function useAlert() {
-  const context = useContext(AlertContext);
+  const context = useContext(AlertContext)
   if (!context) {
-    throw new Error('useAlert must be used within an AlertProvider');
+    throw new Error('useAlert must be used within an AlertProvider')
   }
-  return context;
+  return context
 }
 
 const styles = StyleSheet.create({
@@ -187,4 +194,4 @@ const styles = StyleSheet.create({
   buttonTextDestructive: {
     color: colors.cream,
   },
-});
+})
