@@ -1,6 +1,8 @@
 import { Picker } from '@react-native-picker/picker'
 import { colors, spacing, typography } from '@theme/index'
-import { Platform, StyleSheet, Text, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
+
+import { ThemedText } from './ThemedText'
 
 export interface SelectOption {
   label: string
@@ -26,7 +28,7 @@ export function Select({
 }: SelectProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <ThemedText style={styles.label}>{label}</ThemedText>
       <View
         style={[
           styles.pickerContainer,
@@ -45,7 +47,7 @@ export function Select({
           ))}
         </Picker>
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
     </View>
   )
 }

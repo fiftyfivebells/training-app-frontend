@@ -1,5 +1,8 @@
 import { colors, spacing, typography } from '@theme/index'
-import { StyleSheet, Text, TextInput, type TextInputProps, View } from 'react-native'
+import { StyleSheet, type TextInputProps, View } from 'react-native'
+
+import { ThemedText } from './ThemedText'
+import { ThemedTextInput } from './ThemedTextInput'
 
 interface InputProps extends TextInputProps {
   label: string
@@ -10,8 +13,8 @@ interface InputProps extends TextInputProps {
 export function Input({ label, error, disabled, style, ...props }: InputProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
+      <ThemedText style={styles.label}>{label}</ThemedText>
+      <ThemedTextInput
         style={[
           styles.input,
           error && styles.inputError,
@@ -23,7 +26,7 @@ export function Input({ label, error, disabled, style, ...props }: InputProps) {
         autoCorrect={false}
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
     </View>
   )
 }

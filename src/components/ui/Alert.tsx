@@ -6,9 +6,10 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  Text,
   View,
 } from 'react-native'
+
+import { ThemedText } from './ThemedText'
 
 export interface AlertButton {
   text: string
@@ -78,9 +79,9 @@ export function AlertProvider({ children }: { children: ReactNode }) {
               }}
             >
               <View style={styles.alertCard}>
-                <Text style={styles.title}>{alertConfig.title}</Text>
+                <ThemedText style={styles.title}>{alertConfig.title}</ThemedText>
                 {alertConfig.message && (
-                  <Text style={styles.message}>{alertConfig.message}</Text>
+                  <ThemedText style={styles.message}>{alertConfig.message}</ThemedText>
                 )}
 
                 <View style={styles.buttonContainer}>
@@ -97,7 +98,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                         handleButtonPress(button)
                       }}
                     >
-                      <Text
+                      <ThemedText
                         style={[
                           styles.buttonText,
                           button.style === 'cancel' && styles.buttonTextCancel,
@@ -105,7 +106,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                         ]}
                       >
                         {button.text}
-                      </Text>
+                      </ThemedText>
                     </Pressable>
                   ))}
                 </View>

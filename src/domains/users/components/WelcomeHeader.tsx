@@ -1,6 +1,8 @@
 import { colors, spacing, typography } from '@theme/index'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+
+import { ThemedText } from '@/components/ui/ThemedText'
 
 interface WelcomeHeaderProps {
   userName: string
@@ -13,11 +15,11 @@ interface WelcomeHeaderProps {
 export function WelcomeHeader({ userName, currentBlock }: WelcomeHeaderProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.greeting}>Welcome back, {userName}!</Text>
+      <ThemedText style={styles.greeting}>Welcome back, {userName}!</ThemedText>
       {currentBlock && (
-        <Text style={styles.blockInfo}>
+        <ThemedText style={styles.blockInfo}>
           {currentBlock.name} • {currentBlock.daysRemaining} days remaining
-        </Text>
+        </ThemedText>
       )}
     </View>
   )

@@ -4,9 +4,10 @@ import {
   Pressable,
   type StyleProp,
   StyleSheet,
-  Text,
   type ViewStyle,
 } from 'react-native'
+
+import { ThemedText } from './ThemedText'
 
 interface ButtonProps {
   title: string
@@ -47,7 +48,9 @@ export function Button({
           color={variant === 'outline' ? colors.primary.DEFAULT : colors.white}
         />
       ) : (
-        <Text style={[styles.text, textStyles[variant], textStyles[size]]}>{title}</Text>
+        <ThemedText style={[styles.text, textStyles[variant], textStyles[size]]}>
+          {title}
+        </ThemedText>
       )}
     </Pressable>
   )

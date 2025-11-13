@@ -8,13 +8,13 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { CreateUserRequest } from '../api/authApi'
 import { useRegister } from '../hooks'
+import { ThemedText } from '@/components/ui/ThemedText'
 
 interface RegisterFormData {
   email: string
@@ -119,8 +119,10 @@ export function RegisterScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Start your mindful running journey</Text>
+            <ThemedText style={styles.title}>Create Account</ThemedText>
+            <ThemedText style={styles.subtitle}>
+              Start your mindful running journey
+            </ThemedText>
           </View>
 
           {/* Form */}
@@ -316,15 +318,15 @@ export function RegisterScreen() {
 
             {/* Login Link */}
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Already have an account? </Text>
-              <Text
+              <ThemedText style={styles.footerText}>Already have an account? </ThemedText>
+              <ThemedText
                 style={styles.footerLink}
                 onPress={() => {
                   router.push('/(auth)/login')
                 }}
               >
                 Log in
-              </Text>
+              </ThemedText>
             </View>
           </View>
         </ScrollView>

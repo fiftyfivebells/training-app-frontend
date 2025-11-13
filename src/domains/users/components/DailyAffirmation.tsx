@@ -1,6 +1,8 @@
 import { colors, spacing, typography } from '@theme/index'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+
+import { ThemedText } from '@/components/ui/ThemedText'
 
 interface DailyAffirmationProps {
   affirmation: string
@@ -10,8 +12,8 @@ interface DailyAffirmationProps {
 export function DailyAffirmation({ affirmation, blockName }: DailyAffirmationProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.affirmation}>{affirmation}</Text>
-      {blockName && <Text style={styles.blockName}>{blockName}</Text>}
+      <ThemedText style={styles.affirmation}>{affirmation}</ThemedText>
+      {blockName && <ThemedText style={styles.blockName}>{blockName}</ThemedText>}
     </View>
   )
 }

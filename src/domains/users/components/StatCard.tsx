@@ -1,6 +1,8 @@
 import { colors, spacing, typography } from '@theme/index'
 import React, { ReactNode } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+
+import { ThemedText } from '@/components/ui/ThemedText'
 
 interface StatCardProps {
   icon: ReactNode
@@ -22,9 +24,9 @@ export function StatCard({
   return (
     <View style={[styles.card, isAccent && styles.cardAccent]}>
       <View style={styles.iconWrapper}>{icon}</View>
-      <Text style={styles.value}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
-      {subtext && <Text style={styles.subtext}>{subtext}</Text>}
+      <ThemedText style={styles.value}>{value}</ThemedText>
+      <ThemedText style={styles.label}>{label}</ThemedText>
+      {subtext && <ThemedText style={styles.subtext}>{subtext}</ThemedText>}
     </View>
   )
 }

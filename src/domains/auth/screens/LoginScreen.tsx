@@ -9,12 +9,12 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useAuthContext } from '../context/AuthContext'
+import { ThemedText } from '@/components/ui/ThemedText'
 
 interface LoginFormData extends LoginRequest {
   email: string
@@ -59,8 +59,8 @@ export function LoginScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to your account</Text>
+            <ThemedText style={styles.title}>Welcome Back</ThemedText>
+            <ThemedText style={styles.subtitle}>Sign in to your account</ThemedText>
 
             <View style={styles.form}>
               <Controller
@@ -127,14 +127,14 @@ export function LoginScreen() {
             </View>
 
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Don't have an account? </Text>
+              <ThemedText style={styles.footerText}>Don't have an account? </ThemedText>
               <Pressable
                 onPress={() => {
                   router.push('/(auth)/register')
                 }}
                 disabled={isLoading}
               >
-                <Text style={styles.linkText}>Create Account</Text>
+                <ThemedText style={styles.linkText}>Create Account</ThemedText>
               </Pressable>
             </View>
           </View>

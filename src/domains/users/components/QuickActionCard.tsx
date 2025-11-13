@@ -1,6 +1,8 @@
 import { colors, spacing, typography } from '@theme/index'
 import React, { ReactNode } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
+
+import { ThemedText } from '@/components/ui/ThemedText'
 
 interface QuickActionCardProps {
   icon: ReactNode
@@ -19,10 +21,10 @@ export function QuickActionCard({
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.iconContainer}>{icon}</View>
       <View style={styles.content}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <ThemedText style={styles.label}>{label}</ThemedText>
+        <ThemedText style={styles.description}>{description}</ThemedText>
       </View>
-      <Text style={styles.arrow}>›</Text>
+      <ThemedText style={styles.arrow}>›</ThemedText>
     </TouchableOpacity>
   )
 }

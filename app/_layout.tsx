@@ -8,8 +8,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { SessionChecker } from '@/domains/auth/components/SessionChecker'
 import { useFonts } from 'expo-font'
-import { useEffect } from 'react'
-import { Text } from 'react-native'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,10 +40,10 @@ function AuthGate() {
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    Manrope: require('../assets/Manrope-Regular.ttf'),
-    ManropeBold: require('../assets/Manrope-Bold.ttf'),
-    ManropeSemiBold: require('../assets/Manrope-SemiBold.ttf'),
-    ManropeMedium: require('../assets/Manrope-Medium.ttf'),
+    Manrope: require('../assets/static/Manrope-Regular.ttf'),
+    ManropeBold: require('../assets/static/Manrope-Bold.ttf'),
+    ManropeSemiBold: require('../assets/static/Manrope-SemiBold.ttf'),
+    ManropeMedium: require('../assets/static/Manrope-Medium.ttf'),
   })
 
   if (!fontsLoaded) return null

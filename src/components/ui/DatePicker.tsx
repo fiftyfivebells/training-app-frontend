@@ -9,12 +9,12 @@ import {
   Pressable,
   type StyleProp,
   StyleSheet,
-  Text,
   View,
   type ViewStyle,
 } from 'react-native'
 
 import { Button } from './Button'
+import { ThemedText } from './ThemedText'
 
 export interface DatePickerProps {
   label?: string
@@ -114,7 +114,7 @@ export function DatePicker({
 
   return (
     <View style={style}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <ThemedText style={styles.label}>{label}</ThemedText>}
       {isWeb ? (
         <input
           type="date"
@@ -143,7 +143,7 @@ export function DatePicker({
               error && styles.inputError,
             ]}
           >
-            <Text
+            <ThemedText
               style={[
                 styles.inputText,
                 !hasValue && styles.placeholderText,
@@ -151,7 +151,7 @@ export function DatePicker({
               ]}
             >
               {formattedValue}
-            </Text>
+            </ThemedText>
           </Pressable>
           {showPicker && (
             <View style={styles.pickerContainer}>
@@ -176,8 +176,10 @@ export function DatePicker({
           )}
         </>
       )}
-      {helperText && !error && <Text style={styles.helperText}>{helperText}</Text>}
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {helperText && !error && (
+        <ThemedText style={styles.helperText}>{helperText}</ThemedText>
+      )}
+      {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
     </View>
   )
 }
@@ -247,7 +249,7 @@ const webInputStyle: React.CSSProperties = {
   borderRadius: 8,
   padding: spacing.sm,
   fontSize: typography.sizes.base,
-  fontFamily: 'inherit',
+  fontFamily: typography.primary.regular,
   backgroundColor: colors.white,
   color: colors.charcoal,
   minHeight: 48,

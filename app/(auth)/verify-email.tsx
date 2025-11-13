@@ -2,8 +2,10 @@
 import { Button } from '@components/ui'
 import { colors, spacing, typography } from '@theme/index'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { ThemedText } from '@/components/ui/ThemedText'
 
 export default function VerifyEmailScreen() {
   const router = useRouter()
@@ -12,8 +14,10 @@ export default function VerifyEmailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Verify Email</Text>
-        <Text style={styles.subtitle}>Check your email: {params.email}</Text>
+        <ThemedText style={styles.title}>Verify Email</ThemedText>
+        <ThemedText style={styles.subtitle}>
+          Check your email: {params.email}
+        </ThemedText>
 
         <Button
           title="Go to Login"

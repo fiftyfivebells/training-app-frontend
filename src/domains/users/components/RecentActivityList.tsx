@@ -1,7 +1,9 @@
 import type { DashboardActivity } from '@domains/users/utils/dashboard'
 import { colors, spacing, typography } from '@theme/index'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+
+import { ThemedText } from '@/components/ui/ThemedText'
 
 interface RecentActivityListProps {
   activities: DashboardActivity[]
@@ -11,9 +13,9 @@ export function RecentActivityList({ activities }: RecentActivityListProps) {
   if (activities.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Recent Activity</Text>
+        <ThemedText style={styles.title}>Recent Activity</ThemedText>
         <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>No recent activities</Text>
+          <ThemedText style={styles.emptyText}>No recent activities</ThemedText>
         </View>
       </View>
     )
@@ -21,17 +23,19 @@ export function RecentActivityList({ activities }: RecentActivityListProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Recent Activity</Text>
+      <ThemedText style={styles.title}>Recent Activity</ThemedText>
       <View style={styles.list}>
         {activities.map((activity) => (
           <View key={activity.id} style={styles.activityItem}>
             <View style={styles.iconContainer}>
-              <Text style={styles.icon}>{activity.icon}</Text>
+              <ThemedText style={styles.icon}>{activity.icon}</ThemedText>
             </View>
             <View style={styles.activityContent}>
-              <Text style={styles.activityTitle}>{activity.title}</Text>
-              <Text style={styles.activitySubtitle}>{activity.subtitle}</Text>
-              <Text style={styles.timestamp}>{activity.timestamp}</Text>
+              <ThemedText style={styles.activityTitle}>{activity.title}</ThemedText>
+              <ThemedText style={styles.activitySubtitle}>
+                {activity.subtitle}
+              </ThemedText>
+              <ThemedText style={styles.timestamp}>{activity.timestamp}</ThemedText>
             </View>
           </View>
         ))}

@@ -12,7 +12,6 @@ import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -25,6 +24,7 @@ import {
   StatCard,
   WelcomeHeader,
 } from '../components'
+import { ThemedText } from '@/components/ui/ThemedText'
 
 type StatCardConfig = {
   key: string
@@ -143,7 +143,7 @@ export function UserDashboard() {
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary.DEFAULT} />
-          <Text style={styles.loadingText}>Loading dashboard...</Text>
+          <ThemedText style={styles.loadingText}>Loading dashboard...</ThemedText>
         </View>
       </SafeAreaView>
     )
@@ -158,10 +158,10 @@ export function UserDashboard() {
     return (
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorTitle}>Something went wrong</Text>
-          <Text style={styles.errorMessage}>{errorMessage}</Text>
+          <ThemedText style={styles.errorTitle}>Something went wrong</ThemedText>
+          <ThemedText style={styles.errorMessage}>{errorMessage}</ThemedText>
           <TouchableOpacity style={styles.primaryButton} onPress={() => refetchRuns}>
-            <Text style={styles.primaryButtonText}>Try again</Text>
+            <ThemedText style={styles.primaryButtonText}>Try again</ThemedText>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -200,19 +200,19 @@ export function UserDashboard() {
 
         {!hasRuns && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateTitle}>No runs yet</Text>
-            <Text style={styles.emptyStateText}>
+            <ThemedText style={styles.emptyStateTitle}>No runs yet</ThemedText>
+            <ThemedText style={styles.emptyStateText}>
               Log your first training session to unlock personalized insights.
-            </Text>
+            </ThemedText>
             <TouchableOpacity style={styles.primaryButton} onPress={handleLogRun}>
-              <Text style={styles.primaryButtonText}>Log a run</Text>
+              <ThemedText style={styles.primaryButtonText}>Log a run</ThemedText>
             </TouchableOpacity>
           </View>
         )}
 
         <View style={styles.contentGrid}>
           <View style={styles.quickActionsSection}>
-            <Text style={styles.sectionTitle}>Quick Actions</Text>
+            <ThemedText style={styles.sectionTitle}>Quick Actions</ThemedText>
             {quickActions.map((action) => (
               <QuickActionCard
                 key={action.label}

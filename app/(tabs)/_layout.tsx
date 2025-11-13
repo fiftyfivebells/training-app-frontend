@@ -1,7 +1,7 @@
 import { Redirect, Tabs } from 'expo-router'
-import { Text } from 'react-native'
 
 import { useAuthContext } from '@/domains/auth/context/AuthContext'
+import { ThemedText } from '@/components/ui/ThemedText'
 
 import { colors } from '../../src/theme'
 
@@ -92,8 +92,8 @@ function TabBarIcon({
   }
 
   return (
-    <Text style={{ fontSize: size, color }}>
+    <ThemedText style={{ fontSize: size, color }}>
       {icons[name as keyof typeof icons] || '•'}
-    </Text>
+    </ThemedText>
   )
 }
