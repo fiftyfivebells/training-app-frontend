@@ -34,10 +34,18 @@ export const RunLogForm: React.FC = () => {
   )
   const normalized = normalizeDuration(totalSeconds)
 
+  const resetForm = () => {
+    setDate(new Date())
+    setDistance('')
+    setDistanceUnit('miles')
+    setDurationHours('')
+    setDurationMinutes('')
+    setDurationSeconds('')
+    setNotes('')
+    setSelectedMood(null)
+  }
+
   const logRunMutation = useLogRun({
-    onSuccess: () => {
-      alert('Nice work!', 'Your run has been logged.')
-    },
     onError: (error) => {
       alert('Unable to log run', error.message ?? 'Please try again in a moment.')
     },
@@ -69,7 +77,12 @@ export const RunLogForm: React.FC = () => {
       notes: notes || undefined,
     }
 
-    logRunMutation.mutate(payload)
+    logRunMutation.mutate(payload, {
+      onSuccess: () => {
+        resetForm()
+        alert('Nice work!', 'Your run has been logged.')
+      },
+    })
   }
 
   return (
