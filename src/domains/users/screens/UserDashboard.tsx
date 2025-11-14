@@ -1,4 +1,3 @@
-import { useAuth } from '@domains/auth/hooks/useAuth'
 import { useRuns } from '@domains/runs/hooks/useRuns'
 import {
   calculateDashboardStats,
@@ -25,6 +24,7 @@ import {
   WelcomeHeader,
 } from '../components'
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useAuthContext } from '@/domains/auth/context/AuthContext'
 
 type StatCardConfig = {
   key: string
@@ -37,7 +37,7 @@ type StatCardConfig = {
 
 export function UserDashboard() {
   const router = useRouter()
-  const { user, isLoading: isLoadingAuth } = useAuth()
+  const { user, isLoading: isLoadingAuth } = useAuthContext()
   const {
     data: runs,
     isLoading: isLoadingRuns,
