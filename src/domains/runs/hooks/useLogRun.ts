@@ -14,7 +14,10 @@ export function useLogRun(
     mutationFn: (body: LogRunRequest) => runsClient.logRun(body),
     onSuccess: (newRun) => {
       queryClient.setQueryData(runsKeys.detail(newRun.id), newRun)
-      queryClient.invalidateQueries({ queryKey: runsKeys.lists() })
+      queryClient.invalidateQueries({
+        queryKey: runsKeys.all,
+        exact: false,
+      })
     },
     ...options,
   })
