@@ -4,6 +4,7 @@ import { ApiError } from '@/lib/api/error'
 
 import { LogRunRequest, RunResponse, runsClient } from '../api/runsApi'
 import { runsKeys } from '../constants'
+import { router } from 'expo-router'
 
 export function useLogRun(
   options?: UseMutationOptions<RunResponse, ApiError, LogRunRequest>,
@@ -18,6 +19,7 @@ export function useLogRun(
         queryKey: runsKeys.all,
         exact: false,
       })
+      router.replace(`/run/${newRun.id}`)
     },
     ...options,
   })

@@ -242,6 +242,11 @@ export interface components {
             timeZone: string;
             /** Format: int32 */
             distanceMeters: number;
+            /**
+             * @example miles
+             * @enum {string}
+             */
+            distanceUnits: "miles" | "meters" | "km";
             /** Format: int32 */
             durationSeconds: number;
             /** Format: int32 */

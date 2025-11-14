@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [currentUser])
 
-  const { mutateAsync: loginMutation } = useLogin()
+  //const { mutateAsync: loginMutation } = useLogin()
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -73,7 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       router.replace('/(tabs)')
     },
-    [loginMutation],
+    [],
+    //[loginMutation],
   )
 
   const logout = useCallback(async () => {

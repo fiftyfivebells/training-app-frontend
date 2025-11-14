@@ -11,3 +11,9 @@ export function calculateMeters(distance: number, units: DistanceUnit): number {
   // miles
   return Math.round(distance * METERS_PER_MILE)
 }
+
+export function metersToDistanceUnit(distance: number, unit: DistanceUnit): number {
+  if (unit === 'meters') return distance
+  else if (unit === 'km') return distance / 1000
+  else return distance / METERS_PER_MILE
+}

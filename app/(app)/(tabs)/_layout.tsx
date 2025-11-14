@@ -1,19 +1,9 @@
-import { Redirect, Tabs } from 'expo-router'
-
-import { useAuthContext } from '@/domains/auth/context/AuthContext'
+// app/(app)/(tabs)/_layout.tsx
+import { Tabs } from 'expo-router'
 import { ThemedText } from '@/components/ui/ThemedText'
-
-import { colors } from '../../src/theme'
+import { colors } from '@theme/colors'
 
 export default function TabLayout() {
-  const { isAuthenticated, isLoading } = useAuthContext()
-
-  if (isLoading) return null
-
-  if (!isAuthenticated) {
-    return <Redirect href="/(auth)/login" />
-  }
-
   return (
     <Tabs
       screenOptions={{
@@ -52,6 +42,8 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* TODO: anticipated screens for later */}
+      {/* 
       <Tabs.Screen
         name="blocks"
         options={{
@@ -70,11 +62,11 @@ export default function TabLayout() {
           ),
         }}
       />
+      */}
     </Tabs>
   )
 }
 
-// Simple icon component
 function TabBarIcon({
   name,
   color,
