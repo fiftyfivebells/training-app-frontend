@@ -128,8 +128,7 @@ export interface paths {
         put: operations["putApiV1Runs"];
         /** @description Logs a run for a user */
         post: operations["postApiV1Runs"];
-        /** @description Delete a run for the authenticated user by run id */
-        delete: operations["deleteApiV1Runs"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -146,7 +145,8 @@ export interface paths {
         get: operations["getApiV1RunsRunid"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** @description Delete a run for the authenticated user by run id */
+        delete: operations["deleteApiV1RunsRunid"];
         options?: never;
         head?: never;
         patch?: never;
@@ -409,6 +409,7 @@ export interface operations {
         responses: {
             200: {
                 headers: {
+                    "Set-Cookie"?: string[];
                     [name: string]: unknown;
                 };
                 content: {
@@ -1081,22 +1082,24 @@ export interface operations {
             };
         };
     };
-    deleteApiV1Runs: {
+    getApiV1RunsRunid: {
         parameters: {
-            query: {
+            query?: never;
+            header?: never;
+            path: {
                 runId: string;
             };
-            header?: never;
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            204: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RunResponse"];
+                };
             };
             400: {
                 headers: {
@@ -1164,7 +1167,7 @@ export interface operations {
             };
         };
     };
-    getApiV1RunsRunid: {
+    deleteApiV1RunsRunid: {
         parameters: {
             query?: never;
             header?: never;
@@ -1175,13 +1178,11 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            200: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["RunResponse"];
-                };
+                content?: never;
             };
             400: {
                 headers: {
