@@ -6,5 +6,5 @@ export default function RootIndex() {
 
   if (isLoading) return null
 
-  return <Redirect href={isAuthenticated ? '/(app)/(tabs)' : '/(auth)/login'} />
+  return <Redirect href={isAuthenticated ? '/(drawer)/' : '/(auth)/login'} />
 }

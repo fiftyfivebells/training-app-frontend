@@ -17,3 +17,9 @@ export function metersToDistanceUnit(distance: number, unit: DistanceUnit): numb
   else if (unit === 'km') return distance / 1000
   else return distance / METERS_PER_MILE
 }
+
+export function formatDistance(distanceMeters: number, unit: DistanceUnit): string {
+  const total = metersToDistanceUnit(distanceMeters, unit).toFixed(2)
+
+  return `${Number(total)} ${unit}`.trim()
+}

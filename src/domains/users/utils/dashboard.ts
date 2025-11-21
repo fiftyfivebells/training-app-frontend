@@ -89,7 +89,7 @@ export function formatRunsAsActivities(
       return {
         id: run.id,
         type: 'run' as const,
-        title: run.workoutName ?? 'Run',
+        title: 'Run', // TODO: give runs more descriptive titles
         subtitle: `${distanceKm} km • ${durationMin} min`,
         timestamp: formatRelativeTime(run.date),
         icon: '🏃',

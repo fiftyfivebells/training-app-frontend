@@ -3,7 +3,6 @@ import { AuthProvider } from '@domains/auth/context/AuthContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useFonts } from 'expo-font'
 
 import { SessionChecker } from '@/domains/auth/components/SessionChecker'
@@ -29,21 +28,19 @@ export default function RootLayout() {
   if (!fontsLoaded) return null
 
   return (
-    <SafeAreaProvider>
-      <AlertProvider>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <SessionChecker />
-            <StatusBar style="dark" />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: '#FAF8F5' },
-              }}
-            />
-          </AuthProvider>
-        </QueryClientProvider>
-      </AlertProvider>
-    </SafeAreaProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AlertProvider>
+          <SessionChecker />
+          <StatusBar style="dark" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: '#FAF8F5' },
+            }}
+          />
+        </AlertProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }

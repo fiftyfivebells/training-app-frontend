@@ -15,23 +15,18 @@ export default function Index() {
 
   async function checkAuth() {
     try {
-      // Check if user has a token
       const token = await tokenStorage.getAccessToken()
 
       if (token) {
-        // User is logged in - go to main app
-        router.replace('/(tabs)')
+        router.replace('/(drawer)/')
       } else {
-        // User is not logged in - go to auth
         router.replace('/(auth)/login')
       }
     } catch (_) {
-      // Error checking auth - default to login
       router.replace('/(auth)/login')
     }
   }
 
-  // Show loading spinner while checking auth
   return (
     <View
       style={{

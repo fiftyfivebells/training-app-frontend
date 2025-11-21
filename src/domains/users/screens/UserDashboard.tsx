@@ -70,15 +70,15 @@ export function UserDashboard() {
   }, [stats])
 
   const handleLogRun = useCallback(() => {
-    router.push('/(tabs)/log-run')
+    router.push('/(drawer)/log-run')
   }, [router])
 
   const handleViewRuns = useCallback(() => {
-    router.push('/runs')
+    router.push('/(drawer)/runs')
   }, [router])
 
   const handleManageBlocks = useCallback(() => {
-    router.push('/(tabs)/blocks')
+    router.push('/(drawer)/blocks')
   }, [router])
 
   const quickActions = useMemo(

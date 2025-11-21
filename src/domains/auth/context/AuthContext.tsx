@@ -56,26 +56,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [currentUser])
 
-  //const { mutateAsync: loginMutation } = useLogin()
+  const login = useCallback(async (email: string, password: string) => {
+    const { accessToken, user } = await authClient.login({
+      email: email,
+      password: password,
+      deviceInfo: getDeviceInfo(),
+    })
 
-  const login = useCallback(
-    async (email: string, password: string) => {
-      const { accessToken, user } = await authClient.login({
-        email: email,
-        password: password,
-        deviceInfo: getDeviceInfo(),
-      })
+    await tokenStorage.setAccessToken(accessToken)
+    setUser(userResponseToUser(user))
 
-      await tokenStorage.setAccessToken(accessToken)
-      setUser(userResponseToUser(user))
+    queryClient.setQueryData(['users', 'me'], user)
 
-      queryClient.setQueryData(['users', 'me'], user)
-
-      router.replace('/(tabs)')
-    },
-    [],
-    //[loginMutation],
-  )
+    router.replace('/(drawer)/')
+  }, [])
 
   const logout = useCallback(async () => {
     await tokenStorage.deleteAccessToken()

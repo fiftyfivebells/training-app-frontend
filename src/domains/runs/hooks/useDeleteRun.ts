@@ -5,10 +5,7 @@ import { ApiError } from '@/lib/api/error'
 import { runsClient } from '../api/runsApi'
 import { runsKeys } from '../constants'
 
-export function useDeleteRun(
-  runId: string,
-  options?: UseMutationOptions<void, ApiError, string>,
-) {
+export function useDeleteRun(options?: UseMutationOptions<void, ApiError, string>) {
   const queryClient = useQueryClient()
 
   return useMutation({
