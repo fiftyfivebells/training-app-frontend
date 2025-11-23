@@ -1,5 +1,5 @@
 import { Button, Input, useAlert } from '@components/ui'
-import type { LoginRequest } from '@domains/auth/api/authApi'
+import type { LoginRequest } from '@domains/auth/api/authClient'
 import { colors, spacing, typography } from '@theme/index'
 import { useRouter } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
