@@ -3,6 +3,7 @@ import { BaseApiClient } from '@lib/api/base'
 
 export type CreateUserRequest = components['schemas']['CreateUserRequest']
 export type LoginRequest = components['schemas']['LoginRequest']
+export type RefreshRequest = components['schemas']['RefreshRequest']
 export type SuccessResponse = components['schemas']['SuccessResponse']
 export type AuthResponse = components['schemas']['AuthResponse']
 export type UserResponse = components['schemas']['UserResponse']
@@ -16,6 +17,14 @@ export class AuthClient extends BaseApiClient {
 
   async login(body: LoginRequest) {
     return this.post<AuthResponse>(`${this.baseAuthRoute}/login`, body)
+  }
+
+  async refreshMobile(body: RefreshRequest) {
+    return this.post<AuthResponse>(`${this.baseAuthRoute}/refresh/mobile`, body)
+  }
+
+  async refreshWeb() {
+    return this.post<AuthResponse>(`${this.baseAuthRoute}/refresh/web`)
   }
 }
 

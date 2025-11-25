@@ -1,11 +1,12 @@
 import Constants from 'expo-constants'
+import { refreshAccessToken } from '@/lib/api/refreshManager'
 
 import { notifyLogout } from '@/domains/auth/context/authEvents'
 
 import { tokenStorage } from '../../domains/auth/utils/tokenStorage'
 import { ApiError } from './error'
 
-const API_BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl ?? 'http://localhost:8080'
+const API_BASE_URL = '' //Constants.expoConfig?.extra?.apiBaseUrl ?? 'http://localhost:8080'
 
 export abstract class BaseApiClient {
   protected baseUrl: string
@@ -20,23 +21,47 @@ export abstract class BaseApiClient {
     const url = `${this.baseUrl}${this.apiVersion}/${path}`
     const accessToken = await tokenStorage.getAccessToken()
 
-    if (accessToken) {
-      options = {
-        ...options,
-        headers: {
-          ...options?.headers,
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    }
-
-    const response = await fetch(url, {
+    let requestOptions = {
+      credentials: 'include' as RequestCredentials,
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...options?.headers,
+        ...(options?.headers ?? {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-    })
+    }
+
+    const attemptRequest = async (): Promise<Response> => {
+      return fetch(url, requestOptions)
+    }
+
+    let response = await attemptRequest()
+
+    if (response.status === 401) {
+      let body: any = null
+      try {
+        body = await response.json()
+      } catch {}
+
+      if (body?.message === 'Token expired') {
+        const newAccessToken = await refreshAccessToken()
+
+        if (!newAccessToken) {
+          notifyLogout()
+          throw new ApiError(401, { message: 'Session is expired' })
+        }
+
+        requestOptions = {
+          ...requestOptions,
+          headers: {
+            ...requestOptions.headers,
+            Authorization: `Bearer ${newAccessToken}`,
+          },
+        }
+
+        response = await attemptRequest()
+      }
+    }
 
     if (response.ok) {
       if (response.status === 204) {
