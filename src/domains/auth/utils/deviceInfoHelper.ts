@@ -6,17 +6,14 @@ import type { DeviceInfo } from '../constants'
 
 export function getDeviceInfo(): DeviceInfo {
   if (Platform.OS === 'web') {
-    console.log(getWebDeviceInfo())
     return getWebDeviceInfo()
   } else {
-    console.log(getMobileDeviceInfo())
     return getMobileDeviceInfo()
   }
 }
 
 function getMobileDeviceInfo(): DeviceInfo {
   const platform = Platform.OS === 'ios' ? 'iOS' : 'Android'
-  console.log('platform is:', platform)
   return {
     deviceId: generateMobileDeviceId(),
     deviceModel: Device.modelName || Device.deviceName || 'Unknown Device',

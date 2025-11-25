@@ -19,8 +19,6 @@ export async function setSecureValue(key: string, value: string): Promise<void> 
 }
 
 export async function getSecureValue(key: string): Promise<string | null> {
-  console.log('Retrieving secure value for key:', key)
-  console.log('Platform:', Platform.OS)
   if (Platform.OS === 'web') {
     console.warn('Secure storage is not supported on web platform.')
     try {
