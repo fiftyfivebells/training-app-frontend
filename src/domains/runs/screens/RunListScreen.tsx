@@ -1,27 +1,27 @@
-// app/(drawer)/runs.tsx
-
-import React from 'react'
+import { useGetAllMoods } from '@domains/moods/hooks/useGetAllMoods'
+import { getMoodCategoryColor } from '@domains/moods/utils/mood'
 import { useRouter } from 'expo-router'
-import { View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native'
+import React from 'react'
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import { Screen } from '@/components/layout/Screen'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { useRuns } from '@/domains/runs/hooks/useRuns'
-import { useGetAllMoods } from '@domains/moods/hooks/useGetAllMoods'
-import { getMoodCategoryColor } from '@domains/moods/utils/mood'
+import { useTheme } from '@/theme/ThemeProvider'
+
 import { formatDistance } from '../utils/distance'
-import { colors, spacing, typography } from '@/theme'
 
 export default function RunListScreen() {
   const router = useRouter()
   const { data: runs, isLoading, isError } = useRuns()
   const { data: moods } = useGetAllMoods()
+  const theme = useTheme()
 
   if (isLoading) {
     return (
       <Screen scroll={false}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color={colors.primary.DEFAULT} />
+          <ActivityIndicator size="large" color={theme.semantic.button.primary.bg} />
         </View>
       </Screen>
     )
@@ -37,30 +37,77 @@ export default function RunListScreen() {
 
   return (
     <Screen>
-      <ThemedText style={styles.title}>Logbook</ThemedText>
-      <ThemedText style={styles.subtitle}>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.xxl,
+          fontWeight: theme.typography.weights.bold,
+          color: theme.semantic.text.primary,
+          marginBottom: theme.spacing.xs,
+        }}
+      >
+        Logbook
+      </ThemedText>
+
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.md,
+          color: theme.semantic.text.secondary,
+          marginBottom: theme.spacing.lg,
+        }}
+      >
         A quiet record of where your legs have taken you.
       </ThemedText>
 
-      <View style={styles.list}>
-        {runs.map((run) => {
+      <View>
+        {runs.map((run, index) => {
           const mood = moods?.find((m) => m.id === run.moodId)
-          const moodColor = mood ? getMoodCategoryColor(mood.quadrant) : colors.sand
+          const moodColor = mood
+            ? getMoodCategoryColor(theme, mood.quadrant)
+            : theme.semantic.surface.cardAlt
+          const isLast = index === runs.length - 1
 
           return (
             <TouchableOpacity
               key={run.id}
-              style={styles.cardWrapper}
+              style={[
+                styles.cardWrapper,
+                theme.runItem.container,
+                !isLast && { marginBottom: theme.spacing.md },
+              ]}
               onPress={() => router.push(`/run/${run.id}`)}
             >
-              <View style={[styles.moodStrip, { backgroundColor: moodColor }]} />
-              <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <ThemedText style={styles.date}>{run.date}</ThemedText>
-                  {mood && <ThemedText style={styles.moodLabel}>{mood.label}</ThemedText>}
+              <View style={[theme.runItem.strip(moodColor), styles.moodStrip]} />
+
+              <View style={[styles.card, { padding: theme.spacing.md }]}>
+                <View style={[styles.cardHeader, { marginBottom: theme.spacing.xs }]}>
+                  <ThemedText
+                    style={{
+                      fontSize: theme.typography.size.md,
+                      fontWeight: theme.typography.weights.semibold,
+                      color: theme.semantic.text.primary,
+                    }}
+                  >
+                    {run.date}
+                  </ThemedText>
+
+                  {mood && (
+                    <ThemedText
+                      style={{
+                        fontSize: theme.typography.size.sm,
+                        color: theme.semantic.text.secondary,
+                      }}
+                    >
+                      {mood.label}
+                    </ThemedText>
+                  )}
                 </View>
 
-                <ThemedText style={styles.metrics}>
+                <ThemedText
+                  style={{
+                    fontSize: theme.typography.size.md,
+                    color: theme.semantic.text.secondary,
+                  }}
+                >
                   {formatDistance(run.distanceMeters, run.distanceUnits)} •{' '}
                   {Math.round(run.durationSeconds / 60)} min
                 </ThemedText>
@@ -74,56 +121,28 @@ export default function RunListScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-
-  title: {
-    fontSize: typography.sizes['2xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.brown.DEFAULT,
-    marginBottom: spacing.xs,
-  },
-  subtitle: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.lg,
-  },
-
-  list: {
-    gap: spacing.md,
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   cardWrapper: {
     flexDirection: 'row',
-    borderRadius: 12,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.sand,
     overflow: 'hidden',
   },
+
   moodStrip: {
     width: 6,
+    alignSelf: 'stretch',
   },
+
   card: {
     flex: 1,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
   },
+
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: spacing.xs,
-  },
-  date: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-    color: colors.charcoal,
-  },
-  moodLabel: {
-    fontSize: typography.sizes.sm,
-    color: colors.stone.DEFAULT,
-  },
-  metrics: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
   },
 })

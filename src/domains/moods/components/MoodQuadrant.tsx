@@ -1,10 +1,12 @@
 import React from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
-import type { MoodCategoryKey } from '../moods.types'
-import type { MoodCategory } from '../moods.constants'
-import { colors } from '@/theme/colors'
 
 import { ThemedText } from '@/components/ui/ThemedText'
+import { getMoodToken } from '@/domains/moods/utils/mood'
+import { useTheme } from '@/theme/ThemeProvider'
+
+import type { MoodCategory } from '../moods.constants'
+import type { MoodCategoryKey } from '../moods.types'
 
 type MoodQuadrantProps = {
   category: MoodCategory
@@ -19,40 +21,14 @@ const quadrantEmoji: Record<MoodCategoryKey, string> = {
   'low-challenging': '😴😞',
 }
 
-// Map your MoodCategoryKey -> theme colors
-const quadrantPalette: Record<
-  MoodCategoryKey,
-  { bg: string; border: string; text: string }
-> = {
-  'high-pleasant': {
-    bg: colors.mood.highGreat.bg,
-    border: colors.mood.highGreat.border,
-    text: colors.mood.highGreat.text,
-  },
-  'high-challenging': {
-    bg: colors.mood.highTough.bg,
-    border: colors.mood.highTough.border,
-    text: colors.mood.highTough.text,
-  },
-  'low-pleasant': {
-    bg: colors.mood.lowGreat.bg,
-    border: colors.mood.lowGreat.border,
-    text: colors.mood.lowGreat.text,
-  },
-  'low-challenging': {
-    bg: colors.mood.lowTough.bg,
-    border: colors.mood.lowTough.border,
-    text: colors.mood.lowTough.text,
-  },
-}
-
 export const MoodQuadrant: React.FC<MoodQuadrantProps> = ({
   category,
   isSelected,
   onPress,
 }) => {
+  const theme = useTheme()
   const emoji = quadrantEmoji[category.key]
-  const palette = quadrantPalette[category.key]
+  const palette = getMoodToken(theme, category.key)
 
   return (
     <Pressable
@@ -60,20 +36,42 @@ export const MoodQuadrant: React.FC<MoodQuadrantProps> = ({
       style={({ pressed }) => [
         styles.container,
         {
-          backgroundColor: palette.bg,
-          borderColor: palette.border,
+          backgroundColor: palette?.bg ?? theme.semantic.surface.card,
+          borderColor: palette?.border ?? theme.semantic.border.default,
+          borderRadius: theme.radius.lg,
+          padding: theme.spacing.md,
         },
-        isSelected && styles.containerSelected,
-        pressed && styles.containerPressed,
+        isSelected && {
+          borderWidth: 3,
+          transform: [{ scale: 1.02 }],
+        },
+        pressed && {
+          opacity: 0.9,
+          transform: [{ scale: 0.98 }],
+        },
       ]}
     >
-      <View style={styles.emojiWrapper}>
-        <ThemedText style={styles.emoji}>{emoji}</ThemedText>
+      <View style={{ marginBottom: theme.spacing.sm }}>
+        <ThemedText style={{ fontSize: theme.typography.size.xxxl }}>{emoji}</ThemedText>
       </View>
-      <ThemedText style={[styles.title, { color: palette.text }]}>
+      <ThemedText
+        style={{
+          textAlign: 'center',
+          fontSize: theme.typography.size.md,
+          fontWeight: theme.typography.weights.semibold,
+          marginBottom: theme.spacing.xs,
+          color: palette?.text ?? theme.semantic.text.primary,
+        }}
+      >
         {category.title}
       </ThemedText>
-      <ThemedText style={[styles.description, { color: palette.text }]}>
+      <ThemedText
+        style={{
+          textAlign: 'center',
+          fontSize: theme.typography.size.sm,
+          color: palette?.text ?? theme.semantic.text.secondary,
+        }}
+      >
         {category.description}
       </ThemedText>
     </Pressable>
@@ -83,34 +81,8 @@ export const MoodQuadrant: React.FC<MoodQuadrantProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderRadius: 12,
-    padding: 16,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  containerSelected: {
-    borderWidth: 3,
-    transform: [{ scale: 1.02 }],
-  },
-  containerPressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.98 }],
-  },
-  emojiWrapper: {
-    marginBottom: 8,
-  },
-  emoji: {
-    fontSize: 32,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  description: {
-    textAlign: 'center',
-    fontSize: 14,
   },
 })

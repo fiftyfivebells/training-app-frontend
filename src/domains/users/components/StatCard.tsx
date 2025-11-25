@@ -1,8 +1,8 @@
-import { colors, spacing, typography } from '@theme/index'
 import React, { ReactNode } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useTheme } from '@/theme/ThemeProvider'
 
 interface StatCardProps {
   icon: ReactNode
@@ -19,50 +19,59 @@ export function StatCard({
   subtext,
   variant = 'default',
 }: StatCardProps) {
+  const theme = useTheme()
   const isAccent = variant === 'accent'
 
   return (
-    <View style={[styles.card, isAccent && styles.cardAccent]}>
-      <View style={styles.iconWrapper}>{icon}</View>
-      <ThemedText style={styles.value}>{value}</ThemedText>
-      <ThemedText style={styles.label}>{label}</ThemedText>
-      {subtext && <ThemedText style={styles.subtext}>{subtext}</ThemedText>}
+    <View
+      style={[
+        theme.card.base,
+        styles.card,
+        isAccent && {
+          backgroundColor: theme.semantic.surface.cardAlt,
+          borderColor: theme.semantic.button.primary.bg,
+        },
+      ]}
+    >
+      <View style={{ marginBottom: theme.spacing.sm }}>{icon}</View>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.xxl,
+          fontWeight: theme.typography.weights.bold,
+          color: theme.semantic.text.primary,
+          marginBottom: theme.spacing.xs,
+        }}
+      >
+        {value}
+      </ThemedText>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.sm,
+          fontWeight: theme.typography.weights.medium,
+          color: theme.semantic.text.secondary,
+          textAlign: 'center',
+        }}
+      >
+        {label}
+      </ThemedText>
+      {subtext && (
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.xs,
+            color: theme.semantic.text.secondary,
+            marginTop: theme.spacing.xs,
+            textAlign: 'center',
+          }}
+        >
+          {subtext}
+        </ThemedText>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: spacing.lg,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.sand,
-  },
-  cardAccent: {
-    backgroundColor: colors.primary.DEFAULT + '10', // 10% opacity
-    borderColor: colors.primary.DEFAULT + '30',
-  },
-  iconWrapper: {
-    marginBottom: spacing.sm,
-  },
-  value: {
-    fontSize: typography.sizes['2xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.charcoal,
-    marginBottom: spacing.xs,
-  },
-  label: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
-    color: colors.stone.DEFAULT,
-    textAlign: 'center',
-  },
-  subtext: {
-    fontSize: typography.sizes.xs,
-    color: colors.stone.DEFAULT,
-    marginTop: spacing.xs,
-    textAlign: 'center',
   },
 })

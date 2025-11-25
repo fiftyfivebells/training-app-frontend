@@ -2,16 +2,18 @@ import DateTimePicker, {
   type AndroidNativeProps,
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker'
-import { colors, spacing, typography } from '@theme/index'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Platform,
   Pressable,
-  type StyleProp,
   StyleSheet,
+  type StyleProp,
   View,
   type ViewStyle,
 } from 'react-native'
+
+import { useTheme } from '@/theme/ThemeProvider'
+import type { Theme } from '@/theme/types'
 
 import { Button } from './Button'
 import { ThemedText } from './ThemedText'
@@ -112,9 +114,34 @@ export function DatePicker({
     isEditingWebInput.current = true
   }
 
+  const theme = useTheme()
+  const webInputStyles = useMemo(() => getWebInputStyles(theme), [theme])
+  const inputBaseStyle = [
+    styles.inputLayout,
+    {
+      backgroundColor: theme.semantic.surface.card,
+      borderColor: theme.semantic.border.default,
+      borderRadius: theme.radius.md,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      minHeight: theme.buttons.sizes.md.minHeight,
+    },
+  ]
+
   return (
     <View style={style}>
-      {label && <ThemedText style={styles.label}>{label}</ThemedText>}
+      {label && (
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.sm,
+            fontWeight: theme.typography.weights.medium,
+            color: theme.semantic.text.primary,
+            marginBottom: theme.spacing.xs,
+          }}
+        >
+          {label}
+        </ThemedText>
+      )}
       {isWeb ? (
         <input
           type="date"
@@ -127,9 +154,9 @@ export function DatePicker({
           onFocus={handleWebInputFocus}
           onBlur={handleWebInputBlur}
           style={{
-            ...webInputStyle,
-            ...(disabled ? webInputDisabledStyle : {}),
-            ...(error ? webInputErrorStyle : {}),
+            ...webInputStyles.base,
+            ...(disabled ? webInputStyles.disabled : {}),
+            ...(error ? webInputStyles.error : {}),
           }}
         />
       ) : (
@@ -138,23 +165,42 @@ export function DatePicker({
             onPress={() => !disabled && setShowPicker(true)}
             disabled={disabled}
             style={[
-              styles.input,
-              disabled && styles.inputDisabled,
-              error && styles.inputError,
+              ...inputBaseStyle,
+              disabled && {
+                opacity: 0.6,
+                backgroundColor: theme.semantic.surface.cardAlt,
+              },
+              error && {
+                borderColor: theme.semantic.mood.highTough.border,
+                borderWidth: 2,
+              },
             ]}
           >
             <ThemedText
               style={[
-                styles.inputText,
-                !hasValue && styles.placeholderText,
-                disabled && styles.disabledText,
+                {
+                  fontSize: theme.typography.size.md,
+                  color: theme.semantic.text.primary,
+                },
+                !hasValue && { color: theme.semantic.text.muted },
+                disabled && { color: theme.semantic.text.muted },
               ]}
             >
               {formattedValue}
             </ThemedText>
           </Pressable>
           {showPicker && (
-            <View style={styles.pickerContainer}>
+            <View
+              style={[
+                styles.pickerContainer,
+                {
+                  marginTop: theme.spacing.sm,
+                  borderRadius: theme.radius.lg,
+                  borderColor: theme.semantic.border.default,
+                  backgroundColor: theme.semantic.surface.card,
+                },
+              ]}
+            >
               <DateTimePicker
                 value={selectedDate}
                 mode={mode}
@@ -169,7 +215,7 @@ export function DatePicker({
                   onPress={() => {
                     setShowPicker(false)
                   }}
-                  style={styles.doneButton}
+                  style={{ marginTop: theme.spacing.sm }}
                 />
               )}
             </View>
@@ -177,94 +223,67 @@ export function DatePicker({
         </>
       )}
       {helperText && !error && (
-        <ThemedText style={styles.helperText}>{helperText}</ThemedText>
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.xs,
+            color: theme.semantic.text.secondary,
+            marginTop: theme.spacing.xs,
+          }}
+        >
+          {helperText}
+        </ThemedText>
       )}
-      {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
+      {error && (
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.xs,
+            color: theme.semantic.mood.highTough.text,
+            marginTop: theme.spacing.xs,
+          }}
+        >
+          {error}
+        </ThemedText>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
-    color: colors.charcoal,
-    marginBottom: spacing.xs,
-  },
-  input: {
-    backgroundColor: colors.white,
+  inputLayout: {
     borderWidth: 1,
-    borderColor: colors.sand,
-    borderRadius: 8,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    minHeight: 48,
     justifyContent: 'center',
   },
-  inputDisabled: {
-    opacity: 0.6,
-    backgroundColor: colors.sand,
-  },
-  inputError: {
-    borderColor: colors.error,
-    borderWidth: 2,
-  },
-  inputText: {
-    fontSize: typography.sizes.base,
-    color: colors.charcoal,
-  },
-  placeholderText: {
-    color: colors.stone.light,
-  },
-  disabledText: {
-    color: colors.stone.light,
-  },
-  helperText: {
-    fontSize: typography.sizes.xs,
-    color: colors.stone.DEFAULT,
-    marginTop: spacing.xs,
-  },
-  errorText: {
-    fontSize: typography.sizes.xs,
-    color: colors.error,
-    marginTop: spacing.xs,
-  },
   pickerContainer: {
-    marginTop: spacing.sm,
-    borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.sand,
-    backgroundColor: colors.white,
-  },
-  doneButton: {
-    marginTop: spacing.sm,
   },
 })
 
-const webInputStyle: React.CSSProperties = {
-  width: '100%',
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: colors.sand,
-  borderRadius: 8,
-  padding: spacing.sm,
-  fontSize: typography.sizes.base,
-  fontFamily: typography.primary.regular,
-  backgroundColor: colors.white,
-  color: colors.charcoal,
-  minHeight: 48,
-  boxSizing: 'border-box',
-}
-
-const webInputDisabledStyle: React.CSSProperties = {
-  opacity: 0.6,
-  cursor: 'not-allowed',
-  backgroundColor: colors.sand,
-}
-
-const webInputErrorStyle: React.CSSProperties = {
-  borderColor: colors.error,
-  borderWidth: 2,
+function getWebInputStyles(theme: Theme) {
+  return {
+    base: {
+      width: '100%',
+      borderWidth: 1,
+      borderStyle: 'solid' as const,
+      borderColor: theme.semantic.border.default,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.sm,
+      fontSize: theme.typography.size.md,
+      fontFamily: theme.typography.fontFamily,
+      backgroundColor: theme.semantic.surface.card,
+      color: theme.semantic.text.primary,
+      minHeight: theme.buttons.sizes.md.minHeight,
+      boxSizing: 'border-box' as const,
+    },
+    disabled: {
+      opacity: 0.6,
+      cursor: 'not-allowed',
+      backgroundColor: theme.semantic.surface.cardAlt,
+    },
+    error: {
+      borderColor: theme.semantic.mood.highTough.border,
+      borderWidth: 2,
+    },
+  }
 }
 
 function formatDateForInput(date: Date) {

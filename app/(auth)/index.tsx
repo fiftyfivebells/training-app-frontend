@@ -1,4 +1,5 @@
 import { Redirect } from 'expo-router'
+
 import { useAuthContext } from '@/domains/auth/context/AuthContext'
 
 export default function RootIndex() {

@@ -1,5 +1,4 @@
-import { Button, DatePicker, Input, Select, useAlert } from '@components/ui'
-import { colors, spacing, typography } from '@theme/index'
+import { Button, DatePicker, Input, useAlert } from '@components/ui'
 import * as Localization from 'expo-localization'
 import { useRouter } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
@@ -12,9 +11,11 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import type { CreateUserRequest } from '../api/authApi'
-import { useRegister } from '../hooks'
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useTheme } from '@/theme/ThemeProvider'
+
+import type { CreateUserRequest } from '../api/authClient'
+import { useRegister } from '../hooks'
 
 interface RegisterFormData {
   email: string
@@ -28,6 +29,7 @@ interface RegisterFormData {
 export function RegisterScreen() {
   const router = useRouter()
   const { alert } = useAlert()
+  const theme = useTheme()
 
   const {
     control,
@@ -104,27 +106,49 @@ export function RegisterScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+      edges={['top']}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={{
+            padding: theme.spacing.lg,
+            paddingBottom: theme.spacing.xxl,
+          }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <ThemedText style={styles.title}>Create Account</ThemedText>
-            <ThemedText style={styles.subtitle}>
+          <View style={{ marginBottom: theme.spacing.xl, paddingTop: theme.spacing.md }}>
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.xxxl,
+                fontWeight: theme.typography.weights.bold,
+                color: theme.semantic.text.primary,
+                marginBottom: theme.spacing.xs,
+                textAlign: 'center',
+              }}
+            >
+              Create Account
+            </ThemedText>
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.md,
+                color: theme.semantic.text.secondary,
+                textAlign: 'center',
+              }}
+            >
               Start your mindful running journey
             </ThemedText>
           </View>
 
           {/* Form */}
-          <View style={styles.form}>
+          <View>
             {/* Name */}
             <Controller
               control={control}
@@ -293,14 +317,27 @@ export function RegisterScreen() {
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               disabled={isLoading}
-              style={styles.submitButton}
+              style={{ marginTop: theme.spacing.lg }}
             />
 
             {/* Login Link */}
-            <View style={styles.footer}>
-              <ThemedText style={styles.footerText}>Already have an account? </ThemedText>
+            <View
+              style={[styles.footer, { marginTop: theme.spacing.lg }]}
+            >
               <ThemedText
-                style={styles.footerLink}
+                style={{
+                  fontSize: theme.typography.size.md,
+                  color: theme.semantic.text.secondary,
+                }}
+              >
+                Already have an account?{' '}
+              </ThemedText>
+              <ThemedText
+                style={{
+                  fontSize: theme.typography.size.md,
+                  color: theme.semantic.button.secondary.text,
+                  fontWeight: theme.typography.weights.semibold,
+                }}
                 onPress={() => {
                   router.push('/(auth)/login')
                 }}
@@ -318,7 +355,6 @@ export function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
   },
   keyboardView: {
     flex: 1,
@@ -326,45 +362,9 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  scrollContent: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxl,
-  },
-  header: {
-    marginBottom: spacing.xl,
-    paddingTop: spacing.md,
-  },
-  title: {
-    fontSize: typography.sizes['3xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.brown.DEFAULT,
-    marginBottom: spacing.xs,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    textAlign: 'center',
-  },
-  form: {
-    gap: spacing.sm,
-  },
-  submitButton: {
-    marginTop: spacing.lg,
-  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing.lg,
-  },
-  footerText: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-  },
-  footerLink: {
-    fontSize: typography.sizes.base,
-    color: colors.primary.DEFAULT,
-    fontWeight: typography.weights.semibold,
   },
 })

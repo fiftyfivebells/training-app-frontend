@@ -1,34 +1,41 @@
-import React from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import React from 'react'
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native'
+
 import { AppModal } from '@/components/layout/AppModal'
 import { ModalHeader } from '@/components/layout/ModalHeader'
-import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native'
-import { useRun } from '@/domains/runs/hooks/useRun'
-import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
-import { useDeleteRun } from '@/domains/runs/hooks/useDeleteRun'
-import { getMoodCategoryColor } from '@/domains/moods/utils/mood'
-import { colors, spacing, typography } from '@/theme'
-import { ThemedText } from '@/components/ui/ThemedText'
 import { useAlert } from '@/components/ui'
+import { ThemedText } from '@/components/ui/ThemedText'
+import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
+import { getMoodToken } from '@/domains/moods/utils/mood'
+import { useDeleteRun } from '@/domains/runs/hooks/useDeleteRun'
+import { useRun } from '@/domains/runs/hooks/useRun'
 import { formatDistance } from '@/domains/runs/utils/distance'
 import { normalizeDuration } from '@/domains/runs/utils/duration'
+import { useTheme } from '@/theme/ThemeProvider'
 
 export default function RunDetailModal() {
   const { runId } = useLocalSearchParams<{ runId: string }>()
   const router = useRouter()
   const { alert } = useAlert()
 
-  const { data: run, isLoading } = useRun(runId!)
+  const { data: run, isLoading } = useRun(runId)
 
   const { data: moods } = useGetAllMoods()
   const deleteRun = useDeleteRun()
+  const theme = useTheme()
 
-  const close = () => router.replace('/runs')
+  const close = () => {
+    router.replace('/runs')
+  }
 
   if (isLoading) {
     return (
       <AppModal onClose={close}>
-        <ActivityIndicator style={{ marginTop: 50 }} />
+        <ActivityIndicator
+          style={{ marginTop: theme.spacing.xl }}
+          color={theme.semantic.button.primary.bg}
+        />
       </AppModal>
     )
   }
@@ -43,7 +50,7 @@ export default function RunDetailModal() {
   }
 
   const mood = moods?.find((m) => m.id === run.moodId)
-  const moodColor = mood ? getMoodCategoryColor(mood.quadrant) : colors.sand
+  const moodToken = mood ? getMoodToken(theme, mood.quadrant) : undefined
 
   const handleDelete = () => {
     alert('Delete Run?', 'This cannot be undone.', [
@@ -53,7 +60,9 @@ export default function RunDetailModal() {
         style: 'destructive',
         onPress: () => {
           deleteRun.mutate(runId, {
-            onSuccess: () => router.replace('/runs'),
+            onSuccess: () => {
+              router.replace('/runs')
+            },
           })
         },
       },
@@ -64,30 +73,84 @@ export default function RunDetailModal() {
     <AppModal onClose={close}>
       <ModalHeader title="Run Details" onClose={close} />
 
-      <ThemedText style={styles.date}>{run.date}</ThemedText>
+      <ThemedText
+        style={{
+          color: theme.semantic.text.secondary,
+          marginBottom: theme.spacing.lg,
+        }}
+      >
+        {run.date}
+      </ThemedText>
 
       {mood && (
         <View
           style={[
             styles.moodBadge,
-            { borderColor: moodColor, backgroundColor: `${moodColor}20` },
+            {
+              borderColor: moodToken?.border ?? theme.semantic.border.default,
+              backgroundColor: moodToken?.bg ?? theme.semantic.surface.cardAlt,
+              paddingVertical: theme.spacing.xs,
+              paddingHorizontal: theme.spacing.md,
+              borderRadius: theme.radius.full,
+              marginBottom: theme.spacing.lg,
+            },
           ]}
         >
-          <ThemedText style={styles.moodText}>{mood.label}</ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.sm,
+              color: theme.semantic.text.primary,
+            }}
+          >
+            {mood.label}
+          </ThemedText>
         </View>
       )}
 
-      <View style={styles.sectionRow}>
-        <View style={styles.section}>
-          <ThemedText style={styles.label}>Distance</ThemedText>
-          <ThemedText style={styles.value}>
+      <View
+        style={[
+          styles.sectionRow,
+          { marginBottom: theme.spacing.lg },
+        ]}
+      >
+        <View style={[styles.section, { marginRight: theme.spacing.lg }]}>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.sm,
+              color: theme.semantic.text.secondary,
+              marginBottom: theme.spacing.xs,
+            }}
+          >
+            Distance
+          </ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.lg,
+              fontWeight: theme.typography.weights.semibold,
+              color: theme.semantic.text.primary,
+            }}
+          >
             {formatDistance(run.distanceMeters, run.distanceUnits)}
           </ThemedText>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.label}>Duration</ThemedText>
-          <ThemedText style={styles.value}>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.sm,
+              color: theme.semantic.text.secondary,
+              marginBottom: theme.spacing.xs,
+            }}
+          >
+            Duration
+          </ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.lg,
+              fontWeight: theme.typography.weights.semibold,
+              color: theme.semantic.text.primary,
+            }}
+          >
             {normalizeDuration(run.durationSeconds).formatted}
           </ThemedText>
         </View>
@@ -95,66 +158,64 @@ export default function RunDetailModal() {
 
       {run.notes && (
         <View style={styles.section}>
-          <ThemedText style={styles.label}>Notes</ThemedText>
-          <ThemedText style={styles.notes}>{run.notes}</ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.sm,
+              color: theme.semantic.text.secondary,
+              marginBottom: theme.spacing.xs,
+            }}
+          >
+            Notes
+          </ThemedText>
+          <ThemedText
+            style={{
+              lineHeight: theme.typography.size.md * 1.5,
+              color: theme.semantic.text.primary,
+            }}
+          >
+            {run.notes}
+          </ThemedText>
         </View>
       )}
 
-      <TouchableOpacity onPress={handleDelete} style={styles.delete}>
-        <ThemedText style={styles.deleteText}>Delete Run</ThemedText>
+      <TouchableOpacity
+        onPress={handleDelete}
+        style={[
+          styles.deleteButton,
+          theme.buttons.base,
+          theme.buttons.variants.secondary.container,
+          theme.buttons.sizes.md,
+          { marginTop: theme.spacing.xl },
+        ]}
+      >
+        <ThemedText
+          style={[
+            {
+              fontWeight: theme.typography.weights.semibold,
+              textAlign: 'center',
+            },
+            theme.buttons.variants.secondary.text,
+          ]}
+        >
+          Delete Run
+        </ThemedText>
       </TouchableOpacity>
     </AppModal>
   )
 }
 
 const styles = StyleSheet.create({
-  date: {
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.lg,
-  },
   moodBadge: {
     borderWidth: 1,
-    borderRadius: 999,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
     alignSelf: 'flex-start',
-    marginBottom: spacing.lg,
-  },
-  moodText: {
-    fontSize: typography.sizes.sm,
-    color: colors.charcoal,
   },
   sectionRow: {
     flexDirection: 'row',
-    gap: spacing.lg,
-    marginBottom: spacing.lg,
   },
   section: {
     flex: 1,
   },
-  label: {
-    fontSize: typography.sizes.sm,
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.xs,
-  },
-  value: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    color: colors.charcoal,
-  },
-  notes: {
-    lineHeight: typography.sizes.base * 1.5,
-    color: colors.charcoal,
-  },
-  delete: {
-    marginTop: spacing.xl,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.brown.DEFAULT,
-    borderRadius: 999,
-  },
-  deleteText: {
-    textAlign: 'center',
-    color: colors.white,
-    fontWeight: typography.weights.semibold,
+  deleteButton: {
+    alignSelf: 'stretch',
   },
 })

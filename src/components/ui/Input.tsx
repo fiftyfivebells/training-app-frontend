@@ -1,5 +1,6 @@
-import { colors, spacing, typography } from '@theme/index'
 import { StyleSheet, type TextInputProps, View } from 'react-native'
+
+import { useTheme } from '@/theme/ThemeProvider'
 
 import { ThemedText } from './ThemedText'
 import { ThemedTextInput } from './ThemedTextInput'
@@ -11,58 +12,63 @@ interface InputProps extends TextInputProps {
 }
 
 export function Input({ label, error, disabled, style, ...props }: InputProps) {
+  const theme = useTheme()
+
   return (
-    <View style={styles.container}>
-      <ThemedText style={styles.label}>{label}</ThemedText>
+    <View style={{ marginBottom: theme.spacing.md }}>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.sm,
+          fontWeight: theme.typography.weights.medium,
+          color: theme.semantic.text.primary,
+          marginBottom: theme.spacing.xs,
+        }}
+      >
+        {label}
+      </ThemedText>
       <ThemedTextInput
         style={[
-          styles.input,
-          error && styles.inputError,
-          disabled && styles.inputDisabled,
+          styles.inputBase,
+          {
+            backgroundColor: theme.semantic.surface.card,
+            borderColor: theme.semantic.border.default,
+            borderRadius: theme.radius.md,
+            paddingHorizontal: theme.spacing.md,
+            paddingVertical: theme.spacing.sm,
+            color: theme.semantic.text.primary,
+          },
+          error && {
+            borderColor: theme.semantic.mood.highTough.border,
+            borderWidth: 2,
+          },
+          disabled && {
+            backgroundColor: theme.semantic.surface.cardAlt,
+            opacity: 0.6,
+          },
           style,
         ]}
-        placeholderTextColor={colors.stone.light}
         editable={!disabled}
         autoCorrect={false}
         {...props}
       />
-      {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
+      {error && (
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.xs,
+            color: theme.semantic.mood.highTough.text,
+            marginTop: theme.spacing.xs,
+          }}
+        >
+          {error}
+        </ThemedText>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.md,
-  },
-  label: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
-    color: colors.charcoal,
-    marginBottom: spacing.xs,
-  },
-  input: {
-    backgroundColor: colors.white,
+  inputBase: {
     borderWidth: 1,
-    borderColor: colors.sand,
-    borderRadius: 8,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    fontSize: typography.sizes.base,
-    color: colors.charcoal,
     minHeight: 48,
-  },
-  inputError: {
-    borderColor: colors.error,
-    borderWidth: 2,
-  },
-  inputDisabled: {
-    backgroundColor: colors.sand,
-    opacity: 0.6,
-  },
-  errorText: {
-    fontSize: typography.sizes.xs,
-    color: colors.error,
-    marginTop: spacing.xs,
   },
 })

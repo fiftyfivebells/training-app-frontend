@@ -1,6 +1,8 @@
-import { authClient } from '@/domains/auth/api/authClient'
-import { configureRefreshFunction } from './refreshManager'
 import { Platform } from 'react-native'
+
+import { authClient } from '@/domains/auth/api/authClient'
+
+import { configureRefreshFunction } from './refreshManager'
 
 configureRefreshFunction(async (refreshToken) => {
   if (Platform.OS === 'web') {

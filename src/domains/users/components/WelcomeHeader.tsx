@@ -1,8 +1,8 @@
-import { colors, spacing, typography } from '@theme/index'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useTheme } from '@/theme/ThemeProvider'
 
 interface WelcomeHeaderProps {
   userName: string
@@ -13,11 +13,28 @@ interface WelcomeHeaderProps {
 }
 
 export function WelcomeHeader({ userName, currentBlock }: WelcomeHeaderProps) {
+  const theme = useTheme()
+
   return (
-    <View style={styles.container}>
-      <ThemedText style={styles.greeting}>Welcome back, {userName}!</ThemedText>
+    <View style={[styles.container, { marginBottom: theme.spacing.lg }]}>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.xxxl,
+          fontWeight: theme.typography.weights.bold,
+          color: theme.semantic.text.primary,
+          marginBottom: theme.spacing.xs,
+        }}
+      >
+        Welcome back, {userName}!
+      </ThemedText>
       {currentBlock && (
-        <ThemedText style={styles.blockInfo}>
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.md,
+            color: theme.semantic.text.secondary,
+            fontWeight: theme.typography.weights.medium,
+          }}
+        >
           {currentBlock.name} • {currentBlock.daysRemaining} days remaining
         </ThemedText>
       )}
@@ -26,18 +43,5 @@ export function WelcomeHeader({ userName, currentBlock }: WelcomeHeaderProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.lg,
-  },
-  greeting: {
-    fontSize: typography.sizes['3xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.brown.DEFAULT,
-    marginBottom: spacing.xs,
-  },
-  blockInfo: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    fontWeight: typography.weights.medium,
-  },
+  container: {},
 })

@@ -1,8 +1,8 @@
-import { colors, spacing, typography } from '@theme/index'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useTheme } from '@/theme/ThemeProvider'
 
 interface DailyAffirmationProps {
   affirmation: string
@@ -10,32 +10,46 @@ interface DailyAffirmationProps {
 }
 
 export function DailyAffirmation({ affirmation, blockName }: DailyAffirmationProps) {
+  const theme = useTheme()
+
   return (
-    <View style={styles.container}>
-      <ThemedText style={styles.affirmation}>{affirmation}</ThemedText>
-      {blockName && <ThemedText style={styles.blockName}>{blockName}</ThemedText>}
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.semantic.surface.cardAlt,
+          borderRadius: theme.radius.lg,
+          padding: theme.spacing.lg,
+          borderLeftColor: theme.semantic.button.primary.bg,
+        },
+      ]}
+    >
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.lg,
+          fontWeight: theme.typography.weights.medium,
+          color: theme.semantic.text.primary,
+          lineHeight: theme.typography.size.lg * 1.5,
+          marginBottom: theme.spacing.xs,
+        }}
+      >
+        {affirmation}
+      </ThemedText>
+      {blockName && (
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.sm,
+            color: theme.semantic.text.secondary,
+            fontWeight: theme.typography.weights.medium,
+          }}
+        >
+          {blockName}
+        </ThemedText>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.primary.DEFAULT + '15',
-    borderRadius: 12,
-    padding: spacing.lg,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary.DEFAULT,
-  },
-  affirmation: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.medium,
-    color: colors.charcoal,
-    lineHeight: typography.sizes.lg * 1.5,
-    marginBottom: spacing.xs,
-  },
-  blockName: {
-    fontSize: typography.sizes.sm,
-    color: colors.stone.DEFAULT,
-    fontWeight: typography.weights.medium,
-  },
+  container: { borderLeftWidth: 4 },
 })

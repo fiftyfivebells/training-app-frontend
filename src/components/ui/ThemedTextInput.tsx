@@ -1,14 +1,23 @@
-import { TextInput, TextInputProps, StyleSheet } from 'react-native'
-import { typography } from '@/theme/typography'
+import { TextInput, TextInputProps } from 'react-native'
+
+import { useTheme } from '@/theme/ThemeProvider'
 
 export function ThemedTextInput({ style, ...props }: TextInputProps) {
-  return <TextInput {...props} style={[styles.input, style]} />
-}
+  const theme = useTheme()
 
-const styles = StyleSheet.create({
-  input: {
-    fontFamily: typography.primary.regular,
-    fontSize: typography.sizes.base,
-    color: '#2D2A26',
-  },
-})
+  return (
+    <TextInput
+      {...props}
+      style={[
+        {
+          fontFamily: theme.typography.fontFamily,
+          fontWeight: theme.typography.weights.regular,
+          fontSize: theme.typography.size.md,
+          color: theme.semantic.text.primary,
+        },
+        style,
+      ]}
+      placeholderTextColor={theme.semantic.text.muted}
+    />
+  )
+}

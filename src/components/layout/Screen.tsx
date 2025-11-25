@@ -1,7 +1,8 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, StyleSheet, ViewStyle } from 'react-native'
-import { colors, spacing } from '@/theme'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { useTheme } from '@/theme/ThemeProvider'
 
 type ScreenProps = {
   children: React.ReactNode
@@ -16,12 +17,20 @@ export function Screen({
   style,
   contentContainerStyle,
 }: ScreenProps) {
+  const theme = useTheme()
+  const safeAreaStyles = [
+    styles.safeArea,
+    { backgroundColor: theme.semantic.surface.background },
+    style,
+  ]
+  const containerPadding = { padding: theme.spacing.lg }
+
   if (scroll) {
     return (
-      <SafeAreaView style={[styles.safeArea, style]}>
+      <SafeAreaView style={safeAreaStyles}>
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={[styles.contentContainer, contentContainerStyle]}
+          contentContainerStyle={[containerPadding, contentContainerStyle]}
           showsVerticalScrollIndicator={false}
         >
           {children}
@@ -31,22 +40,13 @@ export function Screen({
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, styles.nonScrollContainer, style]}>
-      {children}
-    </SafeAreaView>
+    <SafeAreaView style={[...safeAreaStyles, containerPadding]}>{children}</SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.cream,
   },
   scroll: { flex: 1 },
-  contentContainer: {
-    padding: spacing.lg,
-  },
-  nonScrollContainer: {
-    padding: spacing.lg,
-  },
 })

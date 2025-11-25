@@ -1,10 +1,11 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
-import type { Mood } from '../moods.types'
-import type { MoodCategoryKey } from '../moods.types'
-import { colors } from '@/theme/colors'
+import { StyleSheet, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
+import { getMoodToken } from '@/domains/moods/utils/mood'
+import { useTheme } from '@/theme/ThemeProvider'
+
+import type { Mood, MoodCategoryKey } from '../moods.types'
 
 const quadrantEmoji: Record<MoodCategoryKey, string> = {
   'high-pleasant': '⚡️😊',
@@ -13,33 +14,46 @@ const quadrantEmoji: Record<MoodCategoryKey, string> = {
   'low-challenging': '😴😞',
 }
 
-const quadrantPalette: Record<
-  MoodCategoryKey,
-  { bg: string; border: string; text: string }
-> = {
-  'high-pleasant': colors.mood.highGreat,
-  'high-challenging': colors.mood.highTough,
-  'low-pleasant': colors.mood.lowGreat,
-  'low-challenging': colors.mood.lowTough,
-}
-
 type Props = {
   mood: Mood
 }
 
 export const MoodSelectedChip: React.FC<Props> = ({ mood }) => {
-  const palette = quadrantPalette[mood.quadrant]
+  const theme = useTheme()
+  const palette = getMoodToken(theme, mood.quadrant)
   const emoji = quadrantEmoji[mood.quadrant]
 
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: palette.bg, borderColor: palette.border },
+        {
+          backgroundColor: palette?.bg ?? theme.semantic.surface.card,
+          borderColor: palette?.border ?? theme.semantic.border.default,
+          paddingVertical: theme.spacing.xs,
+          paddingHorizontal: theme.spacing.md,
+          borderRadius: theme.radius.md,
+          marginTop: theme.spacing.sm,
+        },
       ]}
     >
-      <ThemedText style={[styles.emoji]}>{emoji}</ThemedText>
-      <ThemedText style={[styles.label, { color: palette.text }]}>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.lg,
+          marginRight: theme.spacing.xs,
+        }}
+      >
+        {emoji}
+      </ThemedText>
+      <ThemedText
+        style={[
+          {
+            fontSize: theme.typography.size.sm,
+            fontWeight: theme.typography.weights.semibold,
+          },
+          { color: palette?.text ?? theme.semantic.text.primary },
+        ]}
+      >
         {mood.label}
       </ThemedText>
     </View>
@@ -49,20 +63,8 @@ export const MoodSelectedChip: React.FC<Props> = ({ mood }) => {
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 16,
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 10,
-  },
-  emoji: {
-    fontSize: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
   },
 })

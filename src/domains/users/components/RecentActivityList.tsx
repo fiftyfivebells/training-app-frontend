@@ -1,21 +1,49 @@
 import type { DashboardActivity } from '@domains/users/utils/dashboard'
-import { colors, spacing, typography } from '@theme/index'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useTheme } from '@/theme/ThemeProvider'
 
 interface RecentActivityListProps {
   activities: DashboardActivity[]
 }
 
 export function RecentActivityList({ activities }: RecentActivityListProps) {
+  const theme = useTheme()
+
   if (activities.length === 0) {
     return (
       <View style={styles.container}>
-        <ThemedText style={styles.title}>Recent Activity</ThemedText>
-        <View style={styles.emptyState}>
-          <ThemedText style={styles.emptyText}>No recent activities</ThemedText>
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.xl,
+            fontWeight: theme.typography.weights.semibold,
+            color: theme.semantic.text.primary,
+            marginBottom: theme.spacing.md,
+          }}
+        >
+          Recent Activity
+        </ThemedText>
+        <View
+          style={[
+            styles.emptyState,
+            {
+              backgroundColor: theme.semantic.surface.card,
+              borderRadius: theme.radius.lg,
+              borderColor: theme.semantic.border.default,
+              padding: theme.spacing.xl,
+            },
+          ]}
+        >
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.md,
+              color: theme.semantic.text.secondary,
+            }}
+          >
+            No recent activities
+          </ThemedText>
         </View>
       </View>
     )
@@ -23,19 +51,80 @@ export function RecentActivityList({ activities }: RecentActivityListProps) {
 
   return (
     <View style={styles.container}>
-      <ThemedText style={styles.title}>Recent Activity</ThemedText>
-      <View style={styles.list}>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.xl,
+          fontWeight: theme.typography.weights.semibold,
+          color: theme.semantic.text.primary,
+          marginBottom: theme.spacing.md,
+        }}
+      >
+        Recent Activity
+      </ThemedText>
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor: theme.semantic.surface.card,
+            borderRadius: theme.radius.lg,
+            borderColor: theme.semantic.border.default,
+          },
+        ]}
+      >
         {activities.map((activity) => (
-          <View key={activity.id} style={styles.activityItem}>
-            <View style={styles.iconContainer}>
-              <ThemedText style={styles.icon}>{activity.icon}</ThemedText>
+          <View
+            key={activity.id}
+            style={[
+              styles.activityRow,
+              {
+                padding: theme.spacing.md,
+                borderBottomColor: theme.semantic.border.default,
+              },
+            ]}
+          >
+            <View
+              style={[
+                styles.activityIcon,
+                {
+                  borderRadius: theme.radius.full,
+                  backgroundColor: theme.semantic.surface.cardAlt,
+                  marginRight: theme.spacing.md,
+                },
+              ]}
+            >
+              <ThemedText style={{ fontSize: theme.typography.size.lg }}>
+                {activity.icon}
+              </ThemedText>
             </View>
+
             <View style={styles.activityContent}>
-              <ThemedText style={styles.activityTitle}>{activity.title}</ThemedText>
-              <ThemedText style={styles.activitySubtitle}>
+              <ThemedText
+                style={{
+                  fontSize: theme.typography.size.md,
+                  fontWeight: theme.typography.weights.semibold,
+                  color: theme.semantic.text.primary,
+                  marginBottom: theme.spacing.xs / 2,
+                }}
+              >
+                {activity.title}
+              </ThemedText>
+              <ThemedText
+                style={{
+                  fontSize: theme.typography.size.sm,
+                  color: theme.semantic.text.secondary,
+                  marginBottom: theme.spacing.xs / 2,
+                }}
+              >
                 {activity.subtitle}
               </ThemedText>
-              <ThemedText style={styles.timestamp}>{activity.timestamp}</ThemedText>
+              <ThemedText
+                style={{
+                  fontSize: theme.typography.size.xs,
+                  color: theme.semantic.text.secondary,
+                }}
+              >
+                {activity.timestamp}
+              </ThemedText>
             </View>
           </View>
         ))}
@@ -48,65 +137,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  title: {
-    fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.semibold,
-    color: colors.charcoal,
-    marginBottom: spacing.md,
+  emptyState: {
+    alignItems: 'center',
   },
-  list: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
+  card: {
     borderWidth: 1,
-    borderColor: colors.sand,
     overflow: 'hidden',
   },
-  activityItem: {
+  activityRow: {
     flexDirection: 'row',
-    padding: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.sand,
   },
-  iconContainer: {
+  activityIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primary.DEFAULT + '20',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  icon: {
-    fontSize: typography.sizes.lg,
   },
   activityContent: {
     flex: 1,
-  },
-  activityTitle: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-    color: colors.charcoal,
-    marginBottom: spacing.xs / 2,
-  },
-  activitySubtitle: {
-    fontSize: typography.sizes.sm,
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.xs / 2,
-  },
-  timestamp: {
-    fontSize: typography.sizes.xs,
-    color: colors.stone.DEFAULT,
-  },
-  emptyState: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.sand,
-    padding: spacing.xl,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
   },
 })

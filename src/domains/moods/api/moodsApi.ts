@@ -8,7 +8,7 @@ export class MoodClient extends BaseApiClient {
   private baseMoodsRoute = '/moods'
 
   async getAllMoods(): Promise<MoodResponse[]> {
-    return this.get<MoodResponse[]>(`${this.baseMoodsRoute}`)
+    return this.get<MoodResponse[]>(this.baseMoodsRoute)
   }
 }
 

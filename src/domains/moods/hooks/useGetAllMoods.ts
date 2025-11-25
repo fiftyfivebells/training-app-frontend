@@ -1,7 +1,8 @@
 import { createMappedQueryHook } from '@/lib/hooks/createMappedQueryHook'
-import { MoodResponse, moodClient } from '../api/moodsApi'
-import { Mood, moodResponseToMood } from '../moods.types'
+
+import { moodClient, MoodResponse } from '../api/moodsApi'
 import { moodsKeys } from '../moods.constants'
+import { Mood, moodResponseToMood } from '../moods.types'
 
 export const useGetAllMoods = createMappedQueryHook<
   MoodResponse[],

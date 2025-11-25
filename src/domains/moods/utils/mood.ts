@@ -1,17 +1,19 @@
 import type { MoodCategoryKey } from '@domains/moods/moods.types'
-import { colors } from '@/theme'
 
-export function getMoodCategoryColor(quadrant: MoodCategoryKey): string {
-  switch (quadrant) {
-    case 'high-pleasant':
-      return '#F59E0B'
-    case 'high-challenging':
-      return '#DC2626'
-    case 'low-pleasant':
-      return '#3B82F6'
-    case 'low-challenging':
-      return '#9CA3AF'
-    default:
-      return colors.stone.DEFAULT
-  }
+import type { Theme } from '@/theme/types'
+
+const quadrantToToken: Record<MoodCategoryKey, keyof Theme['semantic']['mood']> = {
+  'high-pleasant': 'highGreat',
+  'high-challenging': 'highTough',
+  'low-pleasant': 'lowGreat',
+  'low-challenging': 'lowTough',
+}
+
+export function getMoodCategoryColor(theme: Theme, quadrant: MoodCategoryKey): string {
+  return getMoodToken(theme, quadrant)?.border ?? theme.semantic.border.default
+}
+
+export function getMoodToken(theme: Theme, quadrant: MoodCategoryKey) {
+  const tokenKey = quadrantToToken[quadrant]
+  return theme.semantic.mood[tokenKey]
 }

@@ -1,6 +1,5 @@
 import { Button, Input, useAlert } from '@components/ui'
 import type { LoginRequest } from '@domains/auth/api/authClient'
-import { colors, spacing, typography } from '@theme/index'
 import { useRouter } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -13,8 +12,10 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { useAuthContext } from '../context/AuthContext'
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useTheme } from '@/theme/ThemeProvider'
+
+import { useAuthContext } from '../context/AuthContext'
 
 interface LoginFormData extends LoginRequest {
   email: string
@@ -25,6 +26,7 @@ export function LoginScreen() {
   const router = useRouter()
   const { alert } = useAlert()
   const { login, isLoading } = useAuthContext()
+  const theme = useTheme()
 
   const {
     control,
@@ -49,7 +51,10 @@ export function LoginScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+      edges={['top']}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -58,11 +63,30 @@ export function LoginScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.content}>
-            <ThemedText style={styles.title}>Welcome Back</ThemedText>
-            <ThemedText style={styles.subtitle}>Sign in to your account</ThemedText>
+          <View style={[styles.content, { padding: theme.spacing.lg }]}>
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.xxxl,
+                fontWeight: theme.typography.weights.bold,
+                color: theme.semantic.text.primary,
+                marginBottom: theme.spacing.xs,
+                textAlign: 'center',
+              }}
+            >
+              Welcome Back
+            </ThemedText>
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.md,
+                color: theme.semantic.text.secondary,
+                marginBottom: theme.spacing.xl,
+                textAlign: 'center',
+              }}
+            >
+              Sign in to your account
+            </ThemedText>
 
-            <View style={styles.form}>
+            <View>
               <Controller
                 control={control}
                 name="email"
@@ -122,19 +146,36 @@ export function LoginScreen() {
                 onPress={handleSubmit(onSubmit)}
                 loading={isLoading}
                 disabled={isLoading}
-                style={styles.loginButton}
+                style={{ marginTop: theme.spacing.md }}
               />
             </View>
 
-            <View style={styles.footer}>
-              <ThemedText style={styles.footerText}>Don't have an account? </ThemedText>
+            <View
+              style={[styles.footer, { marginTop: theme.spacing.xl }]}
+            >
+              <ThemedText
+                style={{
+                  fontSize: theme.typography.size.sm,
+                  color: theme.semantic.text.secondary,
+                }}
+              >
+                Don't have an account?{' '}
+              </ThemedText>
               <Pressable
                 onPress={() => {
                   router.push('/(auth)/register')
                 }}
                 disabled={isLoading}
               >
-                <ThemedText style={styles.linkText}>Create Account</ThemedText>
+                <ThemedText
+                  style={{
+                    fontSize: theme.typography.size.sm,
+                    color: theme.semantic.button.secondary.text,
+                    fontWeight: theme.typography.weights.semibold,
+                  }}
+                >
+                  Create Account
+                </ThemedText>
               </Pressable>
             </View>
           </View>
@@ -147,7 +188,6 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
   },
   keyboardView: {
     flex: 1,
@@ -157,41 +197,11 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: spacing.lg,
     justifyContent: 'center',
-  },
-  title: {
-    fontSize: typography.sizes['3xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.brown.DEFAULT,
-    marginBottom: spacing.xs,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.xl,
-    textAlign: 'center',
-  },
-  form: {
-    gap: spacing.sm,
-  },
-  loginButton: {
-    marginTop: spacing.md,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing.xl,
-  },
-  footerText: {
-    fontSize: typography.sizes.sm,
-    color: colors.stone.DEFAULT,
-  },
-  linkText: {
-    fontSize: typography.sizes.sm,
-    color: colors.brown.DEFAULT,
-    fontWeight: typography.weights.semibold,
   },
 })

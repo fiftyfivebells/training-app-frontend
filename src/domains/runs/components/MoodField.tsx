@@ -1,11 +1,10 @@
-import React, { useMemo } from 'react'
-import { View, StyleSheet } from 'react-native'
 import { MoodGrid } from '@domains/moods/components/MoodGrid'
 import { MoodPickerModal } from '@domains/moods/components/MoodPickerModal'
 import { MoodSelectedChip } from '@domains/moods/components/MoodSelectedChip'
 import { useGetAllMoods } from '@domains/moods/hooks/useGetAllMoods'
 import type { Mood, MoodCategoryKey } from '@domains/moods/moods.types'
-import { colors } from '@/theme'
+import React, { useMemo } from 'react'
+import { View } from 'react-native'
 
 type MoodFieldProps = {
   mood: Mood | null
@@ -24,7 +23,7 @@ export const MoodField: React.FC<MoodFieldProps> = ({ mood, onChange }) => {
   }, [allMoods, activeQuadrant])
 
   return (
-    <View style={styles.container}>
+    <View>
       <MoodGrid
         selectedCategoryKey={activeQuadrant}
         onSelectCategory={(key) => {
@@ -38,7 +37,9 @@ export const MoodField: React.FC<MoodFieldProps> = ({ mood, onChange }) => {
       <MoodPickerModal
         visible={isMoodModalOpen}
         moods={moodsForQuadrant}
-        onClose={() => setIsMoodModalOpen(false)}
+        onClose={() => {
+          setIsMoodModalOpen(false)
+        }}
         onSelect={(selected) => {
           onChange(selected)
           setIsMoodModalOpen(false)
@@ -47,10 +48,3 @@ export const MoodField: React.FC<MoodFieldProps> = ({ mood, onChange }) => {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 10,
-    backgroundColor: colors.transparent,
-  },
-})

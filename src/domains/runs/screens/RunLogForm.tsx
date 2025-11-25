@@ -1,15 +1,17 @@
-import React from 'react'
-import { View, StyleSheet, ScrollView } from 'react-native'
 import type { Mood } from '@domains/moods/moods.types'
-import { colors, typography } from '@/theme'
+import React from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
+
 import { Button, DatePicker, useAlert } from '@/components/ui'
 import { ThemedText } from '@/components/ui/ThemedText'
-import { useLogRun } from '../hooks'
+import { useTheme } from '@/theme/ThemeProvider'
+
 import type { LogRunRequest } from '../api/runsApi'
-import { durationToTotalSeconds, normalizeDuration } from '../utils/duration'
-import { calculateMeters, type DistanceUnit } from '../utils/distance'
-import { formatDateForApi } from '../utils/date'
 import { DistanceField, DurationField, MoodField, NotesField } from '../components'
+import { useLogRun } from '../hooks'
+import { formatDateForApi } from '../utils/date'
+import { calculateMeters, type DistanceUnit } from '../utils/distance'
+import { durationToTotalSeconds, normalizeDuration } from '../utils/duration'
 
 export const RunLogForm: React.FC = () => {
   const { alert } = useAlert()
@@ -85,14 +87,42 @@ export const RunLogForm: React.FC = () => {
     })
   }
 
+  const theme = useTheme()
+
   return (
-    <ScrollView contentContainerStyle={styles.wrapper}>
-      <ThemedText style={styles.title}>Log a Run</ThemedText>
-      <ThemedText style={styles.subtitle}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.wrapper,
+        {
+          padding: theme.spacing.lg,
+          paddingBottom: theme.spacing.xxl,
+          backgroundColor: theme.semantic.surface.background,
+        },
+      ]}
+    >
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.xxxl,
+          fontWeight: theme.typography.weights.bold,
+          color: theme.semantic.text.primary,
+          textAlign: 'center',
+          marginBottom: theme.spacing.xs,
+        }}
+      >
+        Log a Run
+      </ThemedText>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.md,
+          color: theme.semantic.text.secondary,
+          textAlign: 'center',
+          marginBottom: theme.spacing.lg,
+        }}
+      >
         Capture the essentials from your training session and how it felt.
       </ThemedText>
 
-      <View style={styles.field}>
+      <View style={[styles.field, { marginBottom: theme.spacing.lg }]}>
         <DatePicker
           label="Date"
           value={date}
@@ -101,7 +131,7 @@ export const RunLogForm: React.FC = () => {
         />
       </View>
 
-      <View style={styles.field}>
+      <View style={[styles.field, { marginBottom: theme.spacing.lg }]}>
         <DistanceField
           distance={distance}
           unit={distanceUnit}
@@ -110,7 +140,7 @@ export const RunLogForm: React.FC = () => {
         />
       </View>
 
-      <View style={styles.field}>
+      <View style={[styles.field, { marginBottom: theme.spacing.lg }]}>
         <DurationField
           hours={durationHours}
           minutes={durationMinutes}
@@ -122,11 +152,11 @@ export const RunLogForm: React.FC = () => {
         />
       </View>
 
-      <View style={styles.field}>
+      <View style={[styles.field, { marginBottom: theme.spacing.lg }]}>
         <NotesField value={notes} onChange={setNotes} />
       </View>
 
-      <View style={styles.section}>
+      <View style={{ marginTop: theme.spacing.sm }}>
         <MoodField mood={selectedMood} onChange={setSelectedMood} />
       </View>
 
@@ -134,7 +164,7 @@ export const RunLogForm: React.FC = () => {
         title="Save Run"
         onPress={onSubmit}
         loading={logRunMutation.isPending}
-        style={styles.submitButton}
+        style={[styles.fullWidth, { marginTop: theme.spacing.lg }]}
       />
     </ScrollView>
   )
@@ -142,22 +172,10 @@ export const RunLogForm: React.FC = () => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 20,
-    paddingBottom: 80,
-    backgroundColor: colors.cream,
+    flexGrow: 1,
   },
-  field: { marginBottom: 20 },
-  title: {
-    fontSize: typography.sizes['3xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.brown.DEFAULT,
-    textAlign: 'center',
+  field: {
+    width: '100%',
   },
-  subtitle: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    textAlign: 'center',
-  },
-  section: { marginTop: 10 },
-  submitButton: { width: '100%' },
+  fullWidth: { width: '100%' },
 })

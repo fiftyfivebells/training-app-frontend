@@ -1,17 +1,19 @@
 import { Drawer } from 'expo-router/drawer'
 import React from 'react'
-import { colors, typography } from '@/theme'
-import { SessionChecker } from '@/domains/auth/components/SessionChecker'
+
+import { useTheme } from '@/theme/ThemeProvider'
 
 export default function DrawerLayout() {
+  const theme = useTheme()
+
   return (
     <>
       <Drawer
         screenOptions={{
-          headerTintColor: colors.charcoal,
-          headerStyle: { backgroundColor: colors.cream },
-          drawerActiveTintColor: colors.brown.DEFAULT,
-          drawerInactiveTintColor: colors.stone.DEFAULT,
+          headerTintColor: theme.semantic.text.header,
+          headerStyle: { backgroundColor: theme.semantic.surface.header },
+          drawerActiveTintColor: theme.semantic.text.primary,
+          drawerInactiveTintColor: theme.semantic.text.secondary,
           drawerType: 'front',
         }}
       />

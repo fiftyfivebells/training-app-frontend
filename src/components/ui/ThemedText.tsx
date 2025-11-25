@@ -1,14 +1,22 @@
-import { Text, TextProps, StyleSheet } from 'react-native'
-import { typography } from '@/theme/typography'
+import { Text, TextProps } from 'react-native'
+
+import { useTheme } from '@/theme/ThemeProvider'
 
 export function ThemedText({ style, ...props }: TextProps) {
-  return <Text {...props} style={[styles.text, style]} />
-}
+  const theme = useTheme()
 
-const styles = StyleSheet.create({
-  text: {
-    fontFamily: typography.primary.regular,
-    color: '#2D2A26',
-    fontSize: typography.sizes.base,
-  },
-})
+  return (
+    <Text
+      {...props}
+      style={[
+        {
+          fontFamily: theme.typography.fontFamily,
+          fontWeight: theme.typography.weights.regular,
+          fontSize: theme.typography.size.md,
+          color: theme.semantic.text.primary,
+        },
+        style,
+      ]}
+    />
+  )
+}

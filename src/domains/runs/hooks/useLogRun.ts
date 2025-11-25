@@ -1,10 +1,10 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
+import { router } from 'expo-router'
 
 import { ApiError } from '@/lib/api/error'
 
 import { LogRunRequest, RunResponse, runsClient } from '../api/runsApi'
 import { runsKeys } from '../constants'
-import { router } from 'expo-router'
 
 export function useLogRun(
   options?: UseMutationOptions<RunResponse, ApiError, LogRunRequest>,

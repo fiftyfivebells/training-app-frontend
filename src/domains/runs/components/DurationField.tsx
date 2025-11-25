@@ -1,8 +1,9 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+
 import { ThemedText } from '@/components/ui/ThemedText'
 import { ThemedTextInput } from '@/components/ui/ThemedTextInput'
-import { colors } from '@/theme'
+import { useTheme } from '@/theme/ThemeProvider'
 
 type DurationFieldProps = {
   hours: string
@@ -23,34 +24,71 @@ export const DurationField: React.FC<DurationFieldProps> = ({
   onChangeSeconds,
   normalizedLabel,
 }) => {
+  const theme = useTheme()
+
   return (
     <>
-      <ThemedText style={styles.label}>Duration</ThemedText>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.sm,
+          fontWeight: theme.typography.weights.semibold,
+          marginBottom: theme.spacing.xs,
+          color: theme.semantic.text.primary,
+        }}
+      >
+        Duration
+      </ThemedText>
 
       <View style={styles.durationContainer}>
         <View style={styles.timeRow}>
           <ThemedTextInput
-            style={[styles.input, styles.timeInput]}
+            style={[
+              styles.timeInput,
+              getInputStyle(theme),
+              { marginRight: theme.spacing.xs },
+            ]}
             value={hours}
             onChangeText={onChangeHours}
             placeholder="HH"
             keyboardType="number-pad"
             maxLength={2}
           />
-          <ThemedText style={styles.timeSeparator}>:</ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.lg,
+              fontWeight: theme.typography.weights.semibold,
+              color: theme.semantic.text.primary,
+              marginHorizontal: theme.spacing.xs,
+            }}
+          >
+            :
+          </ThemedText>
 
           <ThemedTextInput
-            style={[styles.input, styles.timeInput]}
+            style={[
+              styles.timeInput,
+              getInputStyle(theme),
+              { marginRight: theme.spacing.xs },
+            ]}
             value={minutes}
             onChangeText={onChangeMinutes}
             placeholder="MM"
             keyboardType="number-pad"
             maxLength={2}
           />
-          <ThemedText style={styles.timeSeparator}>:</ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.lg,
+              fontWeight: theme.typography.weights.semibold,
+              color: theme.semantic.text.primary,
+              marginHorizontal: theme.spacing.xs,
+            }}
+          >
+            :
+          </ThemedText>
 
           <ThemedTextInput
-            style={[styles.input, styles.timeInput]}
+            style={[styles.timeInput, getInputStyle(theme)]}
             value={seconds}
             onChangeText={onChangeSeconds}
             placeholder="SS"
@@ -59,9 +97,30 @@ export const DurationField: React.FC<DurationFieldProps> = ({
           />
         </View>
 
-        <View style={styles.totalTimeWrapper}>
-          <ThemedText style={styles.totalTimeLabel}>Total</ThemedText>
-          <ThemedText style={styles.totalTimeValue}>{normalizedLabel}</ThemedText>
+        <View
+          style={[
+            styles.totalTimeWrapper,
+            { marginLeft: theme.spacing.md },
+          ]}
+        >
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.xs,
+              color: theme.semantic.text.secondary,
+              marginBottom: theme.spacing.xs / 2,
+            }}
+          >
+            Total
+          </ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.md,
+              fontWeight: theme.typography.weights.semibold,
+              color: theme.semantic.text.primary,
+            }}
+          >
+            {normalizedLabel}
+          </ThemedText>
         </View>
       </View>
     </>
@@ -69,42 +128,22 @@ export const DurationField: React.FC<DurationFieldProps> = ({
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 6,
-    color: colors.charcoal,
-  },
   durationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.stone.light,
-    backgroundColor: colors.white,
-    padding: 12,
-    borderRadius: 8,
-    fontSize: 16,
-  },
   timeRow: { flexDirection: 'row', alignItems: 'center' },
-  timeInput: { width: 60, textAlign: 'center', marginRight: 4 },
-  timeSeparator: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginHorizontal: 6,
-    color: colors.charcoal,
-  },
-  totalTimeWrapper: { marginLeft: 16, alignItems: 'flex-start' },
-  totalTimeLabel: {
-    fontSize: 12,
-    color: colors.stone.light,
-    marginBottom: 2,
-  },
-  totalTimeValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.charcoal,
-  },
+  timeInput: { width: 60, textAlign: 'center', borderWidth: 1 },
+  totalTimeWrapper: { alignItems: 'flex-start' },
 })
+
+function getInputStyle(theme: ReturnType<typeof useTheme>) {
+  return {
+    borderColor: theme.semantic.border.default,
+    backgroundColor: theme.semantic.surface.card,
+    padding: theme.spacing.sm,
+    borderRadius: theme.radius.md,
+    fontSize: theme.typography.size.md,
+  }
+}

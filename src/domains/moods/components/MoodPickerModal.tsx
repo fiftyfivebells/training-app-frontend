@@ -1,9 +1,10 @@
 import React from 'react'
-import { Modal, View, FlatList, StyleSheet, Pressable } from 'react-native'
-import type { Mood } from '../moods.types'
-import { colors } from '@/theme/colors'
+import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
+import { useTheme } from '@/theme/ThemeProvider'
+
+import type { Mood } from '../moods.types'
 
 type Props = {
   visible: boolean
@@ -18,31 +19,84 @@ export const MoodPickerModal: React.FC<Props> = ({
   moods,
   onSelect,
 }) => {
+  const theme = useTheme()
+
   return (
     <Modal visible={visible} animationType="slide">
-      <View style={styles.container}>
-        <ThemedText style={styles.title}>Choose Your Mood</ThemedText>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: theme.semantic.surface.background,
+            padding: theme.spacing.lg,
+            paddingTop: theme.spacing.xl,
+          },
+        ]}
+      >
+        <ThemedText
+          style={{
+            fontSize: theme.typography.size.xl,
+            fontWeight: theme.typography.weights.bold,
+            marginBottom: theme.spacing.lg,
+            color: theme.semantic.text.primary,
+            textAlign: 'center',
+          }}
+        >
+          Choose Your Mood
+        </ThemedText>
 
         <FlatList
           data={moods}
           numColumns={3}
           keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.grid}
+          contentContainerStyle={styles.listContent}
           renderItem={({ item }) => (
             <Pressable
-              style={styles.moodTile}
+              style={[
+                styles.moodTile,
+                {
+                  margin: theme.spacing.xs,
+                  padding: theme.spacing.md,
+                  backgroundColor: theme.semantic.surface.card,
+                  borderRadius: theme.radius.md,
+                  borderColor: theme.semantic.border.default,
+                },
+              ]}
               onPress={() => {
                 onSelect(item)
                 onClose()
               }}
             >
-              <ThemedText style={styles.label}>{item.label}</ThemedText>
+              <ThemedText
+                style={{
+                  color: theme.semantic.text.primary,
+                  fontSize: theme.typography.size.sm,
+                }}
+              >
+                {item.label}
+              </ThemedText>
             </Pressable>
           )}
         />
 
-        <Pressable onPress={onClose} style={styles.closeButton}>
-          <ThemedText style={styles.closeText}>Close</ThemedText>
+        <Pressable
+          onPress={onClose}
+          style={[
+            styles.closeButton,
+            {
+              marginTop: theme.spacing.lg,
+              padding: theme.spacing.md,
+            },
+          ]}
+        >
+          <ThemedText
+            style={{
+              color: theme.semantic.button.primary.bg,
+              fontWeight: theme.typography.weights.semibold,
+            }}
+          >
+            Close
+          </ThemedText>
         </Pressable>
       </View>
     </Modal>
@@ -52,41 +106,16 @@ export const MoodPickerModal: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
-    padding: 20,
-    paddingTop: 60,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 20,
-    color: colors.charcoal,
-    textAlign: 'center',
-  },
-  grid: {
-    gap: 12,
+  listContent: {
+    gap: 0,
   },
   moodTile: {
     flex: 1,
-    margin: 6,
-    padding: 16,
-    backgroundColor: colors.white,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.stone.light,
     alignItems: 'center',
-  },
-  label: {
-    color: colors.charcoal,
-    fontSize: 14,
+    borderWidth: 1,
   },
   closeButton: {
-    marginTop: 20,
     alignSelf: 'center',
-    padding: 12,
-  },
-  closeText: {
-    color: colors.primary.DEFAULT,
-    fontWeight: '600',
   },
 })

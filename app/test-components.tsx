@@ -3,8 +3,9 @@ import { useState } from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { useTheme } from '@/theme/ThemeProvider'
+
 import { Button, Input, Select } from '../src/components/ui'
-import { colors, spacing } from '../src/theme'
 
 export default function TestComponentsScreen() {
   const [email, setEmail] = useState('')
@@ -19,9 +20,16 @@ export default function TestComponentsScreen() {
     }, 2000)
   }
 
+  const theme = useTheme()
+
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+    >
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{ padding: theme.spacing.lg }}
+      >
         <Input
           label="Email"
           placeholder="you@example.com"
@@ -77,12 +85,8 @@ export default function TestComponentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
   },
   scroll: {
     flex: 1,
-  },
-  content: {
-    padding: spacing.lg,
   },
 })

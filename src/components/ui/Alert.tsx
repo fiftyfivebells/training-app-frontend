@@ -1,4 +1,3 @@
-import { colors, spacing, typography } from '@theme/index'
 import React, { createContext, ReactNode, useContext, useState } from 'react'
 import {
   Alert as RNAlert,
@@ -8,6 +7,9 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+
+import { useTheme } from '@/theme/ThemeProvider'
+import type { Theme } from '@/theme/types'
 
 import { ThemedText } from './ThemedText'
 
@@ -31,6 +33,7 @@ const AlertContext = createContext<AlertContextType | null>(null)
 
 export function AlertProvider({ children }: { children: ReactNode }) {
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null)
+  const theme = useTheme()
 
   const alert = (title: string, message?: string, buttons?: AlertButton[]) => {
     if (Platform.OS === 'web') {
@@ -71,44 +74,78 @@ export function AlertProvider({ children }: { children: ReactNode }) {
           animationType="fade"
           onRequestClose={handleBackdropPress}
         >
-          <Pressable style={styles.backdrop} onPress={handleBackdropPress}>
+          <Pressable
+            style={[styles.backdrop, { backgroundColor: theme.modal.backdrop }]}
+            onPress={handleBackdropPress}
+          >
             <Pressable
               style={styles.alertContainer}
               onPress={(e) => {
                 e.stopPropagation()
               }}
             >
-              <View style={styles.alertCard}>
-                <ThemedText style={styles.title}>{alertConfig.title}</ThemedText>
+              <View style={[theme.modal.card, theme.modal.cardShadow]}>
+                <ThemedText
+                  style={{
+                    fontSize: theme.typography.size.xl,
+                    fontWeight: theme.typography.weights.bold,
+                    color: theme.semantic.text.primary,
+                    marginBottom: theme.spacing.sm,
+                    textAlign: 'center',
+                  }}
+                >
+                  {alertConfig.title}
+                </ThemedText>
                 {alertConfig.message && (
-                  <ThemedText style={styles.message}>{alertConfig.message}</ThemedText>
+                  <ThemedText
+                    style={{
+                      fontSize: theme.typography.size.md,
+                      color: theme.semantic.text.secondary,
+                      marginBottom: theme.spacing.lg,
+                      textAlign: 'center',
+                      lineHeight: theme.typography.size.md * 1.4,
+                    }}
+                  >
+                    {alertConfig.message}
+                  </ThemedText>
                 )}
 
                 <View style={styles.buttonContainer}>
-                  {(alertConfig.buttons || [{ text: 'OK' }]).map((button, index) => (
-                    <Pressable
-                      key={index}
-                      style={({ pressed }) => [
-                        styles.button,
-                        button.style === 'cancel' && styles.buttonCancel,
-                        button.style === 'destructive' && styles.buttonDestructive,
-                        pressed && styles.buttonPressed,
-                      ]}
-                      onPress={() => {
-                        handleButtonPress(button)
-                      }}
-                    >
-                      <ThemedText
-                        style={[
-                          styles.buttonText,
-                          button.style === 'cancel' && styles.buttonTextCancel,
-                          button.style === 'destructive' && styles.buttonTextDestructive,
+                  {(alertConfig.buttons || [{ text: 'OK' }]).map((button, index, arr) => {
+                    const variantStyles = getButtonVariantStyles(theme, button.style)
+                    return (
+                      <Pressable
+                        key={index}
+                        style={({ pressed }) => [
+                          styles.button,
+                          theme.buttons.base,
+                          variantStyles.container,
+                          {
+                            paddingVertical: theme.spacing.sm,
+                            paddingHorizontal: theme.spacing.md,
+                          },
+                          index < arr.length - 1 && { marginBottom: theme.spacing.sm },
+                          pressed && theme.buttons.states.pressed,
                         ]}
+                        onPress={() => {
+                          handleButtonPress(button)
+                        }}
                       >
-                        {button.text}
-                      </ThemedText>
-                    </Pressable>
-                  ))}
+                        <ThemedText
+                          style={[
+                            {
+                              fontSize: theme.typography.size.md,
+                              fontWeight: theme.typography.weights.semibold,
+                              textAlign: 'center',
+                            },
+                            variantStyles.text,
+                          ]}
+                        >
+                          {button.text}
+                        </ThemedText>
+                      </Pressable>
+                    )
+                  })}
                 </View>
               </View>
             </Pressable>
@@ -130,7 +167,6 @@ export function useAlert() {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -138,61 +174,38 @@ const styles = StyleSheet.create({
     width: '90%',
     maxWidth: 400,
   },
-  alertCard: {
-    backgroundColor: colors.cream,
-    borderRadius: 12,
-    padding: spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  title: {
-    fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.bold,
-    color: colors.brown.DEFAULT,
-    marginBottom: spacing.sm,
-    textAlign: 'center',
-  },
-  message: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.lg,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
   buttonContainer: {
-    gap: spacing.sm,
+    width: '100%',
   },
   button: {
-    backgroundColor: colors.brown.DEFAULT,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonCancel: {
-    backgroundColor: colors.stone.light,
-  },
-  buttonDestructive: {
-    backgroundColor: '#DC2626',
-  },
-  buttonPressed: {
-    opacity: 0.8,
-  },
-  buttonText: {
-    color: colors.cream,
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-  },
-  buttonTextCancel: {
-    color: colors.brown.DEFAULT,
-  },
-  buttonTextDestructive: {
-    color: colors.cream,
+    width: '100%',
   },
 })
+
+function getButtonVariantStyles(theme: Theme, variant?: AlertButton['style']) {
+  switch (variant) {
+    case 'cancel':
+      return {
+        container: {
+          backgroundColor: theme.semantic.surface.cardAlt,
+        },
+        text: {
+          color: theme.semantic.text.primary,
+        },
+      }
+    case 'destructive':
+      return {
+        container: {
+          backgroundColor: theme.semantic.mood.highTough.border,
+        },
+        text: {
+          color: theme.semantic.text.inverse,
+        },
+      }
+    default:
+      return {
+        container: theme.buttons.variants.secondary.container,
+        text: theme.buttons.variants.secondary.text,
+      }
+  }
+}

@@ -1,12 +1,11 @@
-import Constants from 'expo-constants'
-import { refreshAccessToken } from '@/lib/api/refreshManager'
-
 import { notifyLogout } from '@/domains/auth/context/authEvents'
-
+import { refreshAccessToken } from '@/lib/api/refreshManager'
+import { Platform } from 'react-native'
 import { tokenStorage } from '../../domains/auth/utils/tokenStorage'
 import { ApiError } from './error'
 
-const API_BASE_URL = '' //Constants.expoConfig?.extra?.apiBaseUrl ?? 'http://localhost:8080'
+// TODO: this is just for development. I need to go back to the env var for production
+const API_BASE_URL = Platform.OS === 'web' ? '' : 'http://192.168.0.215:8080' //Constants.expoConfig?.extra?.apiBaseUrl ?? 'http://localhost:8080'
 
 export abstract class BaseApiClient {
   protected baseUrl: string
@@ -18,6 +17,7 @@ export abstract class BaseApiClient {
   }
 
   protected async makeRequest<T>(path: string, options?: RequestInit): Promise<T> {
+    console.log('API Base URL:', API_BASE_URL)
     const url = `${this.baseUrl}${this.apiVersion}/${path}`
     const accessToken = await tokenStorage.getAccessToken()
 
@@ -32,6 +32,7 @@ export abstract class BaseApiClient {
     }
 
     const attemptRequest = async (): Promise<Response> => {
+      console.log('Making API request to:', url, requestOptions)
       return fetch(url, requestOptions)
     }
 

@@ -2,12 +2,11 @@ import { tokenStorage } from '@domains/auth/utils/tokenStorage'
 import { useGetCurrentUser } from '@domains/users/hooks'
 import { type User, userResponseToUser } from '@domains/users/users.types'
 import { useQueryClient } from '@tanstack/react-query'
-import { Platform } from 'react-native'
 import { router } from 'expo-router'
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { Platform } from 'react-native'
 
 import { authClient } from '../api/authClient'
-import { useLogin } from '../hooks'
 import { getDeviceInfo } from '../utils/deviceInfoHelper'
 import { registerLogoutHandler } from './authEvents'
 
@@ -34,6 +33,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     ;(async () => {
+      console.log('auth bootstrap', {
+        accessToken: await tokenStorage.getAccessToken(),
+        refreshToken: await tokenStorage.getRefreshToken(),
+      })
       const token = await tokenStorage.getAccessToken()
       if (!token) {
         setIsLoading(false)

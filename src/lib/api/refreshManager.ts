@@ -1,5 +1,5 @@
-import { tokenStorage } from '@/domains/auth/utils/tokenStorage'
 import { notifyLogout } from '@/domains/auth/context/authEvents'
+import { tokenStorage } from '@/domains/auth/utils/tokenStorage'
 
 let refreshPromise: Promise<string | null> | null = null
 

@@ -1,42 +1,37 @@
 import type { Theme } from './types'
 
 //
-// 1. RAW PALETTE — New England Clubhouse
+// 1. RAW PALETTE — Autumn Road Classic
 //
 const colors = {
   // Core palette
-  navy: '#1E293B',
-  leather: '#8B5A3C',
-  brass: '#CBB893',
-  brick: '#C2564A',
+  fog: '#F7F5EF',
+  moss: '#324739',
+  pumpkin: '#C7704A',
+  hillside: '#7B8F7A',
+  taupe: '#C2B8A3',
 
-  // Surfaces
-  creamLight: '#F5F3EF',
-  cream: '#EDE8E1',
-  creamDark: '#E5DCD0',
+  // Neutrals
+  ink: '#2E2A25',
+  creamDark: '#DAD2C4',
   white: '#FFFFFF',
 
-  // Text
-  ink: '#111827',
-  stone: '#6B5D4F',
-  stoneMuted: '#958B80',
+  // Mood palette (earthy + seasonal)
+  highGreatBg: '#F6F1E8',
+  highGreatBorder: '#C7704A',
+  highGreatText: '#9A5739',
 
-  // Mood colors (heritage, desaturated)
-  moodRelaxedGreatBg: '#E9F5EF',
-  moodRelaxedGreatBorder: '#6BAA89',
-  moodRelaxedGreatText: '#355E49',
+  highToughBg: '#F4EDEA',
+  highToughBorder: '#9A725E',
+  highToughText: '#6A4E3F',
 
-  moodRelaxedGoodBg: '#EFF4EA',
-  moodRelaxedGoodBorder: '#8BAA84',
-  moodRelaxedGoodText: '#4A5E3F',
+  lowGreatBg: '#EEF4EF',
+  lowGreatBorder: '#7B8F7A',
+  lowGreatText: '#4C5E4C',
 
-  moodHighToughBg: '#FCECEA',
-  moodHighToughBorder: '#C2564A',
-  moodHighToughText: '#732F23',
-
-  moodTiredProudBg: '#F5EFEA',
-  moodTiredProudBorder: '#8B5A3C',
-  moodTiredProudText: '#4B2F20',
+  lowToughBg: '#F3F0EC',
+  lowToughBorder: '#AFA79B',
+  lowToughText: '#6B645B',
 
   black: '#000000',
   transparent: 'transparent',
@@ -47,52 +42,52 @@ const colors = {
 //
 const semantic = {
   surface: {
-    background: colors.creamLight,
+    background: colors.fog,
     card: colors.white,
-    cardAlt: colors.cream,
-    header: colors.navy,
+    cardAlt: colors.taupe,
+    header: colors.moss,
     modal: colors.white,
   },
   text: {
     primary: colors.ink,
-    secondary: colors.stone,
-    muted: colors.stoneMuted,
-    inverse: colors.creamLight,
-    header: colors.creamLight,
+    secondary: colors.hillside,
+    muted: colors.taupe,
+    inverse: colors.fog,
+    header: colors.fog,
   },
   border: {
     default: colors.creamDark,
-    strong: colors.leather,
+    strong: colors.moss,
   },
   button: {
-    primary: { bg: colors.brick, text: colors.white },
-    secondary: { bg: colors.transparent, text: colors.navy, border: colors.navy },
-    subtle: { bg: colors.cream, text: colors.navy },
+    primary: { bg: colors.pumpkin, text: colors.white },
+    secondary: { bg: colors.transparent, text: colors.moss, border: colors.moss },
+    subtle: { bg: colors.taupe, text: colors.moss },
   },
   chip: {
-    default: { bg: colors.cream, text: colors.navy },
-    brass: { bg: colors.brass + '22', text: colors.leather },
+    default: { bg: colors.taupe, text: colors.moss },
+    brass: { bg: colors.hillside + '33', text: colors.moss },
   },
   mood: {
     highGreat: {
-      bg: colors.moodRelaxedGreatBg,
-      border: colors.moodRelaxedGreatBorder,
-      text: colors.moodRelaxedGreatText,
+      bg: colors.highGreatBg,
+      border: colors.highGreatBorder,
+      text: colors.highGreatText,
     },
     highTough: {
-      bg: colors.moodHighToughBg,
-      border: colors.moodHighToughBorder,
-      text: colors.moodHighToughText,
+      bg: colors.highToughBg,
+      border: colors.highToughBorder,
+      text: colors.highToughText,
     },
     lowGreat: {
-      bg: colors.moodRelaxedGoodBg,
-      border: colors.moodRelaxedGoodBorder,
-      text: colors.moodRelaxedGoodText,
+      bg: colors.lowGreatBg,
+      border: colors.lowGreatBorder,
+      text: colors.lowGreatText,
     },
     lowTough: {
-      bg: colors.moodTiredProudBg,
-      border: colors.moodTiredProudBorder,
-      text: colors.moodTiredProudText,
+      bg: colors.lowToughBg,
+      border: colors.lowToughBorder,
+      text: colors.lowToughText,
     },
   },
 }
@@ -126,7 +121,7 @@ const shadow = {
   card: {
     ios: {
       shadowColor: '#000',
-      shadowOpacity: 0.07,
+      shadowOpacity: 0.06,
       shadowRadius: 6,
       shadowOffset: { width: 0, height: 3 },
     },
@@ -169,7 +164,7 @@ const buttons = {
     },
     secondary: {
       container: {
-        backgroundColor: semantic.button.secondary.bg,
+        backgroundColor: colors.transparent,
         borderWidth: 2,
         borderColor: semantic.button.secondary.border,
       },
@@ -248,7 +243,7 @@ const modal = {
 //
 // 5. EXPORT
 //
-export const clubhouseTheme: Theme = {
+export const autumnRoadTheme: Theme = {
   colors,
   semantic,
   spacing,

@@ -1,13 +1,16 @@
 import '@/lib/api/setup'
+
 import { useRouter } from 'expo-router'
 import { useEffect } from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
+
+import { useTheme } from '@/theme/ThemeProvider'
 
 import { tokenStorage } from '../src/domains/auth/utils/tokenStorage'
-import { colors } from '../src/theme'
 
 export default function Index() {
   const router = useRouter()
+  const theme = useTheme()
 
   useEffect(() => {
     checkAuth()
@@ -29,14 +32,20 @@ export default function Index() {
 
   return (
     <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.cream,
-      }}
+      style={[
+        styles.container,
+        { backgroundColor: theme.semantic.surface.background },
+      ]}
     >
-      <ActivityIndicator size="large" color={colors.primary.DEFAULT} />
+      <ActivityIndicator size="large" color={theme.semantic.button.primary.bg} />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+})

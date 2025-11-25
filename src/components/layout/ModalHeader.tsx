@@ -1,8 +1,9 @@
-import React from 'react'
-import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { Feather } from '@expo/vector-icons'
+import React from 'react'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
+
 import { ThemedText } from '@/components/ui/ThemedText'
-import { colors, spacing, typography } from '@/theme'
+import { useTheme } from '@/theme/ThemeProvider'
 
 type Props = {
   title: string
@@ -10,12 +11,22 @@ type Props = {
 }
 
 export function ModalHeader({ title, onClose }: Props) {
-  return (
-    <View style={styles.header}>
-      <ThemedText style={styles.title}>{title}</ThemedText>
+  const theme = useTheme()
 
-      <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-        <Feather name="x" size={28} color={colors.charcoal} />
+  return (
+    <View style={[styles.header, { marginBottom: theme.spacing.lg }]}>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.xxl,
+          fontWeight: theme.typography.weights.bold,
+          color: theme.semantic.text.primary,
+        }}
+      >
+        {title}
+      </ThemedText>
+
+      <TouchableOpacity onPress={onClose} style={{ padding: theme.spacing.xs }}>
+        <Feather name="x" size={28} color={theme.semantic.text.primary} />
       </TouchableOpacity>
     </View>
   )
@@ -26,14 +37,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  title: {
-    fontSize: typography.sizes['2xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.brown.DEFAULT,
-  },
-  closeBtn: {
-    padding: spacing.xs,
   },
 })

@@ -1,3 +1,5 @@
+import type { TextStyle } from 'react-native'
+
 export type Theme = {
   colors: Record<string, string>
 
@@ -37,7 +39,7 @@ export type Theme = {
 
   typography: {
     fontFamily: string
-    weights: Record<string, string | number>
+    weights: Record<string, TextStyle['fontWeight']>
     size: Record<string, number>
   }
 

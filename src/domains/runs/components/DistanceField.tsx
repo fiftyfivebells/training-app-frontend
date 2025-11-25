@@ -1,9 +1,10 @@
+import type { DistanceUnit } from '@domains/runs/utils/distance'
 import React from 'react'
-import { View, StyleSheet, Pressable } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
+
 import { ThemedText } from '@/components/ui/ThemedText'
 import { ThemedTextInput } from '@/components/ui/ThemedTextInput'
-import { colors } from '@/theme'
-import type { DistanceUnit } from '@domains/runs/utils/distance'
+import { useTheme } from '@/theme/ThemeProvider'
 
 type DistanceFieldProps = {
   distance: string
@@ -18,27 +19,79 @@ export const DistanceField: React.FC<DistanceFieldProps> = ({
   onChangeDistance,
   onChangeUnit,
 }) => {
+  const theme = useTheme()
+
   return (
     <>
-      <ThemedText style={styles.label}>Distance</ThemedText>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.sm,
+          fontWeight: theme.typography.weights.semibold,
+          marginBottom: theme.spacing.xs,
+          color: theme.semantic.text.primary,
+        }}
+      >
+        Distance
+      </ThemedText>
       <View style={styles.row}>
         <ThemedTextInput
-          style={[styles.input, styles.distanceInput]}
+          style={[
+            styles.distanceInput,
+            {
+              marginRight: theme.spacing.md,
+              borderColor: theme.semantic.border.default,
+              backgroundColor: theme.semantic.surface.card,
+              padding: theme.spacing.sm,
+              borderRadius: theme.radius.md,
+              fontSize: theme.typography.size.md,
+            },
+          ]}
           value={distance}
           onChangeText={onChangeDistance}
           placeholder="5.2"
           keyboardType="numeric"
         />
 
-        <View style={styles.unitPicker}>
+        <View
+          style={[
+            styles.unitPicker,
+            {
+              backgroundColor: theme.semantic.surface.card,
+              borderRadius: theme.radius.md,
+              borderColor: theme.semantic.border.default,
+            },
+          ]}
+        >
           {(['miles', 'km', 'meters'] as DistanceUnit[]).map((u) => (
             <Pressable
               key={u}
-              onPress={() => onChangeUnit(u)}
-              style={[styles.unitOption, unit === u && styles.unitOptionSelected]}
+              onPress={() => {
+                onChangeUnit(u)
+              }}
+              style={[
+                styles.unitOption,
+                u === 'meters' && styles.lastUnitOption,
+                {
+                  borderRightColor: theme.semantic.border.default,
+                  paddingVertical: theme.spacing.xs,
+                  paddingHorizontal: theme.spacing.sm,
+                },
+                unit === u && {
+                  backgroundColor: theme.semantic.button.primary.bg,
+                },
+              ]}
             >
               <ThemedText
-                style={[styles.unitText, unit === u && styles.unitTextSelected]}
+                style={[
+                  {
+                    fontSize: theme.typography.size.sm,
+                    color: theme.semantic.text.primary,
+                  },
+                  unit === u && {
+                    color: theme.semantic.button.primary.text,
+                    fontWeight: theme.typography.weights.semibold,
+                  },
+                ]}
               >
                 {u === 'miles' ? 'mi' : u === 'km' ? 'km' : 'm'}
               </ThemedText>
@@ -51,45 +104,13 @@ export const DistanceField: React.FC<DistanceFieldProps> = ({
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 6,
-    color: colors.charcoal,
-  },
   row: { flexDirection: 'row', alignItems: 'center' },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.stone.light,
-    backgroundColor: colors.white,
-    padding: 12,
-    borderRadius: 8,
-    fontSize: 16,
-  },
-  distanceInput: { flex: 1, marginRight: 12 },
+  distanceInput: { flex: 1, borderWidth: 1 },
   unitPicker: {
     flexDirection: 'row',
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.stone.light,
     overflow: 'hidden',
+    borderWidth: 1,
   },
-  unitOption: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRightWidth: 1,
-    borderRightColor: colors.stone.light,
-  },
-  unitOptionSelected: {
-    backgroundColor: colors.primary.light,
-  },
-  unitText: {
-    fontSize: 14,
-    color: colors.charcoal,
-  },
-  unitTextSelected: {
-    color: colors.white,
-    fontWeight: '600',
-  },
+  unitOption: { flex: 1, borderRightWidth: 1 },
+  lastUnitOption: { borderRightWidth: 0 },
 })

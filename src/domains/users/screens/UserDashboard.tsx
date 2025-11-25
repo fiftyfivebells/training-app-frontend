@@ -4,7 +4,6 @@ import {
   formatRunsAsActivities,
 } from '@domains/users/utils/dashboard'
 import { Feather } from '@expo/vector-icons'
-import { colors, spacing, typography } from '@theme/index'
 import { useRouter } from 'expo-router'
 import React, { ReactNode, useCallback, useMemo } from 'react'
 import {
@@ -16,6 +15,10 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { ThemedText } from '@/components/ui/ThemedText'
+import { useAuthContext } from '@/domains/auth/context/AuthContext'
+import { useTheme } from '@/theme/ThemeProvider'
+
 import {
   DailyAffirmation,
   QuickActionCard,
@@ -23,8 +26,6 @@ import {
   StatCard,
   WelcomeHeader,
 } from '../components'
-import { ThemedText } from '@/components/ui/ThemedText'
-import { useAuthContext } from '@/domains/auth/context/AuthContext'
 
 type StatCardConfig = {
   key: string
@@ -38,6 +39,7 @@ type StatCardConfig = {
 export function UserDashboard() {
   const router = useRouter()
   const { user, isLoading: isLoadingAuth } = useAuthContext()
+  const theme = useTheme()
   const {
     data: runs,
     isLoading: isLoadingRuns,
@@ -84,66 +86,87 @@ export function UserDashboard() {
   const quickActions = useMemo(
     () => [
       {
-        icon: <Feather name="plus-circle" size={24} color={colors.primary.DEFAULT} />,
+        icon: (
+          <Feather
+            name="plus-circle"
+            size={24}
+            color={theme.semantic.button.primary.bg}
+          />
+        ),
         label: 'Log a Run',
         description: 'Record your latest training session',
         onPress: handleLogRun,
       },
       {
-        icon: <Feather name="list" size={24} color={colors.primary.DEFAULT} />,
+        icon: <Feather name="list" size={24} color={theme.semantic.button.primary.bg} />,
         label: 'View All Runs',
         description: 'See your complete training history',
         onPress: handleViewRuns,
       },
       {
-        icon: <Feather name="grid" size={24} color={colors.primary.DEFAULT} />,
+        icon: <Feather name="grid" size={24} color={theme.semantic.button.primary.bg} />,
         label: 'Manage Block',
         description: 'Update your current training block',
         onPress: handleManageBlocks,
       },
     ],
-    [handleLogRun, handleViewRuns, handleManageBlocks],
+    [handleLogRun, handleViewRuns, handleManageBlocks, theme],
   )
 
   const statCards: StatCardConfig[] = useMemo(
     () => [
       {
         key: 'weeklyRuns',
-        icon: <Feather name="activity" size={28} color={colors.primary.DEFAULT} />,
+        icon: (
+          <Feather name="activity" size={28} color={theme.semantic.button.primary.bg} />
+        ),
         label: 'Runs This Week',
         value: stats.weeklyRuns,
         variant: 'accent' as const,
       },
       {
         key: 'weeklyDistance',
-        icon: <Feather name="map" size={28} color={colors.brown.DEFAULT} />,
+        icon: <Feather name="map" size={28} color={theme.semantic.text.primary} />,
         label: 'Weekly Distance',
         value: `${stats.weeklyDistance} km`,
       },
       {
         key: 'currentStreak',
-        icon: <Feather name="zap" size={28} color={colors.success} />,
+        icon: (
+          <Feather name="zap" size={28} color={theme.semantic.mood.highGreat.border} />
+        ),
         label: 'Current Streak',
         value: `${stats.currentStreak} days`,
       },
       {
         key: 'totalRuns',
-        icon: <Feather name="award" size={28} color={colors.stone.DEFAULT} />,
+        icon: <Feather name="award" size={28} color={theme.semantic.text.secondary} />,
         label: 'Total Runs',
         value: stats.totalRuns,
       },
     ],
-    [stats],
+    [stats, theme],
   )
 
   const hasRuns = Boolean(runs && runs.length > 0)
 
   if (isLoadingAuth || isLoadingRuns) {
     return (
-      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+        edges={['top', 'left', 'right']}
+      >
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary.DEFAULT} />
-          <ThemedText style={styles.loadingText}>Loading dashboard...</ThemedText>
+          <ActivityIndicator size="large" color={theme.semantic.button.primary.bg} />
+          <ThemedText
+            style={{
+              marginTop: theme.spacing.md,
+              fontSize: theme.typography.size.md,
+              color: theme.semantic.text.secondary,
+            }}
+          >
+            Loading dashboard...
+          </ThemedText>
         </View>
       </SafeAreaView>
     )
@@ -156,12 +179,52 @@ export function UserDashboard() {
         : 'Unable to load your training data right now.'
 
     return (
-      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-        <View style={styles.errorContainer}>
-          <ThemedText style={styles.errorTitle}>Something went wrong</ThemedText>
-          <ThemedText style={styles.errorMessage}>{errorMessage}</ThemedText>
-          <TouchableOpacity style={styles.primaryButton} onPress={() => refetchRuns}>
-            <ThemedText style={styles.primaryButtonText}>Try again</ThemedText>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+        edges={['top', 'left', 'right']}
+      >
+        <View style={[styles.errorContainer, { padding: theme.spacing.xl }]}>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.xxl,
+              fontWeight: theme.typography.weights.bold,
+              color: theme.semantic.text.primary,
+              marginBottom: theme.spacing.sm,
+              textAlign: 'center',
+            }}
+          >
+            Something went wrong
+          </ThemedText>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.md,
+              color: theme.semantic.text.secondary,
+              marginBottom: theme.spacing.lg,
+              textAlign: 'center',
+            }}
+          >
+            {errorMessage}
+          </ThemedText>
+          <TouchableOpacity
+            style={[
+              theme.buttons.base,
+              theme.buttons.variants.primary.container,
+              theme.buttons.sizes.md,
+            ]}
+            onPress={() => refetchRuns()}
+          >
+            <ThemedText
+              style={[
+                {
+                  fontSize: theme.typography.size.md,
+                  fontWeight: theme.typography.weights.semibold,
+                  textAlign: 'center',
+                },
+                theme.buttons.variants.primary.text,
+              ]}
+            >
+              Try again
+            </ThemedText>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -169,24 +232,40 @@ export function UserDashboard() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+      edges={['top', 'left', 'right']}
+    >
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{
+          padding: theme.spacing.lg,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <WelcomeHeader userName={user?.firstName || 'Runner'} />
 
-        <View style={styles.section}>
+        <View style={{ marginBottom: theme.spacing.lg }}>
           <DailyAffirmation
             affirmation={affirmation.text}
             blockName={affirmation.blockName}
           />
         </View>
 
-        <View style={styles.statsGrid}>
+        <View
+          style={[
+            styles.statsGrid,
+            {
+              marginHorizontal: -theme.spacing.sm,
+              marginBottom: theme.spacing.lg,
+            },
+          ]}
+        >
           {statCards.map((card) => (
-            <View key={card.key} style={styles.statCardWrapper}>
+            <View
+              key={card.key}
+              style={[styles.statCardWrapper, { padding: theme.spacing.sm }]}
+            >
               <StatCard
                 icon={card.icon}
                 label={card.label}
@@ -199,20 +278,73 @@ export function UserDashboard() {
         </View>
 
         {!hasRuns && (
-          <View style={styles.emptyState}>
-            <ThemedText style={styles.emptyStateTitle}>No runs yet</ThemedText>
-            <ThemedText style={styles.emptyStateText}>
+          <View
+            style={[
+              styles.emptyCard,
+              {
+                backgroundColor: theme.semantic.surface.card,
+                borderRadius: theme.radius.lg,
+                borderColor: theme.semantic.border.default,
+                padding: theme.spacing.xl,
+                marginBottom: theme.spacing.lg,
+              },
+            ]}
+          >
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.lg,
+                fontWeight: theme.typography.weights.bold,
+                color: theme.semantic.text.primary,
+                marginBottom: theme.spacing.sm,
+              }}
+            >
+              No runs yet
+            </ThemedText>
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.md,
+                color: theme.semantic.text.secondary,
+                marginBottom: theme.spacing.md,
+              }}
+            >
               Log your first training session to unlock personalized insights.
             </ThemedText>
-            <TouchableOpacity style={styles.primaryButton} onPress={handleLogRun}>
-              <ThemedText style={styles.primaryButtonText}>Log a run</ThemedText>
+            <TouchableOpacity
+              style={[
+                theme.buttons.base,
+                theme.buttons.variants.primary.container,
+                theme.buttons.sizes.md,
+              ]}
+              onPress={handleLogRun}
+            >
+              <ThemedText
+                style={[
+                  {
+                    fontSize: theme.typography.size.md,
+                    fontWeight: theme.typography.weights.semibold,
+                    textAlign: 'center',
+                  },
+                  theme.buttons.variants.primary.text,
+                ]}
+              >
+                Log a run
+              </ThemedText>
             </TouchableOpacity>
           </View>
         )}
 
         <View style={styles.contentGrid}>
-          <View style={styles.quickActionsSection}>
-            <ThemedText style={styles.sectionTitle}>Quick Actions</ThemedText>
+          <View style={[styles.quickActionsSection, { marginBottom: theme.spacing.lg }]}>
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.xl,
+                fontWeight: theme.typography.weights.semibold,
+                color: theme.semantic.text.primary,
+                marginBottom: theme.spacing.md,
+              }}
+            >
+              Quick Actions
+            </ThemedText>
             {quickActions.map((action) => (
               <QuickActionCard
                 key={action.label}
@@ -236,100 +368,30 @@ export function UserDashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
   },
   scrollView: {
     flex: 1,
-  },
-  scrollContent: {
-    padding: spacing.lg,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingText: {
-    marginTop: spacing.md,
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.xl,
   },
-  errorTitle: {
-    fontSize: typography.sizes['2xl'],
-    fontWeight: typography.weights.bold,
-    color: colors.charcoal,
-    marginBottom: spacing.sm,
-    textAlign: 'center',
-  },
-  errorMessage: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.lg,
-    textAlign: 'center',
-  },
-  primaryButton: {
-    backgroundColor: colors.primary.DEFAULT,
-    borderRadius: 999,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xl,
-  },
-  primaryButtonText: {
-    color: colors.white,
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-    textAlign: 'center',
-  },
-  section: {
-    marginBottom: spacing.lg,
-  },
+  emptyCard: { borderWidth: 1 },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -spacing.sm,
-    marginBottom: spacing.lg,
   },
-  statCardWrapper: {
-    width: '50%',
-    padding: spacing.sm,
-  },
-  sectionTitle: {
-    fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.semibold,
-    color: colors.charcoal,
-    marginBottom: spacing.md,
-  },
-  contentGrid: {
-    gap: spacing.lg,
-  },
+  statCardWrapper: { width: '50%' },
   quickActionsSection: {
     flex: 1,
   },
   activitySection: {
     flex: 1,
-  },
-  emptyState: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.sand,
-    padding: spacing.xl,
-    marginBottom: spacing.lg,
-  },
-  emptyStateTitle: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.bold,
-    color: colors.charcoal,
-    marginBottom: spacing.sm,
-  },
-  emptyStateText: {
-    fontSize: typography.sizes.base,
-    color: colors.stone.DEFAULT,
-    marginBottom: spacing.md,
   },
 })

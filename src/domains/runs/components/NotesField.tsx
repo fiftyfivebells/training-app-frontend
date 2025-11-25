@@ -1,8 +1,9 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
+
 import { ThemedText } from '@/components/ui/ThemedText'
 import { ThemedTextInput } from '@/components/ui/ThemedTextInput'
-import { colors } from '@/theme'
+import { useTheme } from '@/theme/ThemeProvider'
 
 type NotesFieldProps = {
   value: string
@@ -10,11 +11,31 @@ type NotesFieldProps = {
 }
 
 export const NotesField: React.FC<NotesFieldProps> = ({ value, onChange }) => {
+  const theme = useTheme()
+
   return (
     <>
-      <ThemedText style={styles.label}>Notes (optional)</ThemedText>
+      <ThemedText
+        style={{
+          fontSize: theme.typography.size.sm,
+          fontWeight: theme.typography.weights.semibold,
+          marginBottom: theme.spacing.xs,
+          color: theme.semantic.text.primary,
+        }}
+      >
+        Notes (optional)
+      </ThemedText>
       <ThemedTextInput
-        style={[styles.input, styles.notesInput]}
+        style={[
+          styles.notesInput,
+          {
+            borderColor: theme.semantic.border.default,
+            backgroundColor: theme.semantic.surface.card,
+            padding: theme.spacing.md,
+            borderRadius: theme.radius.md,
+            fontSize: theme.typography.size.md,
+          },
+        ]}
         value={value}
         onChangeText={onChange}
         placeholder="Any details about the run..."
@@ -25,22 +46,9 @@ export const NotesField: React.FC<NotesFieldProps> = ({ value, onChange }) => {
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 6,
-    color: colors.charcoal,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.stone.light,
-    backgroundColor: colors.white,
-    padding: 12,
-    borderRadius: 8,
-    fontSize: 16,
-  },
   notesInput: {
     height: 120,
     textAlignVertical: 'top',
+    borderWidth: 1,
   },
 })
