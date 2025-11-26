@@ -388,6 +388,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   statCardWrapper: { width: '50%' },
+  contentGrid: {
+    flex: 1,
+  },
   quickActionsSection: {
     flex: 1,
   },

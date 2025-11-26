@@ -20,7 +20,6 @@ export default function RunDetailModal() {
   const { alert } = useAlert()
 
   const { data: run, isLoading } = useRun(runId)
-
   const { data: moods } = useGetAllMoods()
   const deleteRun = useDeleteRun()
   const theme = useTheme()
@@ -29,9 +28,11 @@ export default function RunDetailModal() {
     router.replace('/runs')
   }
 
+  const visible = true
+
   if (isLoading) {
     return (
-      <AppModal onClose={close}>
+      <AppModal visible={visible} onClose={close}>
         <ActivityIndicator
           style={{ marginTop: theme.spacing.xl }}
           color={theme.semantic.button.primary.bg}
@@ -42,7 +43,7 @@ export default function RunDetailModal() {
 
   if (!run) {
     return (
-      <AppModal onClose={close}>
+      <AppModal visible={visible} onClose={close}>
         <ModalHeader title="Run Details" onClose={close} />
         <ThemedText>Unable to load this run.</ThemedText>
       </AppModal>
@@ -70,7 +71,7 @@ export default function RunDetailModal() {
   }
 
   return (
-    <AppModal onClose={close}>
+    <AppModal visible={visible} onClose={close}>
       <ModalHeader title="Run Details" onClose={close} />
 
       <ThemedText
@@ -107,12 +108,7 @@ export default function RunDetailModal() {
         </View>
       )}
 
-      <View
-        style={[
-          styles.sectionRow,
-          { marginBottom: theme.spacing.lg },
-        ]}
-      >
+      <View style={[styles.sectionRow, { marginBottom: theme.spacing.lg }]}>
         <View style={[styles.section, { marginRight: theme.spacing.lg }]}>
           <ThemedText
             style={{
@@ -181,10 +177,10 @@ export default function RunDetailModal() {
       <TouchableOpacity
         onPress={handleDelete}
         style={[
-          styles.deleteButton,
           theme.buttons.base,
           theme.buttons.variants.secondary.container,
           theme.buttons.sizes.md,
+          styles.deleteButton,
           { marginTop: theme.spacing.xl },
         ]}
       >
