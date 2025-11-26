@@ -1,45 +1,40 @@
-import type { Theme } from './types'
+import type { Theme } from '../types'
 
 //
-// 1. RAW PALETTE — New England Clubhouse
+// 1. RAW PALETTE — Verde Modern
 //
 const colors = {
-  // Core palette
-  navy: '#1E293B',
-  leather: '#8B5A3C',
-  brass: '#CBB893',
-  brick: '#C2564A',
+  // Core modern green palette
+  forest: '#1E473B',
+  verdant: '#4FAF8F',
+  mistWhite: '#FAFCFA',
+  sage: '#DDECE4',
+  ink: '#1A1C1C',
 
-  // Surfaces
-  creamLight: '#F5F3EF',
-  cream: '#EDE8E1',
-  creamDark: '#E5DCD0',
+  // Supporting neutrals
+  borderLight: '#D1D5DB',
+  borderMid: '#94A3A2',
+
   white: '#FFFFFF',
-
-  // Text
-  ink: '#111827',
-  stone: '#6B5D4F',
-  stoneMuted: '#958B80',
-
-  // Mood colors (heritage, desaturated)
-  moodRelaxedGreatBg: '#E9F5EF',
-  moodRelaxedGreatBorder: '#6BAA89',
-  moodRelaxedGreatText: '#355E49',
-
-  moodRelaxedGoodBg: '#EFF4EA',
-  moodRelaxedGoodBorder: '#8BAA84',
-  moodRelaxedGoodText: '#4A5E3F',
-
-  moodHighToughBg: '#FCECEA',
-  moodHighToughBorder: '#C2564A',
-  moodHighToughText: '#732F23',
-
-  moodTiredProudBg: '#F5EFEA',
-  moodTiredProudBorder: '#8B5A3C',
-  moodTiredProudText: '#4B2F20',
-
   black: '#000000',
   transparent: 'transparent',
+
+  // Mood palette (clean, modern, green-forward)
+  moodHighGreatBg: '#E6F5F0',
+  moodHighGreatBorder: '#4FAF8F',
+  moodHighGreatText: '#1E473B',
+
+  moodHighToughBg: '#F2F5F3',
+  moodHighToughBorder: '#A3B2A8',
+  moodHighToughText: '#55635B',
+
+  moodLowGreatBg: '#EEF7F2',
+  moodLowGreatBorder: '#66C2A6',
+  moodLowGreatText: '#1E473B',
+
+  moodLowToughBg: '#F3F4F4',
+  moodLowToughBorder: '#C5CBC8',
+  moodLowToughText: '#6D746F',
 }
 
 //
@@ -47,37 +42,37 @@ const colors = {
 //
 const semantic = {
   surface: {
-    background: colors.creamLight,
+    background: colors.mistWhite,
     card: colors.white,
-    cardAlt: colors.cream,
-    header: colors.navy,
+    cardAlt: colors.sage,
+    header: colors.forest,
     modal: colors.white,
   },
   text: {
     primary: colors.ink,
-    secondary: colors.stone,
-    muted: colors.stoneMuted,
-    inverse: colors.creamLight,
-    header: colors.creamLight,
+    secondary: colors.forest,
+    muted: colors.borderMid,
+    inverse: colors.mistWhite,
+    header: colors.mistWhite,
   },
   border: {
-    default: colors.creamDark,
-    strong: colors.leather,
+    default: colors.borderLight,
+    strong: colors.forest,
   },
   button: {
-    primary: { bg: colors.brick, text: colors.white },
-    secondary: { bg: colors.transparent, text: colors.navy, border: colors.navy },
-    subtle: { bg: colors.cream, text: colors.navy },
+    primary: { bg: colors.forest, text: colors.mistWhite },
+    secondary: { bg: colors.transparent, text: colors.forest, border: colors.forest },
+    subtle: { bg: colors.sage, text: colors.forest },
   },
   chip: {
-    default: { bg: colors.cream, text: colors.navy },
-    brass: { bg: colors.brass + '22', text: colors.leather },
+    default: { bg: colors.sage, text: colors.forest },
+    brass: { bg: colors.verdant + '33', text: colors.forest },
   },
   mood: {
     highGreat: {
-      bg: colors.moodRelaxedGreatBg,
-      border: colors.moodRelaxedGreatBorder,
-      text: colors.moodRelaxedGreatText,
+      bg: colors.moodHighGreatBg,
+      border: colors.moodHighGreatBorder,
+      text: colors.moodHighGreatText,
     },
     highTough: {
       bg: colors.moodHighToughBg,
@@ -85,14 +80,14 @@ const semantic = {
       text: colors.moodHighToughText,
     },
     lowGreat: {
-      bg: colors.moodRelaxedGoodBg,
-      border: colors.moodRelaxedGoodBorder,
-      text: colors.moodRelaxedGoodText,
+      bg: colors.moodLowGreatBg,
+      border: colors.moodLowGreatBorder,
+      text: colors.moodLowGreatText,
     },
     lowTough: {
-      bg: colors.moodTiredProudBg,
-      border: colors.moodTiredProudBorder,
-      text: colors.moodTiredProudText,
+      bg: colors.moodLowToughBg,
+      border: colors.moodLowToughBorder,
+      text: colors.moodLowToughText,
     },
   },
 }
@@ -126,7 +121,7 @@ const shadow = {
   card: {
     ios: {
       shadowColor: '#000',
-      shadowOpacity: 0.07,
+      shadowOpacity: 0.06,
       shadowRadius: 6,
       shadowOffset: { width: 0, height: 3 },
     },
@@ -169,7 +164,7 @@ const buttons = {
     },
     secondary: {
       container: {
-        backgroundColor: semantic.button.secondary.bg,
+        backgroundColor: colors.transparent,
         borderWidth: 2,
         borderColor: semantic.button.secondary.border,
       },
@@ -248,7 +243,7 @@ const modal = {
 //
 // 5. EXPORT
 //
-export const clubhouseTheme: Theme = {
+export const verdeModernTheme: Theme = {
   colors,
   semantic,
   spacing,

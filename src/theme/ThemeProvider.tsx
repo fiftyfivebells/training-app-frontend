@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState } from 'react'
 
-import { fallTheme } from './fall'
+import { fallTheme } from './themes/fall'
 import type { Theme } from './types'
-import { clubhouseTheme } from './clubhouse'
-import { racebibTheme } from './racebib'
+import { clubhouseTheme } from './themes/clubhouse'
+import { racebibTheme } from './themes/racebib'
+import { verdeModernTheme } from './themes/verdeModern'
 
 type ThemeContextValue = {
   theme: Theme
@@ -14,7 +15,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
 export function ThemeProvider({
   children,
-  initial = clubhouseTheme,
+  initial = verdeModernTheme,
 }: {
   children: React.ReactNode
   initial?: Theme
