@@ -72,6 +72,7 @@ export const DistanceField: React.FC<DistanceFieldProps> = ({
                 styles.unitOption,
                 u === 'meters' && styles.lastUnitOption,
                 {
+                  alignItems: 'center',
                   borderRightColor: theme.semantic.border.default,
                   paddingVertical: theme.spacing.xs,
                   paddingHorizontal: theme.spacing.sm,
@@ -105,8 +106,13 @@ export const DistanceField: React.FC<DistanceFieldProps> = ({
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center' },
-  distanceInput: { flex: 1, borderWidth: 1 },
+  distanceInput: {
+    minWidth: '10%',
+    borderWidth: 1,
+  },
   unitPicker: {
+    justifyContent: 'space-around',
+    maxWidth: '30%',
     flexDirection: 'row',
     overflow: 'hidden',
     borderWidth: 1,
