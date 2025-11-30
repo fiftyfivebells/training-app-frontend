@@ -5,6 +5,7 @@ import { useGetAllMoods } from '@domains/moods/hooks/useGetAllMoods'
 import type { Mood, MoodCategoryKey } from '@domains/moods/moods.types'
 import React, { useMemo } from 'react'
 import { View } from 'react-native'
+import * as Haptics from 'expo-haptics'
 
 type MoodFieldProps = {
   mood: Mood | null
@@ -27,6 +28,7 @@ export const MoodField: React.FC<MoodFieldProps> = ({ mood, onChange }) => {
       <MoodGrid
         selectedCategoryKey={activeQuadrant}
         onSelectCategory={(key) => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
           setActiveQuadrant(key)
           setIsMoodModalOpen(true)
         }}
@@ -41,6 +43,7 @@ export const MoodField: React.FC<MoodFieldProps> = ({ mood, onChange }) => {
           setIsMoodModalOpen(false)
         }}
         onSelect={(selected) => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
           onChange(selected)
           setIsMoodModalOpen(false)
         }}

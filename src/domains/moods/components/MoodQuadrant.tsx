@@ -43,11 +43,14 @@ export const MoodQuadrant: React.FC<MoodQuadrantProps> = ({
         },
         isSelected && {
           borderWidth: 3,
-          transform: [{ scale: 1.02 }],
+          transform: [{ scale: 1.03 }],
+          shadowColor: palette?.border,
+          shadowOpacity: 0.25,
+          shadowRadius: 12,
         },
         pressed && {
           opacity: 0.9,
-          transform: [{ scale: 0.98 }],
+          transform: [{ scale: 0.97 }],
         },
       ]}
     >
