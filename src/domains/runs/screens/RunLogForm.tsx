@@ -13,6 +13,29 @@ import { formatDateForApi } from '../utils/date'
 import { calculateMeters, type DistanceUnit } from '../utils/distance'
 import { durationToTotalSeconds, normalizeDuration } from '../utils/duration'
 
+const calculatePace = (
+  distanceStr: string,
+  unit: DistanceUnit,
+  totalSeconds: number,
+): string | null => {
+  const d = Number(distanceStr)
+  if (!d || totalSeconds === 0) return null
+
+  // convert distance to miles
+  let miles = d
+  if (unit === 'km') miles = d * 0.621371
+  if (unit === 'meters') miles = d * 0.000621371
+
+  if (miles === 0) return null
+
+  const secondsPerMile = totalSeconds / miles
+  const mins = Math.floor(secondsPerMile / 60)
+  const secs = Math.round(secondsPerMile % 60)
+  const paddedSecs = secs < 10 ? `0${secs}` : secs.toString()
+
+  return `${mins}:${paddedSecs} / mi`
+}
+
 export const RunLogForm: React.FC = () => {
   const { alert } = useAlert()
 
@@ -35,6 +58,8 @@ export const RunLogForm: React.FC = () => {
     durationSeconds,
   )
   const normalized = normalizeDuration(totalSeconds)
+
+  const pace = calculatePace(distance, distanceUnit, totalSeconds)
 
   const resetForm = () => {
     setDate(new Date())
@@ -121,7 +146,6 @@ export const RunLogForm: React.FC = () => {
       >
         Capture the essentials from your training session and how it felt.
       </ThemedText>
-
       <View style={[styles.field, { marginBottom: theme.spacing.lg }]}>
         <DatePicker
           label="Date"
@@ -130,7 +154,6 @@ export const RunLogForm: React.FC = () => {
           maximumDate={new Date()}
         />
       </View>
-
       <View style={[styles.field, { marginBottom: theme.spacing.lg }]}>
         <DistanceField
           distance={distance}
@@ -150,22 +173,43 @@ export const RunLogForm: React.FC = () => {
           onChangeSeconds={setDurationSeconds}
           normalizedLabel={normalized.formatted}
         />
+
+        {
+          <ThemedText
+            style={{
+              marginTop: theme.spacing.md,
+              marginBottom: theme.spacing.lg,
+              color: theme.semantic.text.secondary,
+              fontWeight: theme.typography.weights.semibold,
+              fontSize: theme.typography.size.md,
+            }}
+          >
+            Pace:{' '}
+            <ThemedText
+              style={{
+                color: theme.semantic.text.secondary,
+                fontWeight: theme.typography.weights.regular,
+              }}
+            >
+              {pace}
+            </ThemedText>
+          </ThemedText>
+        }
       </View>
 
       <View style={[styles.field, { marginBottom: theme.spacing.lg }]}>
         <NotesField value={notes} onChange={setNotes} />
       </View>
-
       <View style={{ marginTop: theme.spacing.sm }}>
         <MoodField mood={selectedMood} onChange={setSelectedMood} />
       </View>
-
       <Button
-        title="Save Run"
         onPress={onSubmit}
         loading={logRunMutation.isPending}
         style={[styles.fullWidth, { marginTop: theme.spacing.lg }]}
-      />
+      >
+        Save run
+      </Button>
     </ScrollView>
   )
 }
