@@ -2,6 +2,13 @@ export type DistanceUnit = 'miles' | 'km' | 'meters'
 
 const METERS_PER_MILE = 1609.34
 
+export function parseDistanceInput(input: string, units: DistanceUnit): number {
+  const parsed = parseFloat(input)
+  if (Number.isNaN(parsed) || parsed < 0) return 0
+
+  return calculateMeters(parsed, units)
+}
+
 export function calculateMeters(distance: number, units: DistanceUnit): number {
   if (Number.isNaN(distance)) return 0
 
