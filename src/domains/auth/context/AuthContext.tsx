@@ -33,10 +33,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     ;(async () => {
-      console.log('auth bootstrap', {
-        accessToken: await tokenStorage.getAccessToken(),
-        refreshToken: await tokenStorage.getRefreshToken(),
-      })
       const token = await tokenStorage.getAccessToken()
       if (!token) {
         setIsLoading(false)

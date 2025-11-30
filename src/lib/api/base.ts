@@ -17,7 +17,6 @@ export abstract class BaseApiClient {
   }
 
   protected async makeRequest<T>(path: string, options?: RequestInit): Promise<T> {
-    console.log('API Base URL:', API_BASE_URL)
     const url = `${this.baseUrl}${this.apiVersion}/${path}`
     const accessToken = await tokenStorage.getAccessToken()
 
@@ -32,7 +31,6 @@ export abstract class BaseApiClient {
     }
 
     const attemptRequest = async (): Promise<Response> => {
-      console.log('Making API request to:', url, requestOptions)
       return fetch(url, requestOptions)
     }
 

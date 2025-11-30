@@ -16,7 +16,6 @@ export class AuthClient extends BaseApiClient {
   }
 
   async login(body: LoginRequest) {
-    console.log('at least trying the request')
     return this.post<AuthResponse>(`${this.baseAuthRoute}/login`, body)
   }
 
