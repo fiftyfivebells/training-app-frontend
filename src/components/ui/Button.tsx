@@ -10,7 +10,7 @@ import { useTheme } from '@/theme/ThemeProvider'
 import { ThemedText } from './ThemedText'
 
 interface ButtonProps {
-  title: string
+  children: React.ReactNode
   onPress: () => void
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
@@ -20,7 +20,7 @@ interface ButtonProps {
 }
 
 export function Button({
-  title,
+  children,
   onPress,
   variant = 'primary',
   size = 'md',
@@ -63,7 +63,7 @@ export function Button({
             variantStyles.text,
           ]}
         >
-          {title}
+          {children}
         </ThemedText>
       )}
     </Pressable>

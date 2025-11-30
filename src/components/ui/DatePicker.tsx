@@ -211,12 +211,13 @@ export function DatePicker({
               />
               {Platform.OS === 'ios' && (
                 <Button
-                  title={confirmLabel}
                   onPress={() => {
                     setShowPicker(false)
                   }}
                   style={{ marginTop: theme.spacing.sm }}
-                />
+                >
+                  {confirmLabel}
+                </Button>
               )}
             </View>
           )}

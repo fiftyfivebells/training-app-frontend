@@ -142,17 +142,16 @@ export function LoginScreen() {
               />
 
               <Button
-                title="Sign In"
                 onPress={handleSubmit(onSubmit)}
                 loading={isLoading}
                 disabled={isLoading}
                 style={{ marginTop: theme.spacing.md }}
-              />
+              >
+                Sign In
+              </Button>
             </View>
 
-            <View
-              style={[styles.footer, { marginTop: theme.spacing.xl }]}
-            >
+            <View style={[styles.footer, { marginTop: theme.spacing.xl }]}>
               <ThemedText
                 style={{
                   fontSize: theme.typography.size.sm,
