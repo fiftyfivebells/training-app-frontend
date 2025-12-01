@@ -5,12 +5,14 @@ import { Pressable, StyleSheet, View } from 'react-native'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { ThemedTextInput } from '@/components/ui/ThemedTextInput'
 import { useTheme } from '@/theme/ThemeProvider'
+import { TextInput } from 'react-native-gesture-handler'
 
 type DistanceFieldProps = {
   distance: string
   unit: DistanceUnit
   onChangeDistance: (value: string) => void
   onChangeUnit: (unit: DistanceUnit) => void
+  inputRef?: React.RefObject<TextInput | null>
 }
 
 export const DistanceField: React.FC<DistanceFieldProps> = ({
@@ -18,6 +20,7 @@ export const DistanceField: React.FC<DistanceFieldProps> = ({
   unit,
   onChangeDistance,
   onChangeUnit,
+  inputRef,
 }) => {
   const theme = useTheme()
 
@@ -50,6 +53,7 @@ export const DistanceField: React.FC<DistanceFieldProps> = ({
           onChangeText={onChangeDistance}
           placeholder="5.2"
           keyboardType="numeric"
+          ref={inputRef}
         />
 
         <View

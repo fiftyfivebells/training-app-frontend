@@ -1,5 +1,5 @@
 import type { Mood } from '@domains/moods/moods.types'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
 import { Button, DatePicker, useAlert } from '@/components/ui'
@@ -12,6 +12,8 @@ import { useLogRun } from '../hooks'
 import { formatDateForApi } from '../utils/date'
 import { calculateMeters, type DistanceUnit } from '../utils/distance'
 import { durationToTotalSeconds, normalizeDuration } from '../utils/duration'
+import { TextInput } from 'react-native-gesture-handler'
+import { Animated } from 'react-native'
 
 const calculatePace = (
   distanceStr: string,
@@ -21,10 +23,7 @@ const calculatePace = (
   const d = Number(distanceStr)
   if (!d || totalSeconds === 0) return null
 
-  // convert distance to miles
-  let miles = d
-  if (unit === 'km') miles = d * 0.621371
-  if (unit === 'meters') miles = d * 0.000621371
+  const miles = unit === 'km' ? d * 0.621371 : unit === 'meters' ? d * 0.000621371 : d
 
   if (miles === 0) return null
 
@@ -39,7 +38,6 @@ const calculatePace = (
 export const RunLogForm: React.FC = () => {
   const { alert } = useAlert()
 
-  // core form state
   const [date, setDate] = React.useState<Date>(new Date())
 
   const [distance, setDistance] = React.useState('')
@@ -61,6 +59,10 @@ export const RunLogForm: React.FC = () => {
 
   const pace = calculatePace(distance, distanceUnit, totalSeconds)
 
+  const distanceRef = React.useRef<TextInput | null>(null)
+
+  const opacity = React.useRef(new Animated.Value(1)).current
+
   const resetForm = () => {
     setDate(new Date())
     setDistance('')
@@ -71,6 +73,31 @@ export const RunLogForm: React.FC = () => {
     setNotes('')
     setSelectedMood(null)
   }
+
+  useEffect(() => {
+    const id = setTimeout(() => {
+      distanceRef.current?.focus()
+    }, 100)
+
+    return () => clearTimeout(id)
+  }, [])
+
+  useEffect(() => {
+    if (!pace) return
+
+    Animated.sequence([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 220,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 220,
+        useNativeDriver: true,
+      }),
+    ]).start()
+  }, [pace])
 
   const logRunMutation = useLogRun({
     onError: (error) => {
@@ -160,6 +187,7 @@ export const RunLogForm: React.FC = () => {
           unit={distanceUnit}
           onChangeDistance={setDistance}
           onChangeUnit={setDistanceUnit}
+          inputRef={distanceRef}
         />
       </View>
 
@@ -175,25 +203,27 @@ export const RunLogForm: React.FC = () => {
         />
 
         {
-          <ThemedText
-            style={{
-              marginTop: theme.spacing.md,
-              marginBottom: theme.spacing.lg,
-              color: theme.semantic.text.secondary,
-              fontWeight: theme.typography.weights.semibold,
-              fontSize: theme.typography.size.md,
-            }}
-          >
-            Pace:{' '}
+          <Animated.View style={{ opacity: opacity }}>
             <ThemedText
               style={{
+                marginTop: theme.spacing.md,
+                marginBottom: theme.spacing.lg,
                 color: theme.semantic.text.secondary,
-                fontWeight: theme.typography.weights.regular,
+                fontWeight: theme.typography.weights.semibold,
+                fontSize: theme.typography.size.md,
               }}
             >
-              {pace}
+              Pace:{' '}
+              <ThemedText
+                style={{
+                  color: theme.semantic.text.secondary,
+                  fontWeight: theme.typography.weights.regular,
+                }}
+              >
+                {pace}
+              </ThemedText>
             </ThemedText>
-          </ThemedText>
+          </Animated.View>
         }
       </View>
 
