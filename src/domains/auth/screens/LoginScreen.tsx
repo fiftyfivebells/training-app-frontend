@@ -16,6 +16,7 @@ import { ThemedText } from '@/components/ui/ThemedText'
 import { useTheme } from '@/theme/ThemeProvider'
 
 import { useAuthContext } from '../context/AuthContext'
+import { useState } from 'react'
 
 interface LoginFormData extends LoginRequest {
   email: string
@@ -25,6 +26,7 @@ interface LoginFormData extends LoginRequest {
 export function LoginScreen() {
   const router = useRouter()
   const { alert } = useAlert()
+  const [showPassword, toggleShowPassword] = useState<boolean>(false)
   const { login, isLoading } = useAuthContext()
   const theme = useTheme()
 
@@ -128,7 +130,7 @@ export function LoginScreen() {
                   <Input
                     label="Password"
                     placeholder="Enter your password"
-                    secureTextEntry
+                    secureTextEntry={!showPassword}
                     autoCapitalize="none"
                     autoComplete="password"
                     onBlur={onBlur}
@@ -137,9 +139,43 @@ export function LoginScreen() {
                     error={errors.password?.message}
                     disabled={isLoading}
                     onSubmitEditing={handleSubmit(onSubmit)}
+                    rightElement={
+                      <Pressable onPress={() => toggleShowPassword(!showPassword)}>
+                        <ThemedText
+                          style={{
+                            fontSize: theme.typography.size.sm,
+                            color: theme.semantic.button.secondary.text,
+                            fontWeight: theme.typography.weights.semibold,
+                          }}
+                        >
+                          {showPassword ? 'Hide' : 'Show'}
+                        </ThemedText>
+                      </Pressable>
+                    }
                   />
                 )}
               />
+              <Pressable
+                onPress={() => {
+                  alert(
+                    'Forgot Password',
+                    'Forgot password functionality is not implemented yet.',
+                  )
+                  //router.push('/(auth)/forgot-password') // TODO: implement forgot password
+                }}
+                disabled={isLoading}
+                style={{ alignSelf: 'flex-end', marginBottom: theme.spacing.md }}
+              >
+                <ThemedText
+                  style={{
+                    fontSize: theme.typography.size.sm,
+                    color: theme.semantic.button.secondary.text,
+                    fontWeight: theme.typography.weights.semibold,
+                  }}
+                >
+                  Forgot password?
+                </ThemedText>
+              </Pressable>
 
               <Button
                 onPress={handleSubmit(onSubmit)}
