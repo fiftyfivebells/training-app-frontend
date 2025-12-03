@@ -9,9 +9,17 @@ interface InputProps extends TextInputProps {
   label: string
   error?: string
   disabled?: boolean
+  rightElement?: React.ReactNode
 }
 
-export function Input({ label, error, disabled, style, ...props }: InputProps) {
+export function Input({
+  label,
+  error,
+  disabled,
+  rightElement,
+  style,
+  ...props
+}: InputProps) {
   const theme = useTheme()
 
   return (
@@ -51,6 +59,20 @@ export function Input({ label, error, disabled, style, ...props }: InputProps) {
         autoCorrect={false}
         {...props}
       />
+
+      {rightElement && (
+        <View
+          style={{
+            position: 'absolute',
+            right: theme.spacing.md,
+            height: '100%',
+            justifyContent: 'center',
+          }}
+        >
+          {rightElement}
+        </View>
+      )}
+
       {error && (
         <ThemedText
           style={{
