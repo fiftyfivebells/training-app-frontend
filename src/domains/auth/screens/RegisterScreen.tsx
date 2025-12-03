@@ -87,7 +87,6 @@ export function RegisterScreen() {
 
   const isLoading = registerMutation.isPending
 
-  // Calculate age from date of birth
   const calculateAge = (birthDate: Date): number => {
     const today = new Date()
     let age = today.getFullYear() - birthDate.getFullYear()
@@ -123,7 +122,6 @@ export function RegisterScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
           <View style={{ marginBottom: theme.spacing.xl, paddingTop: theme.spacing.md }}>
             <ThemedText
               style={{
@@ -147,9 +145,7 @@ export function RegisterScreen() {
             </ThemedText>
           </View>
 
-          {/* Form */}
           <View>
-            {/* Name */}
             <Controller
               control={control}
               name="firstName"
@@ -206,7 +202,6 @@ export function RegisterScreen() {
               )}
             />
 
-            {/* Email */}
             <Controller
               control={control}
               name="email"
@@ -232,7 +227,6 @@ export function RegisterScreen() {
               )}
             />
 
-            {/* Date of Birth */}
             <Controller
               control={control}
               name="dateOfBirth"
@@ -260,7 +254,6 @@ export function RegisterScreen() {
               )}
             />
 
-            {/* Password */}
             <Controller
               control={control}
               name="password"
@@ -289,7 +282,6 @@ export function RegisterScreen() {
               )}
             />
 
-            {/* Confirm Password */}
             <Controller
               control={control}
               name="confirmPassword"
@@ -311,19 +303,16 @@ export function RegisterScreen() {
               )}
             />
 
-            {/* Submit Button */}
             <Button
-              title={isLoading ? 'Creating Account...' : 'Create Account'}
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               disabled={isLoading}
               style={{ marginTop: theme.spacing.lg }}
-            />
-
-            {/* Login Link */}
-            <View
-              style={[styles.footer, { marginTop: theme.spacing.lg }]}
             >
+              {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+
+            <View style={[styles.footer, { marginTop: theme.spacing.lg }]}>
               <ThemedText
                 style={{
                   fontSize: theme.typography.size.md,

@@ -39,12 +39,13 @@ export default function VerifyEmailScreen() {
         </ThemedText>
 
         <Button
-          title="Go to Login"
           onPress={() => {
             router.push('/(auth)/login')
           }}
           style={styles.buttonWidth}
-        />
+        >
+          Go to Login
+        </Button>
       </View>
     </SafeAreaView>
   )
