@@ -4,8 +4,8 @@ import { Platform } from 'react-native'
 import { tokenStorage } from '../../domains/auth/utils/tokenStorage'
 import { ApiError } from './error'
 
-// TODO: this is just for development. I need to go back to the env var for production
-const API_BASE_URL = Platform.OS === 'web' ? '' : 'http://192.168.0.215:8080' //Constants.expoConfig?.extra?.apiBaseUrl ?? 'http://localhost:8080'
+// TODO: use env var for production
+const API_BASE_URL = Platform.OS === 'web' ? '' : 'http://192.168.0.17:8080'
 
 export abstract class BaseApiClient {
   protected baseUrl: string
@@ -76,7 +76,8 @@ export abstract class BaseApiClient {
 
     let errorBody: any
     try {
-      errorBody = await response.json()
+      const raw = await response.json()
+      errorBody = raw?.error ?? raw
     } catch (error) {
       console.log(error)
       errorBody = { message: 'Failed to parse error response' }
