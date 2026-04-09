@@ -7,7 +7,7 @@ export type LogRunRequest = components['schemas']['LogRunRequest']
 export type UpdateRunRequest = components['schemas']['UpdateRunRequest']
 
 export class RunsClient extends BaseApiClient {
-  private baseRunRoute = '/runs'
+  private baseRunRoute = 'runs'
 
   async logRun(body: LogRunRequest): Promise<RunResponse> {
     return this.post<RunResponse>(this.baseRunRoute, body)
