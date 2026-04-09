@@ -1,10 +1,14 @@
 import type { Mood } from '@domains/moods/moods.types'
 import React, { useEffect } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Animated, ScrollView, StyleSheet, View } from 'react-native'
 
 import { Button, DatePicker, useAlert } from '@/components/ui'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { useTheme } from '@/theme/ThemeProvider'
+
+import { TextInput } from 'react-native-gesture-handler'
+
+import { useDistanceUnitPreference } from '@/domains/users/hooks/useDistanceUnitPreference'
 
 import type { LogRunRequest } from '../api/runsApi'
 import { DistanceField, DurationField, MoodField, NotesField } from '../components'
@@ -12,8 +16,10 @@ import { useLogRun } from '../hooks'
 import { formatDateForApi } from '../utils/date'
 import { calculateMeters, type DistanceUnit } from '../utils/distance'
 import { durationToTotalSeconds, normalizeDuration } from '../utils/duration'
-import { TextInput } from 'react-native-gesture-handler'
-import { Animated } from 'react-native'
+
+function preferenceToDistanceUnit(pref: 'imperial' | 'metric'): DistanceUnit {
+  return pref === 'metric' ? 'km' : 'miles'
+}
 
 const calculatePace = (
   distanceStr: string,
@@ -37,11 +43,18 @@ const calculatePace = (
 
 export const RunLogForm: React.FC = () => {
   const { alert } = useAlert()
+  const { unit: unitPreference, loaded: prefLoaded } = useDistanceUnitPreference()
 
   const [date, setDate] = React.useState<Date>(new Date())
 
   const [distance, setDistance] = React.useState('')
   const [distanceUnit, setDistanceUnit] = React.useState<DistanceUnit>('miles')
+
+  React.useEffect(() => {
+    if (prefLoaded) {
+      setDistanceUnit(preferenceToDistanceUnit(unitPreference))
+    }
+  }, [prefLoaded, unitPreference])
 
   const [durationHours, setDurationHours] = React.useState('')
   const [durationMinutes, setDurationMinutes] = React.useState('')

@@ -79,10 +79,6 @@ export function UserDashboard() {
     router.push('/(drawer)/runs')
   }, [router])
 
-  const handleManageBlocks = useCallback(() => {
-    router.push('/(drawer)/blocks')
-  }, [router])
-
   const quickActions = useMemo(
     () => [
       {
@@ -103,14 +99,8 @@ export function UserDashboard() {
         description: 'See your complete training history',
         onPress: handleViewRuns,
       },
-      {
-        icon: <Feather name="grid" size={24} color={theme.semantic.button.primary.bg} />,
-        label: 'Manage Block',
-        description: 'Update your current training block',
-        onPress: handleManageBlocks,
-      },
     ],
-    [handleLogRun, handleViewRuns, handleManageBlocks, theme],
+    [handleLogRun, handleViewRuns, theme],
   )
 
   const statCards: StatCardConfig[] = useMemo(
