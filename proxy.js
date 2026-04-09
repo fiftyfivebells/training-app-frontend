@@ -33,8 +33,10 @@ proxy.on('error', (err, req, res) => {
 })
 
 const server = https.createServer({ key: fs.readFileSync(KEY), cert: fs.readFileSync(CERT) }, (req, res) => {
-  const target = req.url.startsWith('/api') ? BACKEND : METRO
-  proxy.web(req, res, { target })
+  const isApi = req.url.startsWith('/api')
+  const target = isApi ? BACKEND : METRO
+  console.log(`${req.method} ${req.url} → ${isApi ? 'BACKEND' : 'METRO'}`)
+  proxy.web(req, res, { target, changeOrigin: true })
 })
 
 // Forward WebSocket upgrades so Metro HMR works through the proxy
