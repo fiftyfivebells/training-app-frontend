@@ -27,7 +27,8 @@ export function LoginScreen() {
   const router = useRouter()
   const { alert } = useAlert()
   const [showPassword, toggleShowPassword] = useState<boolean>(false)
-  const { login, isLoading } = useAuthContext()
+  const { login } = useAuthContext()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const theme = useTheme()
 
   const {
@@ -42,6 +43,7 @@ export function LoginScreen() {
   })
 
   const onSubmit = async (data: LoginFormData) => {
+    setIsSubmitting(true)
     try {
       await login(data.email, data.password)
     } catch (err: any) {
@@ -49,6 +51,8 @@ export function LoginScreen() {
         'Login Failed',
         err?.message || 'Invalid email or password. Please try again.',
       )
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -110,7 +114,7 @@ export function LoginScreen() {
                     onChangeText={onChange}
                     value={value}
                     error={errors.email?.message}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     onSubmitEditing={handleSubmit(onSubmit)}
                   />
                 )}
@@ -137,7 +141,7 @@ export function LoginScreen() {
                     onChangeText={onChange}
                     value={value}
                     error={errors.password?.message}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     onSubmitEditing={handleSubmit(onSubmit)}
                     rightElement={
                       <Pressable onPress={() => toggleShowPassword(!showPassword)}>
@@ -163,7 +167,7 @@ export function LoginScreen() {
                   )
                   //router.push('/(auth)/forgot-password') // TODO: implement forgot password
                 }}
-                disabled={isLoading}
+                disabled={isSubmitting}
                 style={{ alignSelf: 'flex-end', marginBottom: theme.spacing.md }}
               >
                 <ThemedText
@@ -179,8 +183,8 @@ export function LoginScreen() {
 
               <Button
                 onPress={handleSubmit(onSubmit)}
-                loading={isLoading}
-                disabled={isLoading}
+                loading={isSubmitting}
+                disabled={isSubmitting}
                 style={{ marginTop: theme.spacing.md }}
               >
                 Sign In
@@ -200,7 +204,7 @@ export function LoginScreen() {
                 onPress={() => {
                   router.push('/(auth)/register')
                 }}
-                disabled={isLoading}
+                disabled={isSubmitting}
               >
                 <ThemedText
                   style={{
