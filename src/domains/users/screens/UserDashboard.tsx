@@ -17,6 +17,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { ThemedText } from '@/components/ui/ThemedText'
 import { useAuthContext } from '@/domains/auth/context/AuthContext'
+import { ActiveBlockBanner } from '@/domains/blocks/components/ActiveBlockBanner'
+import { useActiveBlock, useTodayAffirmation } from '@/domains/blocks/hooks'
 import { useTheme } from '@/theme/ThemeProvider'
 
 import {
@@ -48,10 +50,20 @@ export function UserDashboard() {
     refetch: refetchRuns,
   } = useRuns()
 
+  const { data: activeBlock } = useActiveBlock()
+  const { data: affirmationData } = useTodayAffirmation()
+
   const stats = useMemo(() => calculateDashboardStats(runs), [runs])
   const recentActivities = useMemo(() => formatRunsAsActivities(runs), [runs])
 
   const affirmation = useMemo(() => {
+    if (affirmationData) {
+      return {
+        text: affirmationData.affirmation,
+        blockName: affirmationData.blockName,
+      }
+    }
+
     if (stats.totalRuns === 0) {
       return {
         text: 'Every journey starts with a single run. Log your first session to begin tracking progress.',
@@ -69,7 +81,7 @@ export function UserDashboard() {
       text: `You've logged ${stats.weeklyRuns} ${weeklyRunsLabel} this week covering ${stats.weeklyDistance} km.`,
       blockName: streakText,
     }
-  }, [stats])
+  }, [affirmationData, stats])
 
   const handleLogRun = useCallback(() => {
     router.push('/(drawer)/log-run')
@@ -234,6 +246,10 @@ export function UserDashboard() {
         showsVerticalScrollIndicator={false}
       >
         <WelcomeHeader userName={user?.firstName || 'Runner'} />
+
+        <View style={{ marginBottom: theme.spacing.md }}>
+          <ActiveBlockBanner block={activeBlock} />
+        </View>
 
         <View style={{ marginBottom: theme.spacing.lg }}>
           <DailyAffirmation
