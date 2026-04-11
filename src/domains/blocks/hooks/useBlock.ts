@@ -14,6 +14,7 @@ export function useBlock(
       const response = await blocksClient.getBlock(blockId)
       return blockResponseToBlock(response)
     },
+    enabled: !!blockId,
     staleTime: 5 * 60 * 1000,
     ...options,
   })

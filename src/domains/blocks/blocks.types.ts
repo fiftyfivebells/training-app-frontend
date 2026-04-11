@@ -83,7 +83,22 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
   },
 }
 
+const VALID_BLOCK_TYPES = new Set<string>([
+  'BaseBuilding',
+  'BuildIntensity',
+  'PeakRacePrep',
+  'Recovery',
+  'OffSeason',
+])
+const VALID_STATUSES = new Set<string>(['active', 'completed'])
+
 export function blockResponseToBlock(r: BlockResponse): Block {
+  if (!VALID_BLOCK_TYPES.has(r.blockType)) {
+    throw new Error(`Unknown block type from API: ${r.blockType}`)
+  }
+  if (!VALID_STATUSES.has(r.status)) {
+    throw new Error(`Unknown block status from API: ${r.status}`)
+  }
   return {
     id: r.id,
     blockType: r.blockType as BlockType,

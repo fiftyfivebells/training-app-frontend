@@ -121,7 +121,7 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
       ]}
     >
       <View style={styles.headerRow}>
-        <View style={styles.labelGroup}>
+        <View style={[styles.labelGroup, { marginRight: theme.spacing.sm }]}>
           <ThemedText
             style={{
               fontSize: theme.typography.size.xs,
@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
   },
   labelGroup: {
     flex: 1,
-    marginRight: 8,
   },
   progressTrack: {
     overflow: 'hidden',

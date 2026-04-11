@@ -1,7 +1,7 @@
 import { Drawer } from 'expo-router/drawer'
 import React from 'react'
 
-import { useBlockThemeSync } from '@/domains/blocks/hooks'
+import { useBlockThemeSync } from '@/domains/blocks/hooks/useBlockThemeSync'
 import { useTheme } from '@/theme/ThemeProvider'
 
 function DrawerWithThemeSync() {

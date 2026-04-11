@@ -1,5 +1,4 @@
 export { useActiveBlock } from './useActiveBlock'
-export { useBlockThemeSync } from './useBlockThemeSync'
 export { useBlock } from './useBlock'
 export { useBlocks } from './useBlocks'
 export { useCompleteBlock } from './useCompleteBlock'

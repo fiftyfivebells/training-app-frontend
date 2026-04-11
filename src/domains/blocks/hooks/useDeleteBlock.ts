@@ -10,7 +10,8 @@ export function useDeleteBlock(options?: UseMutationOptions<void, ApiError, stri
 
   return useMutation({
     mutationFn: (blockId: string) => blocksClient.deleteBlock(blockId),
-    onSuccess: () => {
+    onSuccess: (_, blockId) => {
+      queryClient.removeQueries({ queryKey: blocksKeys.detail(blockId) })
       queryClient.invalidateQueries({ queryKey: blocksKeys.all })
     },
     ...options,
