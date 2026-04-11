@@ -1,26 +1,28 @@
 import { Drawer } from 'expo-router/drawer'
 import React from 'react'
 
+import { useBlockThemeSync } from '@/domains/blocks/hooks'
 import { useTheme } from '@/theme/ThemeProvider'
 
-export default function DrawerLayout() {
+function DrawerWithThemeSync() {
+  useBlockThemeSync()
   const theme = useTheme()
 
   return (
-    <>
-      <Drawer
-        screenOptions={{
-          headerTintColor: theme.semantic.text.header,
-          headerStyle: { backgroundColor: theme.semantic.surface.header },
-          drawerActiveTintColor: theme.semantic.text.primary,
-          drawerInactiveTintColor: theme.semantic.text.secondary,
-          drawerType: 'front',
-        }}
-      />
-      {/*         <Drawer.Screen name="index" options={{ title: 'Home' }} />
-        <Drawer.Screen name="runs" options={{ title: 'Runs' }} />
-        <Drawer.Screen name="log-run" options={{ title: 'Log Run' }} />
-      </Drawer> */}
-    </>
+    <Drawer
+      screenOptions={{
+        headerTintColor: theme.semantic.text.header,
+        headerStyle: { backgroundColor: theme.semantic.surface.header },
+        drawerActiveTintColor: theme.semantic.text.primary,
+        drawerInactiveTintColor: theme.semantic.text.secondary,
+        drawerType: 'front',
+      }}
+    >
+      <Drawer.Screen name="blocks" options={{ title: 'Training Blocks' }} />
+    </Drawer>
   )
+}
+
+export default function DrawerLayout() {
+  return <DrawerWithThemeSync />
 }
