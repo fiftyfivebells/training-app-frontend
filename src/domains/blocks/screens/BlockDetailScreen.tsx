@@ -49,6 +49,7 @@ function ProgressBar({ percent, accentColor }: { percent: number; accentColor: s
 function StatusBadge({ status }: { status: Block['status'] }) {
   const theme = useTheme()
   const isActive = status === 'active'
+  const label = status === 'active' ? 'Active' : status === 'completed' ? 'Completed' : 'Expired'
   return (
     <View
       style={{
@@ -67,7 +68,7 @@ function StatusBadge({ status }: { status: Block['status'] }) {
           color: isActive ? theme.semantic.button.primary.text : theme.semantic.text.secondary,
         }}
       >
-        {isActive ? 'Active' : 'Completed'}
+        {label}
       </ThemedText>
     </View>
   )
@@ -305,7 +306,9 @@ export function BlockDetailScreen() {
           >
             {block.status === 'active'
               ? `${daysRemaining} ${daysRemaining === 1 ? 'day' : 'days'} remaining`
-              : `Completed ${block.completedAt ?? block.endDate}`}
+              : block.status === 'completed'
+                ? `Completed ${block.completedAt ?? block.endDate}`
+                : `Expired ${block.endDate}`}
           </ThemedText>
         </View>
 

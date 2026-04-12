@@ -12,6 +12,7 @@ import { useBlocks } from '../hooks'
 function StatusBadge({ status }: { status: Block['status'] }) {
   const theme = useTheme()
   const isActive = status === 'active'
+  const label = status === 'active' ? 'Active' : status === 'completed' ? 'Completed' : 'Expired'
   return (
     <View
       style={[
@@ -33,7 +34,7 @@ function StatusBadge({ status }: { status: Block['status'] }) {
           color: isActive ? theme.semantic.button.primary.text : theme.semantic.text.secondary,
         }}
       >
-        {isActive ? 'Active' : 'Completed'}
+        {label}
       </ThemedText>
     </View>
   )

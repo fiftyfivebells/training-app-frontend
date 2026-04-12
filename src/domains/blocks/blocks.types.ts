@@ -12,13 +12,14 @@ export type CreateBlockRequest = components['schemas']['CreateBlockRequest']
 export type AffirmationResponse = components['schemas']['AffirmationResponse']
 
 export type BlockType =
-  | 'BaseBuilding'
-  | 'BuildIntensity'
-  | 'PeakRacePrep'
-  | 'Recovery'
-  | 'OffSeason'
+  | 'base_building'
+  | 'race_specific'
+  | 'peaking'
+  | 'tapering'
+  | 'recovery'
+  | 'off_season'
 
-export type BlockStatus = 'active' | 'completed'
+export type BlockStatus = 'active' | 'completed' | 'expired'
 
 export type Block = {
   id: string
@@ -41,7 +42,7 @@ export type BlockTypeConfig = {
 }
 
 export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
-  BaseBuilding: {
+  base_building: {
     label: 'Base Building',
     description: 'Patience & Foundation',
     accentColor: '#4FAF8F',
@@ -49,23 +50,31 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     completionMessage: "You've built the foundation. Now it's time to build on it.",
     recommendedWeeks: [4, 12],
   },
-  BuildIntensity: {
-    label: 'Build Intensity',
+  race_specific: {
+    label: 'Race Specific',
     description: 'Structured Suffering',
     accentColor: '#C0392B',
     theme: racebibTheme,
     completionMessage: "The hard work is done. You earned every one of those miles.",
     recommendedWeeks: [4, 8],
   },
-  PeakRacePrep: {
-    label: 'Peak Race Prep',
+  peaking: {
+    label: 'Peaking',
     description: 'Sharpen the Edge',
     accentColor: '#D2691E',
     theme: autumnRoadTheme,
     completionMessage: "You're ready. Trust the work you've put in.",
     recommendedWeeks: [3, 6],
   },
-  Recovery: {
+  tapering: {
+    label: 'Taper',
+    description: 'Less is More',
+    accentColor: '#7B9EB0',
+    theme: autumnRoadTheme,
+    completionMessage: 'The work is done. Time to race.',
+    recommendedWeeks: [1, 3],
+  },
+  recovery: {
     label: 'Recovery',
     description: 'Rest Is Training',
     accentColor: '#7B9E87',
@@ -73,7 +82,7 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     completionMessage: "Well rested and ready. The body needed this.",
     recommendedWeeks: [1, 3],
   },
-  OffSeason: {
+  off_season: {
     label: 'Off Season',
     description: 'Run for the Joy of It',
     accentColor: '#8B7355',
@@ -84,13 +93,14 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
 }
 
 const VALID_BLOCK_TYPES = new Set<string>([
-  'BaseBuilding',
-  'BuildIntensity',
-  'PeakRacePrep',
-  'Recovery',
-  'OffSeason',
+  'base_building',
+  'race_specific',
+  'peaking',
+  'tapering',
+  'recovery',
+  'off_season',
 ])
-const VALID_STATUSES = new Set<string>(['active', 'completed'])
+const VALID_STATUSES = new Set<string>(['active', 'completed', 'expired'])
 
 export function blockResponseToBlock(r: BlockResponse): Block {
   if (!VALID_BLOCK_TYPES.has(r.blockType)) {

@@ -14,11 +14,12 @@ import { useCreateBlock } from '@/domains/blocks/hooks/useCreateBlock'
 import { useTheme } from '@/theme/ThemeProvider'
 
 const BLOCK_TYPES: BlockType[] = [
-  'BaseBuilding',
-  'BuildIntensity',
-  'PeakRacePrep',
-  'Recovery',
-  'OffSeason',
+  'base_building',
+  'race_specific',
+  'peaking',
+  'tapering',
+  'recovery',
+  'off_season',
 ]
 
 type FormValues = {
