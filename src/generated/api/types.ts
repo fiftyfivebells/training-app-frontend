@@ -324,7 +324,11 @@ export interface components {
             name: string;
             startDate: string;
             endDate: string;
-            status: string;
+            /**
+             * @example active
+             * @enum {string}
+             */
+            status: "active" | "completed" | "expired";
             completedAt?: string;
             notes?: string;
         };
@@ -334,7 +338,11 @@ export interface components {
         };
         /** CreateBlockRequest */
         CreateBlockRequest: {
-            blockType: string;
+            /**
+             * @example base_building
+             * @enum {string}
+             */
+            blockType: "base_building" | "race_specific" | "peaking" | "tapering" | "recovery" | "off_season";
             name: string;
             startDate: string;
             endDate: string;
