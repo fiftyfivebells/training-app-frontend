@@ -162,7 +162,7 @@ function QuadrantRow({ row }: QuadrantRowProps) {
       >
         <View
           style={{
-            width: barWidth,
+            width: barWidth as `${number}%`,
             height: 6,
             backgroundColor: color,
             borderRadius: theme.radius.xs,
