@@ -1,5 +1,5 @@
-import { useRouter, useLocalSearchParams } from 'expo-router'
-import React, { useMemo, useState } from 'react'
+import { useFocusEffect, useRouter, useLocalSearchParams } from 'expo-router'
+import React, { useCallback, useMemo, useState } from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
 import { AppModal } from '@/components/layout/AppModal'
@@ -160,6 +160,14 @@ export function BlockDetailScreen() {
   const deleteBlock = useDeleteBlock()
 
   const [showCeremony, setShowCeremony] = useState(false)
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setShowCeremony(false)
+      }
+    }, []),
+  )
 
   const blockRuns = useMemo(
     () => allRuns?.filter((r) => r.blockId === blockId) ?? [],
