@@ -363,28 +363,17 @@ export function BlockDetailScreen() {
         ) : null}
 
         {/* Section 5 — Actions */}
-        <View style={{ marginBottom: theme.spacing.lg }}>
-          {block.status === 'active' && (
+        {block.status === 'active' && (
+          <View style={{ marginBottom: theme.spacing.lg }}>
             <Button
               onPress={handleComplete}
               loading={completeBlock.isPending}
-              disabled={deleteBlock.isPending}
               size="lg"
             >
               Complete Block
             </Button>
-          )}
-          <Button
-            onPress={handleDelete}
-            variant="outline"
-            loading={deleteBlock.isPending}
-            disabled={completeBlock.isPending}
-            size="lg"
-            style={{ marginTop: block.status === 'active' ? theme.spacing.sm : 0 }}
-          >
-            Delete Block
-          </Button>
-        </View>
+          </View>
+        )}
       </Screen>
 
       {/* Completion Ceremony */}
