@@ -1,33 +1,30 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
-import { getSecureValue, setSecureValue } from '@/lib/storage/secureStorage'
+import { useGetUserPreferences } from './useGetUserPreferences'
+import { useUpdatePreferences } from './useUpdatePreferences'
 
 export type DistanceUnitPreference = 'imperial' | 'metric'
 
-const STORAGE_KEY = 'preference_distance_unit'
 const DEFAULT: DistanceUnitPreference = 'imperial'
 
-function isValidPreference(value: string | null): value is DistanceUnitPreference {
+function isValidPreference(value: string | undefined): value is DistanceUnitPreference {
   return value === 'imperial' || value === 'metric'
 }
 
 export function useDistanceUnitPreference() {
-  const [unit, setUnitState] = useState<DistanceUnitPreference>(DEFAULT)
-  const [loaded, setLoaded] = useState(false)
+  const { data: prefs, isLoading } = useGetUserPreferences()
+  const { mutate } = useUpdatePreferences()
 
-  useEffect(() => {
-    getSecureValue(STORAGE_KEY).then((stored) => {
-      if (isValidPreference(stored)) {
-        setUnitState(stored)
-      }
-      setLoaded(true)
-    })
-  }, [])
+  const unit: DistanceUnitPreference = isValidPreference(prefs?.preferredUnits)
+    ? prefs.preferredUnits
+    : DEFAULT
 
-  const setUnit = useCallback((newUnit: DistanceUnitPreference) => {
-    setUnitState(newUnit)
-    setSecureValue(STORAGE_KEY, newUnit).catch(console.error)
-  }, [])
+  const setUnit = useCallback(
+    (newUnit: DistanceUnitPreference) => {
+      mutate({ preferredUnits: newUnit })
+    },
+    [mutate],
+  )
 
-  return { unit, setUnit, loaded }
+  return { unit, setUnit, loaded: !isLoading }
 }
