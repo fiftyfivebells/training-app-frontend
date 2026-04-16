@@ -1,4 +1,7 @@
 export { useGetCurrentUser } from './useGetCurrentUser'
 export { useGetUserById } from './useGetUserById'
+export { useGetUserPreferences } from './useGetUserPreferences'
 export { useDistanceUnitPreference } from './useDistanceUnitPreference'
 export type { DistanceUnitPreference } from './useDistanceUnitPreference'
+export { useUpdateProfile } from './useUpdateProfile'
+export { useUpdatePreferences } from './useUpdatePreferences'

@@ -4,4 +4,5 @@ export const usersKeys = {
   details: () => [...usersKeys.all, 'detail'] as const,
   detail: (userId: string) => [...usersKeys.details(), userId] as const,
   me: () => [...usersKeys.all, 'me'] as const,
+  preferences: () => [...usersKeys.all, 'me', 'preferences'] as const,
 }
