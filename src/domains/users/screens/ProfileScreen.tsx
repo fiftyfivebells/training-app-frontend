@@ -1,7 +1,9 @@
 import { format, parseISO } from 'date-fns'
+import { useRouter } from 'expo-router'
 import React from 'react'
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   View,
@@ -19,6 +21,7 @@ import { InfoRow, SectionLabel, UnitToggle, VerifiedBadge } from '../components'
 
 export function ProfileScreen() {
   const theme = useTheme()
+  const router = useRouter()
   const { data: user, isLoading, isError } = useGetCurrentUser()
   const { unit, setUnit } = useDistanceUnitPreference()
   const logout = useLogout()
@@ -39,16 +42,31 @@ export function ProfileScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <ThemedText
-          style={{
-            fontSize: theme.typography.size.xxxl,
-            fontWeight: theme.typography.weights.bold,
-            color: theme.semantic.text.primary,
-            marginBottom: theme.spacing.xs,
-          }}
-        >
-          Profile
-        </ThemedText>
+        <View style={styles.titleRow}>
+          <ThemedText
+            style={{
+              fontSize: theme.typography.size.xxxl,
+              fontWeight: theme.typography.weights.bold,
+              color: theme.semantic.text.primary,
+            }}
+          >
+            Profile
+          </ThemedText>
+          <Pressable
+            onPress={() => router.push('/(drawer)/edit-profile')}
+            hitSlop={8}
+          >
+            <ThemedText
+              style={{
+                fontSize: theme.typography.size.sm,
+                fontWeight: theme.typography.weights.medium,
+                color: theme.semantic.button.primary.bg,
+              }}
+            >
+              Edit
+            </ThemedText>
+          </Pressable>
+        </View>
         <ThemedText
           style={{
             fontSize: theme.typography.size.md,
@@ -182,6 +200,12 @@ export function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: 4,
   },
   card: {
     borderWidth: 1,
