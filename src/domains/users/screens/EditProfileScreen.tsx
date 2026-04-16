@@ -116,7 +116,7 @@ export function EditProfileScreen() {
         updateProfile.mutateAsync(profilePayload),
         updatePreferences.mutateAsync(prefsPayload),
       ])
-      router.back()
+      router.replace('/(drawer)/profile')
     } catch {
       alert('Unable to save', 'Please check your connection and try again.')
     }
