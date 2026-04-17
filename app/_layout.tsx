@@ -1,5 +1,6 @@
 import { AlertProvider } from '@components/ui'
 import { AuthProvider } from '@domains/auth/context/AuthContext'
+import { Fraunces_400Regular, Fraunces_400Regular_Italic } from '@expo-google-fonts/fraunces'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
@@ -7,6 +8,7 @@ import { StatusBar } from 'expo-status-bar'
 
 import { SessionChecker } from '@/domains/auth/components/SessionChecker'
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider'
+import { BaseThemeProvider } from '@/theme/ThemeContext'
 import { AuthGate } from '@/domains/auth/context/AuthGate'
 
 const queryClient = new QueryClient({
@@ -25,22 +27,26 @@ export default function RootLayout() {
     ManropeBold: require('../assets/static/Manrope-Bold.ttf'),
     ManropeSemiBold: require('../assets/static/Manrope-SemiBold.ttf'),
     ManropeMedium: require('../assets/static/Manrope-Medium.ttf'),
+    Fraunces_400Regular,
+    Fraunces_400Regular_Italic,
   })
 
   if (!fontsLoaded) return null
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AuthGate>
-          <ThemeProvider>
-            <AlertProvider>
-              <ThemedAppShell />
-            </AlertProvider>
-          </ThemeProvider>
-        </AuthGate>
-      </AuthProvider>
-    </QueryClientProvider>
+    <BaseThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AuthGate>
+            <ThemeProvider>
+              <AlertProvider>
+                <ThemedAppShell />
+              </AlertProvider>
+            </ThemeProvider>
+          </AuthGate>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BaseThemeProvider>
   )
 }
 
