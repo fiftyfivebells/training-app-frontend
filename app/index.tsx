@@ -21,7 +21,7 @@ export default function Index() {
       const token = await tokenStorage.getAccessToken()
 
       if (token) {
-        router.replace('/(drawer)/')
+        router.replace('/(tabs)/')
       } else {
         router.replace('/(auth)/login')
       }

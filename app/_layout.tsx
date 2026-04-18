@@ -62,7 +62,15 @@ function ThemedAppShell() {
           headerShown: false,
           contentStyle: { backgroundColor: theme.semantic.surface.background },
         }}
-      />
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+        <Stack.Screen name="log" options={{ presentation: 'fullScreenModal', headerShown: false }} />
+        <Stack.Screen name="mood-picker" options={{ presentation: 'fullScreenModal', headerShown: false }} />
+        <Stack.Screen name="block-create" options={{ presentation: 'fullScreenModal', headerShown: false }} />
+        <Stack.Screen name="profile" options={{ presentation: 'card', headerShown: false }} />
+      </Stack>
     </>
   )
 }
