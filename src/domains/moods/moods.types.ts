@@ -12,6 +12,7 @@ export type MoodCategoryKey =
 export type Mood = {
   id: number
   label: string
+  description: string
   quadrant: MoodCategoryKey
   energyLevel: number
   experienceQuality: number
@@ -21,6 +22,7 @@ export function moodResponseToMood(mr: MoodResponse): Mood {
   return {
     id: mr.id,
     label: mr.label,
+    description: mr.description,
     quadrant: deriveMoodQuadrant(mr.energyLevel, mr.experienceQuality),
     energyLevel: mr.energyLevel,
     experienceQuality: mr.experienceQuality,

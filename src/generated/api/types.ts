@@ -392,6 +392,7 @@ export interface components {
             /** Format: int32 */
             moodId: number;
             notes?: string;
+            runType: string;
         };
         /** LoginRequest */
         LoginRequest: {
@@ -411,6 +412,7 @@ export interface components {
             /** Format: int32 */
             id: number;
             label: string;
+            description: string;
             /** Format: int32 */
             energyLevel: number;
             /** Format: int32 */
@@ -443,6 +445,7 @@ export interface components {
             moodId: number;
             notes?: string;
             blockId?: string;
+            runType: string;
         };
         /** ServiceUnavailable */
         ServiceUnavailable: {
@@ -481,6 +484,7 @@ export interface components {
             /** Format: int32 */
             moodId?: number;
             notes?: string;
+            runType?: string;
         };
         /** UserPreferencesResponse */
         UserPreferencesResponse: {
