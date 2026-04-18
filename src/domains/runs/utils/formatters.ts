@@ -42,3 +42,17 @@ export function formatRunDate(dateString: string): string {
 
   return `${MONTHS[runDate.getMonth()]} ${runDate.getDate()}`
 }
+
+export function formatRelativeDays(dateString: string): string {
+  const [year, month, day] = dateString.split('-').map(Number)
+  const runDate = new Date(year, month - 1, day)
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const diffDays = Math.round((today.getTime() - runDate.getTime()) / (1000 * 60 * 60 * 24))
+
+  if (diffDays <= 0) return 'Today'
+  if (diffDays === 1) return 'Yesterday'
+  return `${diffDays} days ago`
+}

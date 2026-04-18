@@ -1,8 +1,3 @@
-import { View } from 'react-native'
+import { HomeScreen } from '@/domains/runs/screens/HomeScreen'
 
-import { useTheme } from '@/theme/useTheme'
-
-export default function HomeScreen() {
-  const { colors } = useTheme()
-  return <View style={{ flex: 1, backgroundColor: colors.background.base }} />
-}
+export default HomeScreen
