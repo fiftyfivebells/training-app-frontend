@@ -28,3 +28,9 @@ export function normalizeDuration(totalSeconds: number) {
       .padStart(2, '0')}:${s.toString().padStart(2, '0')}`,
   }
 }
+
+export function formatDurationDisplay(seconds: number): string {
+  const { hours, minutes, seconds: secs } = normalizeDuration(seconds)
+  const h = parseInt(hours, 10)
+  return h > 0 ? `${h}:${minutes}:${secs}` : `${minutes}:${secs}`
+}
