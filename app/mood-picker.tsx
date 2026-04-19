@@ -1,4 +1,4 @@
-import { Skia, Canvas, Group, Path, Text as SkiaText, DashPathEffect } from '@shopify/react-native-skia'
+import { Skia, Canvas, Group, Path, Text as SkiaText, DashPathEffect, useFont, type SkFont } from '@shopify/react-native-skia'
 import { router } from 'expo-router'
 import { useCallback, useMemo, useState } from 'react'
 import {
@@ -19,6 +19,8 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Ionicons } from '@expo/vector-icons'
+
+import { Inter_400Regular } from '@expo-google-fonts/inter'
 
 import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
 import { type Mood, type MoodCategoryKey } from '@/domains/moods/moods.types'
@@ -150,8 +152,8 @@ export default function MoodPickerScreen() {
     return centers
   }, [cells])
 
-  const hexFont = useMemo(() => Skia.Font(undefined, 8), [])
-  const axisFont = useMemo(() => Skia.Font(undefined, 9), [])
+  const hexFont = useFont(Inter_400Regular, 8)
+  const axisFont = useFont(Inter_400Regular, 9)
 
   const pan = Gesture.Pan()
     .onBegin(() => {
@@ -205,7 +207,7 @@ export default function MoodPickerScreen() {
   )
 
   const textWidth = useCallback(
-    (text: string, font: ReturnType<typeof Skia.Font>) => font.measureText(text).width,
+    (text: string, font: SkFont) => font.measureText(text).width,
     [],
   )
 
