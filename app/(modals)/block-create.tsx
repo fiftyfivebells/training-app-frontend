@@ -1,8 +1,2 @@
-import { View } from 'react-native'
-
-import { useTheme } from '@/theme/useTheme'
-
-export default function BlockCreateScreen() {
-  const { colors } = useTheme()
-  return <View style={{ flex: 1, backgroundColor: colors.background.elevated }} />
-}
+import { BlockCreateScreen } from '@/domains/blocks/screens/BlockCreateScreen'
+export default BlockCreateScreen
