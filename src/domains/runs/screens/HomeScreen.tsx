@@ -6,29 +6,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useActiveBlock } from '@/domains/blocks/hooks/useActiveBlock'
 import { useTodayAffirmation } from '@/domains/blocks/hooks/useTodayAffirmation'
 import type { Block } from '@/domains/blocks/blocks.types'
-import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
-import type { Mood, MoodCategoryKey } from '@/domains/moods/moods.types'
 import type { RunResponse } from '@/domains/runs/api/runsApi'
+import { RunRow } from '@/domains/runs/components/RunRow'
 import { useRuns } from '@/domains/runs/hooks/useRuns'
-import { formatDistanceDisplay, formatDistanceParts } from '@/domains/runs/utils/distance'
-import { formatDurationDisplay } from '@/domains/runs/utils/duration'
-import { formatRelativeDays, generateRunTitle } from '@/domains/runs/utils/formatters'
+import { formatDistanceParts } from '@/domains/runs/utils/distance'
 import { computeWeeklyStats } from '@/domains/runs/utils/weeklyStats'
 import { useGetCurrentUser } from '@/domains/users/hooks/useGetCurrentUser'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
 import { useTheme } from '@/theme/useTheme'
 
 // ---------- constants ----------
-
-const QUADRANT_COLOR_KEY: Record<
-  MoodCategoryKey,
-  'highGood' | 'highTough' | 'lowGood' | 'lowTough'
-> = {
-  'high-pleasant': 'highGood',
-  'high-challenging': 'highTough',
-  'low-pleasant': 'lowGood',
-  'low-challenging': 'lowTough',
-}
 
 function getGreeting(): string {
   const hour = new Date().getHours()
@@ -146,58 +133,11 @@ function AffirmationCard({ affirmation }: AffirmationCardProps) {
   )
 }
 
-type RecentRunRowProps = {
-  run: RunResponse
-  moods: Mood[]
-  unit: 'km' | 'mi'
-  showDivider: boolean
-}
-
-function RecentRunRow({ run, moods, unit, showDivider }: RecentRunRowProps) {
-  const { colors } = useTheme()
-
-  const mood = moods.find((m) => m.id === run.moodId)
-  const moodColor = mood ? colors.mood[QUADRANT_COLOR_KEY[mood.quadrant]] : null
-
-  const title = generateRunTitle(undefined, mood?.label)
-  const dateLabel = formatRelativeDays(run.date)
-  const distanceStr = formatDistanceDisplay(run.distanceMeters, unit)
-  const durationStr = formatDurationDisplay(run.durationSeconds)
-  const statsStr = `${distanceStr} · ${durationStr}`
-
-  return (
-    <TouchableOpacity
-      style={[
-        styles.recentRunRow,
-        showDivider && { borderTopWidth: 1, borderTopColor: colors.border.subtle },
-      ]}
-      onPress={() => router.push(`/runs/${run.id}`)}
-      activeOpacity={0.7}
-    >
-      <View style={styles.recentRunMain}>
-        <Text style={[styles.recentRunTitle, { color: colors.text.primary }]} numberOfLines={1}>
-          {title}
-        </Text>
-        <Text style={[styles.recentRunDate, { color: colors.text.tertiary }]}>{dateLabel}</Text>
-        <Text style={[styles.recentRunStats, { color: colors.text.secondary }]}>{statsStr}</Text>
-      </View>
-      {mood && moodColor && (
-        <View style={styles.moodContainer}>
-          <View style={[styles.moodDot, { backgroundColor: moodColor }]} />
-          <Text style={[styles.moodLabel, { color: colors.text.tertiary }]}>{mood.label}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  )
-}
-
 type RecentRunsCardProps = {
   runs: RunResponse[]
-  moods: Mood[]
-  unit: 'km' | 'mi'
 }
 
-function RecentRunsCard({ runs, moods, unit }: RecentRunsCardProps) {
+function RecentRunsCard({ runs }: RecentRunsCardProps) {
   const { colors } = useTheme()
   return (
     <View
@@ -225,13 +165,10 @@ function RecentRunsCard({ runs, moods, unit }: RecentRunsCardProps) {
         </View>
       ) : (
         runs.map((run, i) => (
-          <RecentRunRow
-            key={run.id}
-            run={run}
-            moods={moods}
-            unit={unit}
-            showDivider={i > 0}
-          />
+          <View key={run.id}>
+            {i > 0 && <View style={[styles.divider, { backgroundColor: colors.border.subtle }]} />}
+            <RunRow run={run} compact />
+          </View>
         ))
       )}
     </View>
@@ -249,7 +186,6 @@ export function HomeScreen() {
   const { data: activeBlock } = useActiveBlock()
   const { data: affirmation } = useTodayAffirmation()
   const { data: runs = [] } = useRuns()
-  const { data: moods = [] } = useGetAllMoods()
 
   const recentRuns = runs.slice(0, 3)
   const { weeklyDistanceMeters, streak, blockRunCount } = computeWeeklyStats(
@@ -337,7 +273,7 @@ export function HomeScreen() {
           />
         </View>
 
-        <RecentRunsCard runs={recentRuns} moods={moods} unit={unit} />
+        <RecentRunsCard runs={recentRuns} />
       </ScrollView>
     </View>
   )
@@ -505,40 +441,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
   },
-  recentRunRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  recentRunMain: {
-    flex: 1,
-    gap: 3,
-    marginRight: 12,
-  },
-  recentRunTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  recentRunDate: {
-    fontSize: 11,
-  },
-  recentRunStats: {
-    fontSize: 12,
-  },
-  moodContainer: {
-    alignItems: 'center',
-    gap: 4,
-    paddingTop: 2,
-  },
-  moodDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  moodLabel: {
-    fontSize: 11,
+  divider: {
+    height: 1,
   },
   // Empty state
   emptyState: {

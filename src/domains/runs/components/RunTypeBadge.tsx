@@ -17,6 +17,8 @@ export function RunTypeBadge({ runType }: RunTypeBadgeProps) {
 
   if (!runType) return null
 
+  const normalized = runType.charAt(0).toUpperCase() + runType.slice(1).toLowerCase()
+
   const styleMap: Record<string, BadgeStyle> = {
     Easy: { bg: colors.semantic.successBg, text: colors.semantic.successFg },
     Recovery: { bg: colors.background.surface, text: colors.text.tertiary, border: colors.border.subtle },
@@ -25,7 +27,7 @@ export function RunTypeBadge({ runType }: RunTypeBadgeProps) {
     Speed: { bg: '#1E1510', text: colors.mood.highTough },
   }
 
-  const style = styleMap[runType] ?? {
+  const style = styleMap[normalized] ?? {
     bg: colors.background.surface,
     text: colors.text.tertiary,
     border: colors.border.subtle,
@@ -42,7 +44,7 @@ export function RunTypeBadge({ runType }: RunTypeBadgeProps) {
         },
       ]}
     >
-      <Text style={[styles.label, { color: style.text }]}>{runType}</Text>
+      <Text style={[styles.label, { color: style.text }]}>{normalized}</Text>
     </View>
   )
 }

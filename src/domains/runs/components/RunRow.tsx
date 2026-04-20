@@ -8,9 +8,9 @@ import type { RunResponse } from '@/domains/runs/api/runsApi'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
 import { useTheme } from '@/theme/useTheme'
 
-import { formatDistanceParts } from '../utils/distance'
+import { formatDistanceDisplay, formatDistanceParts } from '../utils/distance'
 import { formatDurationDisplay } from '../utils/duration'
-import { formatPace, formatRunDate, generateRunTitle } from '../utils/formatters'
+import { formatPace, formatRelativeDays, formatRunDate, generateRunTitle } from '../utils/formatters'
 import { RunTypeBadge } from './RunTypeBadge'
 
 const QUADRANT_COLOR_KEY: Record<MoodCategoryKey, 'highGood' | 'highTough' | 'lowGood' | 'lowTough'> = {
@@ -22,9 +22,10 @@ const QUADRANT_COLOR_KEY: Record<MoodCategoryKey, 'highGood' | 'highTough' | 'lo
 
 type RunRowProps = {
   run: RunResponse
+  compact?: boolean
 }
 
-export function RunRow({ run }: RunRowProps) {
+export function RunRow({ run, compact = false }: RunRowProps) {
   const { colors } = useTheme()
   const { unit } = useDistanceUnit()
   const { data: moods } = useGetAllMoods()
@@ -32,18 +33,19 @@ export function RunRow({ run }: RunRowProps) {
   const mood = moods?.find((m) => m.id === run.moodId)
   const moodColor = mood ? colors.mood[QUADRANT_COLOR_KEY[mood.quadrant]] : null
 
-  // runType not yet a field on RunResponse — wired here when backend adds it
-  const runType: string | undefined = undefined
+  const runType = run.runType
+    ? run.runType.charAt(0).toUpperCase() + run.runType.slice(1).toLowerCase()
+    : undefined
 
   const title = generateRunTitle(runType, mood?.label)
-  const dateLabel = formatRunDate(run.date)
+  const dateLabel = compact ? formatRelativeDays(run.date) : formatRunDate(run.date)
   const { value: distValue, unit: distUnit } = formatDistanceParts(run.distanceMeters, unit)
   const duration = formatDurationDisplay(run.durationSeconds)
   const pace = formatPace(run.distanceMeters, run.durationSeconds, unit)
 
   return (
     <TouchableOpacity
-      style={styles.row}
+      style={[styles.row, compact && styles.rowCompact]}
       onPress={() => router.push(`/runs/${run.id}`)}
       activeOpacity={0.7}
     >
@@ -52,39 +54,53 @@ export function RunRow({ run }: RunRowProps) {
           {title}
         </Text>
 
-        <View style={styles.subLine}>
-          <Text style={[styles.timestamp, { color: colors.text.tertiary }]}>{dateLabel}</Text>
-          {runType && (
-            <>
-              <View style={[styles.separatorDot, { backgroundColor: colors.border.default }]} />
-              <RunTypeBadge runType={runType} />
-            </>
-          )}
-        </View>
-
-        <View style={styles.statsLine}>
-          <Text>
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>{distValue}</Text>
-            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> {distUnit}</Text>
-          </Text>
-          <Text>
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>{duration}</Text>
-            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> dur</Text>
-          </Text>
-          <Text>
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>{pace}</Text>
-            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> /{unit}</Text>
-          </Text>
-          {mood && moodColor && (
-            <View style={styles.moodContainer}>
-              <View style={[styles.moodDot, { backgroundColor: moodColor }]} />
-              <Text style={[styles.moodLabel, { color: colors.text.tertiary }]}>{mood.label}</Text>
+        {compact ? (
+          <>
+            <Text style={[styles.timestamp, { color: colors.text.tertiary }]}>{dateLabel}</Text>
+            <Text style={[styles.compactStats, { color: colors.text.secondary }]}>
+              {formatDistanceDisplay(run.distanceMeters, unit)} · {duration}
+            </Text>
+          </>
+        ) : (
+          <>
+            <View style={styles.subLine}>
+              <Text style={[styles.timestamp, { color: colors.text.tertiary }]}>{dateLabel}</Text>
+              {runType && (
+                <>
+                  <View style={[styles.separatorDot, { backgroundColor: colors.border.default }]} />
+                  <RunTypeBadge runType={runType} />
+                </>
+              )}
             </View>
-          )}
-        </View>
+
+            <View style={styles.statsLine}>
+              <Text>
+                <Text style={[styles.statValue, { color: colors.text.primary }]}>{distValue}</Text>
+                <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> {distUnit}</Text>
+              </Text>
+              <Text>
+                <Text style={[styles.statValue, { color: colors.text.primary }]}>{duration}</Text>
+                <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> dur</Text>
+              </Text>
+              <Text>
+                <Text style={[styles.statValue, { color: colors.text.primary }]}>{pace}</Text>
+                <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> /{unit}</Text>
+              </Text>
+            </View>
+          </>
+        )}
       </View>
 
-      <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} style={styles.chevron} />
+      {mood && moodColor && (
+        <View style={[styles.moodContainer, compact && styles.moodContainerCompact]}>
+          <View style={[styles.moodDot, { backgroundColor: moodColor }]} />
+          <Text style={[styles.moodLabel, { color: colors.text.tertiary }]}>{mood.label}</Text>
+        </View>
+      )}
+
+      {!compact && (
+        <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} style={styles.chevron} />
+      )}
     </TouchableOpacity>
   )
 }
@@ -95,6 +111,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: 13,
     paddingHorizontal: 14,
+  },
+  rowCompact: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
   content: {
     flex: 1,
@@ -136,11 +156,21 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 16,
   },
+  compactStats: {
+    fontSize: 12,
+  },
   moodContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
     marginLeft: 'auto',
+  },
+  moodContainerCompact: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 4,
+    marginLeft: 0,
+    paddingTop: 2,
   },
   moodDot: {
     width: 8,

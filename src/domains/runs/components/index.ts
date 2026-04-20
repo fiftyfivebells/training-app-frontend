@@ -1,6 +1,7 @@
 export { DistanceField } from './DistanceField'
 export { DurationField } from './DurationField'
 export { MoodWidget } from './MoodWidget'
+export { PeriodSection } from './PeriodSection'
 export { RunRow } from './RunRow'
 export { RunTypeBadge } from './RunTypeBadge'
 export { RunTypePicker } from './RunTypePicker'
