@@ -1,5 +1,4 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { router } from 'expo-router'
 
 import { ApiError } from '@/lib/api/error'
 
@@ -13,14 +12,15 @@ export function useLogRun(
 
   return useMutation({
     mutationFn: (body: LogRunRequest) => runsClient.logRun(body),
-    onSuccess: (newRun) => {
+    onSuccess: (newRun, vars, ctx, mutation) => {
       queryClient.setQueryData(runsKeys.detail(newRun.id), newRun)
       queryClient.invalidateQueries({
         queryKey: runsKeys.all,
         exact: false,
       })
-      router.replace(`/run/${newRun.id}`)
+      options?.onSuccess?.(newRun, vars, ctx, mutation)
     },
-    ...options,
+    onError: options?.onError,
+    onSettled: options?.onSettled,
   })
 }

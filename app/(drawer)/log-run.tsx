@@ -1,5 +1,5 @@
-import { RunLogForm } from '@/domains/runs/screens/RunLogForm'
+import { LogScreen } from '@/domains/runs/screens/LogScreen'
 
 export default function LogRunRoute() {
-  return <RunLogForm />
+  return <LogScreen />
 }

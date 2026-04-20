@@ -1,3 +1,5 @@
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+
 import { AlertProvider } from '@components/ui'
 import { AuthProvider } from '@domains/auth/context/AuthContext'
 import { Fraunces_400Regular, Fraunces_400Regular_Italic } from '@expo-google-fonts/fraunces'
@@ -34,19 +36,21 @@ export default function RootLayout() {
   if (!fontsLoaded) return null
 
   return (
-    <BaseThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AuthGate>
-            <ThemeProvider>
-              <AlertProvider>
-                <ThemedAppShell />
-              </AlertProvider>
-            </ThemeProvider>
-          </AuthGate>
-        </AuthProvider>
-      </QueryClientProvider>
-    </BaseThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BaseThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <AuthGate>
+              <ThemeProvider>
+                <AlertProvider>
+                  <ThemedAppShell />
+                </AlertProvider>
+              </ThemeProvider>
+            </AuthGate>
+          </AuthProvider>
+        </QueryClientProvider>
+      </BaseThemeProvider>
+    </GestureHandlerRootView>
   )
 }
 

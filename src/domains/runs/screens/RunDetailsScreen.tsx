@@ -15,7 +15,7 @@ import { DistanceField, DurationField, MoodField, NotesField } from '@/domains/r
 import { useDeleteRun } from '@/domains/runs/hooks/useDeleteRun'
 import { useRun } from '@/domains/runs/hooks/useRun'
 import { useUpdateRun } from '@/domains/runs/hooks/useUpdateRun'
-import { formatDateForApi } from '@/domains/runs/utils/date'
+import { formatDateForApi } from '@/domains/runs/utils/datetime'
 import {
   calculateMeters,
   formatDistance,

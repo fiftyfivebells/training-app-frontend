@@ -1,126 +1,139 @@
-import type { DistanceUnit } from '@domains/runs/utils/distance'
-import React from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
+import {
+  LayoutChangeEvent,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
-import { ThemedText } from '@/components/ui/ThemedText'
-import { ThemedTextInput } from '@/components/ui/ThemedTextInput'
-import { useTheme } from '@/theme/ThemeProvider'
-import { TextInput } from 'react-native-gesture-handler'
+import { useTheme } from '@/theme/useTheme'
 
-type DistanceFieldProps = {
-  distance: string
-  unit: DistanceUnit
-  onChangeDistance: (value: string) => void
-  onChangeUnit: (unit: DistanceUnit) => void
-  inputRef?: React.RefObject<TextInput | null>
+interface DistanceFieldProps {
+  value: string
+  onChange: (v: string) => void
+  onBlur: () => void
+  hasError: boolean
+  errorMessage?: string
+  displayUnit: 'km' | 'mi'
+  onUnitToggle: (unit: 'km' | 'mi') => void
+  onLayout?: (e: LayoutChangeEvent) => void
 }
 
-export const DistanceField: React.FC<DistanceFieldProps> = ({
-  distance,
-  unit,
-  onChangeDistance,
-  onChangeUnit,
-  inputRef,
-}) => {
-  const theme = useTheme()
+export function DistanceField({
+  value,
+  onChange,
+  onBlur,
+  hasError,
+  errorMessage,
+  displayUnit,
+  onUnitToggle,
+  onLayout,
+}: DistanceFieldProps) {
+  const { colors } = useTheme()
 
   return (
-    <>
-      <ThemedText
-        style={{
-          fontSize: theme.typography.size.sm,
-          fontWeight: theme.typography.weights.semibold,
-          marginBottom: theme.spacing.xs,
-          color: theme.semantic.text.primary,
-        }}
-      >
-        Distance
-      </ThemedText>
-      <View style={styles.row}>
-        <ThemedTextInput
+    <View style={styles.root} onLayout={onLayout}>
+      <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>DISTANCE</Text>
+      <View style={styles.distanceRow}>
+        <TextInput
           style={[
             styles.distanceInput,
             {
-              marginRight: theme.spacing.md,
-              borderColor: theme.semantic.border.default,
-              backgroundColor: theme.semantic.surface.card,
-              padding: theme.spacing.sm,
-              borderRadius: theme.radius.md,
-              fontSize: theme.typography.size.md,
+              backgroundColor: colors.background.input,
+              borderColor: hasError ? colors.semantic.errorFg : colors.border.subtle,
+              color: colors.text.primary,
             },
           ]}
-          value={distance}
-          onChangeText={onChangeDistance}
-          placeholder="5.2"
-          keyboardType="numeric"
-          ref={inputRef}
+          value={value}
+          onChangeText={onChange}
+          onBlur={onBlur}
+          keyboardType="decimal-pad"
+          placeholder="0.00"
+          placeholderTextColor={colors.text.tertiary}
+          accessibilityLabel="Distance"
         />
-
         <View
           style={[
-            styles.unitPicker,
-            {
-              backgroundColor: theme.semantic.surface.card,
-              borderRadius: theme.radius.md,
-              borderColor: theme.semantic.border.default,
-            },
+            styles.unitSelector,
+            { backgroundColor: colors.background.base, borderColor: colors.border.subtle },
           ]}
         >
-          {(['miles', 'km', 'meters'] as DistanceUnit[]).map((u) => (
-            <Pressable
-              key={u}
-              onPress={() => {
-                onChangeUnit(u)
-              }}
+          {(['km', 'mi'] as const).map((unit) => (
+            <TouchableOpacity
+              key={unit}
+              onPress={() => onUnitToggle(unit)}
               style={[
-                styles.unitOption,
-                u === 'meters' && styles.lastUnitOption,
-                {
-                  alignItems: 'center',
-                  borderRightColor: theme.semantic.border.default,
-                  paddingVertical: theme.spacing.xs,
-                  paddingHorizontal: theme.spacing.sm,
-                },
-                unit === u && {
-                  backgroundColor: theme.semantic.button.primary.bg,
-                },
+                styles.unitBtn,
+                displayUnit === unit && { backgroundColor: colors.copper.default, borderRadius: 7 },
               ]}
+              accessibilityLabel={`${unit} unit`}
             >
-              <ThemedText
+              <Text
                 style={[
-                  {
-                    fontSize: theme.typography.size.sm,
-                    color: theme.semantic.text.primary,
-                  },
-                  unit === u && {
-                    color: theme.semantic.button.primary.text,
-                    fontWeight: theme.typography.weights.semibold,
-                  },
+                  styles.unitBtnText,
+                  { color: displayUnit === unit ? colors.background.base : colors.text.tertiary },
                 ]}
               >
-                {u === 'miles' ? 'mi' : u === 'km' ? 'km' : 'm'}
-              </ThemedText>
-            </Pressable>
+                {unit}
+              </Text>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
-    </>
+      {hasError && (
+        <Text style={[styles.errorText, { color: colors.semantic.errorFg }]}>
+          {errorMessage}
+        </Text>
+      )}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center' },
-  distanceInput: {
-    minWidth: '10%',
-    borderWidth: 1,
+  root: {
+    gap: 8,
   },
-  unitPicker: {
-    justifyContent: 'space-around',
-    maxWidth: '30%',
+  fieldLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 0.6,
+  },
+  distanceRow: {
     flexDirection: 'row',
-    overflow: 'hidden',
-    borderWidth: 1,
+    alignItems: 'center',
+    gap: 10,
   },
-  unitOption: { flex: 1, borderRightWidth: 1 },
-  lastUnitOption: { borderRightWidth: 0 },
+  distanceInput: {
+    flex: 1,
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    fontSize: 24,
+    fontWeight: '300',
+    textAlign: 'right',
+  },
+  unitSelector: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 3,
+    gap: 2,
+  },
+  unitBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  unitBtnText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  errorText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
 })

@@ -1,149 +1,151 @@
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import {
+  LayoutChangeEvent,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native'
 
-import { ThemedText } from '@/components/ui/ThemedText'
-import { ThemedTextInput } from '@/components/ui/ThemedTextInput'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
-type DurationFieldProps = {
-  hours: string
-  minutes: string
-  seconds: string
-  onChangeHours: (value: string) => void
-  onChangeMinutes: (value: string) => void
-  onChangeSeconds: (value: string) => void
-  normalizedLabel: string
+interface FieldHandlers {
+  value: string
+  onChange: (v: string) => void
+  onBlur: () => void
 }
 
-export const DurationField: React.FC<DurationFieldProps> = ({
-  hours,
-  minutes,
-  seconds,
-  onChangeHours,
-  onChangeMinutes,
-  onChangeSeconds,
-  normalizedLabel,
-}) => {
-  const theme = useTheme()
+interface DurationFieldProps {
+  hh: FieldHandlers
+  mm: FieldHandlers
+  ss: FieldHandlers
+  hhHasError: boolean
+  hhErrorMessage?: string
+  paceString: string
+  onLayout?: (e: LayoutChangeEvent) => void
+}
+
+function clamp(v: number, min: number, max: number): number {
+  return Math.min(Math.max(v, min), max)
+}
+
+export function DurationField({
+  hh,
+  mm,
+  ss,
+  hhHasError,
+  hhErrorMessage,
+  paceString,
+  onLayout,
+}: DurationFieldProps) {
+  const { colors } = useTheme()
+
+  const fields = [
+    { handlers: hh,  label: 'HH', accessLabel: 'Hours',   isClamp: false },
+    { handlers: mm,  label: 'MM', accessLabel: 'Minutes',  isClamp: true  },
+    { handlers: ss,  label: 'SS', accessLabel: 'Seconds',  isClamp: true  },
+  ] as const
 
   return (
-    <>
-      <ThemedText
-        style={{
-          fontSize: theme.typography.size.sm,
-          fontWeight: theme.typography.weights.semibold,
-          marginBottom: theme.spacing.xs,
-          color: theme.semantic.text.primary,
-        }}
-      >
-        Duration
-      </ThemedText>
-
-      <View style={styles.durationContainer}>
-        <View style={styles.timeRow}>
-          <ThemedTextInput
-            style={[
-              styles.timeInput,
-              getInputStyle(theme),
-              { marginRight: theme.spacing.xs },
-            ]}
-            value={hours}
-            onChangeText={onChangeHours}
-            placeholder="HH"
-            keyboardType="number-pad"
-            maxLength={2}
-          />
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.lg,
-              fontWeight: theme.typography.weights.semibold,
-              color: theme.semantic.text.primary,
-              marginHorizontal: theme.spacing.xs,
-            }}
-          >
-            :
-          </ThemedText>
-
-          <ThemedTextInput
-            style={[
-              styles.timeInput,
-              getInputStyle(theme),
-              { marginRight: theme.spacing.xs },
-            ]}
-            value={minutes}
-            onChangeText={onChangeMinutes}
-            placeholder="MM"
-            keyboardType="number-pad"
-            maxLength={2}
-          />
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.lg,
-              fontWeight: theme.typography.weights.semibold,
-              color: theme.semantic.text.primary,
-              marginHorizontal: theme.spacing.xs,
-            }}
-          >
-            :
-          </ThemedText>
-
-          <ThemedTextInput
-            style={[styles.timeInput, getInputStyle(theme)]}
-            value={seconds}
-            onChangeText={onChangeSeconds}
-            placeholder="SS"
-            keyboardType="number-pad"
-            maxLength={2}
-          />
-        </View>
-
-        <View
-          style={[
-            styles.totalTimeWrapper,
-            { marginLeft: theme.spacing.md },
-          ]}
-        >
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.xs,
-              color: theme.semantic.text.secondary,
-              marginBottom: theme.spacing.xs / 2,
-            }}
-          >
-            Total
-          </ThemedText>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.md,
-              fontWeight: theme.typography.weights.semibold,
-              color: theme.semantic.text.primary,
-            }}
-          >
-            {normalizedLabel}
-          </ThemedText>
-        </View>
+    <View style={styles.root} onLayout={onLayout}>
+      <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>DURATION</Text>
+      <View style={styles.durationRow}>
+        {fields.map(({ handlers, label, accessLabel, isClamp }) => (
+          <View key={label} style={styles.durationCell}>
+            <TextInput
+              style={[
+                styles.durationInput,
+                {
+                  backgroundColor: colors.background.input,
+                  borderColor:
+                    label === 'HH' && hhHasError
+                      ? colors.semantic.errorFg
+                      : colors.border.subtle,
+                  color: colors.text.primary,
+                },
+              ]}
+              value={handlers.value}
+              onChangeText={handlers.onChange}
+              onBlur={() => {
+                if (isClamp) {
+                  const n = Number(handlers.value)
+                  if (!Number.isNaN(n)) handlers.onChange(String(clamp(n, 0, 59)))
+                }
+                handlers.onBlur()
+              }}
+              keyboardType="number-pad"
+              maxLength={2}
+              textAlign="center"
+              placeholder="00"
+              placeholderTextColor={colors.text.tertiary}
+              accessibilityLabel={accessLabel}
+            />
+            <Text style={[styles.durationLabel, { color: colors.text.tertiary }]}>
+              {label}
+            </Text>
+          </View>
+        ))}
       </View>
-    </>
+      <View style={styles.paceRow}>
+        <Text style={[styles.paceLabel, { color: colors.text.tertiary }]}>PACE</Text>
+        <Text style={[styles.paceValue, { color: colors.copper.default }]}>{paceString}</Text>
+      </View>
+      {hhHasError && (
+        <Text style={[styles.errorText, { color: colors.semantic.errorFg }]}>
+          {hhErrorMessage}
+        </Text>
+      )}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  durationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  root: {
+    gap: 8,
   },
-  timeRow: { flexDirection: 'row', alignItems: 'center' },
-  timeInput: { width: 60, textAlign: 'center', borderWidth: 1 },
-  totalTimeWrapper: { alignItems: 'flex-start' },
+  fieldLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 0.6,
+  },
+  durationRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  durationCell: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  durationInput: {
+    width: '100%',
+    height: 56,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 28,
+    fontWeight: '300',
+  },
+  durationLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.4,
+  },
+  paceRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'baseline',
+    gap: 6,
+  },
+  paceLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 0.4,
+  },
+  paceValue: {
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  errorText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
 })
-
-function getInputStyle(theme: ReturnType<typeof useTheme>) {
-  return {
-    borderColor: theme.semantic.border.default,
-    backgroundColor: theme.semantic.surface.card,
-    padding: theme.spacing.sm,
-    borderRadius: theme.radius.md,
-    fontSize: theme.typography.size.md,
-  }
-}

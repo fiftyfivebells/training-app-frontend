@@ -391,6 +391,8 @@ export interface components {
             durationSeconds: number;
             /** Format: int32 */
             moodId: number;
+            /** Format: int32 */
+            exertionRating: number;
             notes?: string;
             runType: string;
         };
@@ -443,6 +445,8 @@ export interface components {
             durationSeconds: number;
             /** Format: int32 */
             moodId: number;
+            /** Format: int32 */
+            exertionRating: number;
             notes?: string;
             blockId?: string;
             runType: string;
@@ -483,6 +487,8 @@ export interface components {
             durationSeconds?: number;
             /** Format: int32 */
             moodId?: number;
+            /** Format: int32 */
+            exertionRating?: number;
             notes?: string;
             runType?: string;
         };
