@@ -1,457 +1,409 @@
-import { useFocusEffect, useRouter, useLocalSearchParams } from 'expo-router'
-import React, { useCallback, useMemo, useState } from 'react'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
+import { differenceInCalendarDays, format, parseISO } from 'date-fns'
+import { router, useLocalSearchParams } from 'expo-router'
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { AppModal } from '@/components/layout/AppModal'
-import { Screen } from '@/components/layout/Screen'
-import { useAlert } from '@/components/ui/Alert'
-import { Button } from '@/components/ui/Button'
-import { ThemedText } from '@/components/ui/ThemedText'
-import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
-import { moodCategories } from '@/domains/moods/moods.constants'
-import { getMoodCategoryColor } from '@/domains/moods/utils/mood'
+import { Ionicons } from '@expo/vector-icons'
+
+import { RunRow } from '@/domains/runs/components/RunRow'
 import { useRuns } from '@/domains/runs/hooks/useRuns'
-import { computeMoodAnalytics, QuadrantBreakdown } from '@/domains/runs/utils/analytics'
-import { useTheme } from '@/theme/ThemeProvider'
+import { metersToDistanceUnit } from '@/domains/runs/utils/distance'
+import { useDistanceUnit } from '@/hooks/useDistanceUnit'
+import { useTheme } from '@/theme/useTheme'
 
-import { BLOCK_TYPE_CONFIG, Block } from '../blocks.types'
+import { BLOCK_TYPE_CONFIG } from '../constants/blockTypes'
 import { useBlock } from '../hooks/useBlock'
-import { useCompleteBlock } from '../hooks/useCompleteBlock'
-import { useDeleteBlock } from '../hooks/useDeleteBlock'
-
-// ---------- File-local subcomponents ----------
-
-function ProgressBar({ percent, accentColor }: { percent: number; accentColor: string }) {
-  const theme = useTheme()
-  return (
-    <View
-      style={[
-        styles.progressTrack,
-        {
-          backgroundColor: theme.semantic.border.default,
-          borderRadius: theme.radius.full,
-          height: 8,
-        },
-      ]}
-    >
-      <View
-        style={{
-          width: `${percent}%` as `${number}%`,
-          backgroundColor: accentColor,
-          borderRadius: theme.radius.full,
-          height: 8,
-        }}
-      />
-    </View>
-  )
-}
-
-function StatusBadge({ status }: { status: Block['status'] }) {
-  const theme = useTheme()
-  const isActive = status === 'active'
-  const label = status === 'active' ? 'Active' : status === 'completed' ? 'Completed' : 'Expired'
-  return (
-    <View
-      style={{
-        backgroundColor: isActive
-          ? theme.semantic.button.primary.bg
-          : theme.semantic.surface.cardAlt,
-        borderRadius: theme.radius.full,
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 3,
-      }}
-    >
-      <ThemedText
-        style={{
-          fontSize: theme.typography.size.xs,
-          fontWeight: theme.typography.weights.semibold,
-          color: isActive ? theme.semantic.button.primary.text : theme.semantic.text.secondary,
-        }}
-      >
-        {label}
-      </ThemedText>
-    </View>
-  )
-}
-
-function SectionHeading({ children }: { children: string }) {
-  const theme = useTheme()
-  return (
-    <ThemedText
-      style={{
-        fontSize: theme.typography.size.sm,
-        fontWeight: theme.typography.weights.semibold,
-        color: theme.semantic.text.secondary,
-        marginBottom: theme.spacing.sm,
-      }}
-    >
-      {children}
-    </ThemedText>
-  )
-}
-
-function QuadrantRow({ row }: { row: QuadrantBreakdown }) {
-  const theme = useTheme()
-  const color = getMoodCategoryColor(theme, row.key)
-  const category = moodCategories.find((c) => c.key === row.key)!
-  const barWidth = row.count > 0 ? `${Math.max(row.percentage, 2)}%` : '0%'
-
-  return (
-    <View style={{ marginBottom: theme.spacing.md }}>
-      <View style={[styles.rowHeader, { marginBottom: theme.spacing.sm }]}>
-        <View
-          style={{
-            width: 12,
-            height: 12,
-            borderRadius: 3,
-            backgroundColor: color,
-            marginRight: theme.spacing.sm,
-          }}
-        />
-        <ThemedText
-          style={{
-            flex: 1,
-            fontSize: theme.typography.size.sm,
-            color: theme.semantic.text.primary,
-          }}
-        >
-          {category.title}
-        </ThemedText>
-        <ThemedText
-          style={{ fontSize: theme.typography.size.sm, color: theme.semantic.text.secondary }}
-        >
-          {row.count} {row.count !== 1 ? 'runs' : 'run'}
-        </ThemedText>
-      </View>
-      <View
-        style={{
-          backgroundColor: theme.semantic.surface.card,
-          borderRadius: theme.radius.xs,
-          height: 4,
-          overflow: 'hidden',
-        }}
-      >
-        <View
-          style={{
-            width: barWidth as `${number}%`,
-            height: 4,
-            backgroundColor: color,
-            borderRadius: theme.radius.xs,
-          }}
-        />
-      </View>
-    </View>
-  )
-}
-
-// ---------- Main screen ----------
+import { useBlockRuns } from '../hooks/useBlockRuns'
+import { useBlockStats } from '../hooks/useBlockStats'
+import { MoodTimelineCard } from '../components/MoodTimelineCard'
 
 export function BlockDetailScreen() {
-  const router = useRouter()
-  const theme = useTheme()
-  const { alert } = useAlert()
-  const { blockId } = useLocalSearchParams<{ blockId: string }>()
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
+  const { unit: distUnit } = useDistanceUnit()
 
-  const { data: block, isLoading, isError } = useBlock(blockId)
-  const { data: allRuns } = useRuns()
-  const { data: moods } = useGetAllMoods()
+  const { data: block, isLoading: blockLoading } = useBlock(id ?? '')
+  const { data: blockRuns = [] } = useBlockRuns(id ?? '')
+  const { data: stats } = useBlockStats(id ?? '')
 
-  const completeBlock = useCompleteBlock()
-  const deleteBlock = useDeleteBlock()
-
-  const [showCeremony, setShowCeremony] = useState(false)
-
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        setShowCeremony(false)
-      }
-    }, []),
-  )
-
-  const blockRuns = useMemo(
-    () => allRuns?.filter((r) => r.blockId === blockId) ?? [],
-    [allRuns, blockId],
-  )
-
-  const moodAnalytics = useMemo(
-    () => (blockRuns.length > 0 && moods ? computeMoodAnalytics(blockRuns, moods) : null),
-    [blockRuns, moods],
-  )
-
-  const progress = useMemo(() => {
-    if (!block) return 0
-    const start = new Date(block.startDate).getTime()
-    const end = new Date(block.endDate).getTime()
-    const now = Date.now()
-    if (now <= start) return 0
-    if (now >= end) return 100
-    return Math.round(((now - start) / (end - start)) * 100)
-  }, [block])
-
-  const daysRemaining = useMemo(() => {
-    if (!block) return 0
-    return Math.max(
-      0,
-      Math.ceil((new Date(block.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-    )
-  }, [block])
-
-  const handleComplete = () => {
-    if (!block) return
-    completeBlock.mutate(block.id, {
-      onSuccess: () => setShowCeremony(true),
-      onError: () =>
-        alert('Error', 'Could not complete block. Please try again.', [{ text: 'OK' }]),
-    })
-  }
-
-  const handleDelete = () => {
-    if (!block) return
-    alert('Delete Block', 'Are you sure? This cannot be undone.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () =>
-          deleteBlock.mutate(block.id, {
-            onSuccess: () => router.replace('/(drawer)/blocks'),
-            onError: () =>
-              alert('Error', 'Could not delete block. Please try again.', [{ text: 'OK' }]),
-          }),
-      },
-    ])
-  }
-
-  if (isLoading) {
-    return (
-      <Screen scroll={false}>
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color={theme.semantic.button.primary.bg} />
-        </View>
-      </Screen>
-    )
-  }
-
-  if (isError || !block) {
-    return (
-      <Screen scroll={false}>
-        <ThemedText>Unable to load this block.</ThemedText>
-      </Screen>
-    )
+  if (blockLoading || !block) {
+    return <View style={[styles.screen, { backgroundColor: colors.background.base }]} />
   }
 
   const config = BLOCK_TYPE_CONFIG[block.blockType]
+  const totalDays = differenceInCalendarDays(parseISO(block.endDate), parseISO(block.startDate)) + 1
+
+  const distValue = stats
+    ? Math.round(
+        metersToDistanceUnit(
+          stats.totalDistanceMeters,
+          distUnit === 'mi' ? 'miles' : distUnit,
+        ),
+      )
+    : 0
 
   return (
-    <>
-      <Screen>
-        {/* Section 1 — Header */}
-        <View style={{ marginBottom: theme.spacing.lg }}>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.xs,
-              fontWeight: theme.typography.weights.semibold,
-              color: config.accentColor,
-              textTransform: 'uppercase',
-              letterSpacing: 0.8,
-              marginBottom: theme.spacing.xs,
-            }}
-          >
-            {config.label}
-          </ThemedText>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.xxl,
-              fontWeight: theme.typography.weights.bold,
-              color: theme.semantic.text.primary,
-              marginBottom: theme.spacing.sm,
-            }}
-          >
-            {block.name}
-          </ThemedText>
-          <View style={styles.badgeRow}>
-            <StatusBadge status={block.status} />
-            <ThemedText
-              style={{
-                fontSize: theme.typography.size.sm,
-                color: theme.semantic.text.secondary,
-                marginLeft: theme.spacing.sm,
-              }}
-            >
-              {block.startDate} – {block.endDate}
-            </ThemedText>
-          </View>
-        </View>
+    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+      {/* Header */}
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: insets.top + 8,
+            backgroundColor: colors.background.base,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          style={styles.backBtn}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+          {config.label}
+        </Text>
+        <View style={styles.headerRight} />
+      </View>
 
-        {/* Section 2 — Progress */}
-        <View style={{ marginBottom: theme.spacing.lg }}>
-          <ProgressBar percent={progress} accentColor={config.accentColor} />
-          <View style={[styles.progressLabels, { marginTop: theme.spacing.xs }]}>
-            <ThemedText
-              style={{ fontSize: theme.typography.size.xs, color: theme.semantic.text.muted }}
-            >
-              {block.startDate}
-            </ThemedText>
-            <ThemedText
-              style={{ fontSize: theme.typography.size.xs, color: theme.semantic.text.muted }}
-            >
-              {progress}% complete
-            </ThemedText>
-            <ThemedText
-              style={{ fontSize: theme.typography.size.xs, color: theme.semantic.text.muted }}
-            >
-              {block.endDate}
-            </ThemedText>
-          </View>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.sm,
-              color: theme.semantic.text.secondary,
-              textAlign: 'right',
-              marginTop: theme.spacing.xs,
-            }}
-          >
-            {block.status === 'active'
-              ? `${daysRemaining} ${daysRemaining === 1 ? 'day' : 'days'} remaining`
-              : block.status === 'completed'
-                ? `Completed ${block.completedAt ?? block.endDate}`
-                : `Expired ${block.endDate}`}
-          </ThemedText>
-        </View>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 32 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Identity Card */}
+        <View
+          style={[
+            styles.identityCard,
+            {
+              backgroundColor: colors.background.surface,
+              borderColor: colors.border.subtle,
+              borderLeftColor: config.accentColor,
+            },
+          ]}
+        >
+          <View style={styles.identityTop}>
+            <View style={styles.identityTypeRow}>
+              <View style={[styles.dot8, { backgroundColor: config.accentColor }]} />
+              <Text style={[styles.typeLabel, { color: config.accentColor }]}>
+                {config.label.toUpperCase()}
+              </Text>
+            </View>
 
-        {/* Section 3 — Notes */}
-        {block.notes ? (
-          <View style={{ marginBottom: theme.spacing.lg }}>
-            <SectionHeading>Notes</SectionHeading>
             <View
-              style={{
-                backgroundColor: theme.semantic.surface.cardAlt,
-                borderRadius: theme.radius.md,
-                padding: theme.spacing.md,
-              }}
+              style={[
+                styles.dayCounter,
+                {
+                  backgroundColor: config.accentColor + '14',
+                  borderColor: config.accentColor + '26',
+                },
+              ]}
             >
-              <ThemedText
-                style={{
-                  fontSize: theme.typography.size.md,
-                  color: theme.semantic.text.primary,
-                }}
-              >
-                {block.notes}
-              </ThemedText>
+              <Text style={[styles.dayNumber, { color: colors.text.primary }]}>
+                {totalDays}
+              </Text>
+              <Text style={[styles.dayLabel, { color: colors.text.tertiary }]}>Days</Text>
             </View>
           </View>
-        ) : null}
 
-        {/* Section 4 — Mood Summary */}
-        {moodAnalytics !== null ? (
-          <View style={{ marginBottom: theme.spacing.lg }}>
-            <SectionHeading>Runs in This Block</SectionHeading>
-            <ThemedText
-              style={{
-                fontSize: theme.typography.size.md,
-                color: theme.semantic.text.primary,
-                marginBottom: theme.spacing.md,
-              }}
+          <Text
+            style={[
+              styles.tagline,
+              { color: colors.text.primary, fontFamily: 'Fraunces_400Regular' },
+            ]}
+          >
+            {config.tagline}
+          </Text>
+
+          <View
+            style={[
+              styles.completionBadge,
+              {
+                backgroundColor: colors.semantic.successBg,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.completionBadgeText,
+                { color: colors.semantic.successFg },
+              ]}
             >
-              {moodAnalytics.totalRuns} {moodAnalytics.totalRuns !== 1 ? 'runs' : 'run'} logged
-            </ThemedText>
-            {moodAnalytics.breakdown.map((row) => (
-              <QuadrantRow key={row.key} row={row} />
-            ))}
+              Completed · {format(parseISO(block.endDate), 'MMM d')}
+            </Text>
           </View>
-        ) : null}
 
-        {/* Section 5 — Actions */}
-        {block.status === 'active' && (
-          <View style={{ marginBottom: theme.spacing.lg }}>
-            <Button
-              onPress={handleComplete}
-              loading={completeBlock.isPending}
-              size="lg"
-            >
-              Complete Block
-            </Button>
+          <View style={styles.progressMeta}>
+            <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+              Started {format(parseISO(block.startDate), 'MMM d')}
+            </Text>
           </View>
-        )}
-      </Screen>
-
-      {/* Completion Ceremony */}
-      <AppModal visible={showCeremony} onClose={() => router.replace('/(drawer)/blocks')}>
-        <View style={{ padding: theme.spacing.lg }}>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.xs,
-              fontWeight: theme.typography.weights.semibold,
-              color: config.accentColor,
-              textTransform: 'uppercase',
-              letterSpacing: 0.8,
-              marginBottom: theme.spacing.sm,
-            }}
-          >
-            {config.label}
-          </ThemedText>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.lg,
-              fontWeight: theme.typography.weights.medium,
-              color: theme.semantic.text.primary,
-              marginBottom: theme.spacing.md,
-            }}
-          >
-            {config.completionMessage}
-          </ThemedText>
-          {moodAnalytics !== null && (
-            <ThemedText
-              style={{
-                fontSize: theme.typography.size.md,
-                color: theme.semantic.text.secondary,
-                marginBottom: theme.spacing.lg,
-              }}
-            >
-              {moodAnalytics.totalRuns} {moodAnalytics.totalRuns !== 1 ? 'runs' : 'run'} logged in
-              this block.
-            </ThemedText>
-          )}
-          <Button
-            onPress={() => router.replace('/(drawer)/blocks/create')}
-            size="lg"
-          >
-            Start New Block
-          </Button>
-          <Button
-            onPress={() => router.replace('/')}
-            variant="outline"
-            size="lg"
-            style={{ marginTop: theme.spacing.sm }}
-          >
-            Back to Dashboard
-          </Button>
         </View>
-      </AppModal>
-    </>
+
+        {/* Stats row */}
+        <View style={styles.statsRow}>
+          <View
+            style={[
+              styles.statCell,
+              {
+                backgroundColor: colors.background.surface,
+                borderColor: colors.border.subtle,
+              },
+            ]}
+          >
+            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+              {stats?.runCount ?? 0}
+            </Text>
+            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}>Runs</Text>
+          </View>
+
+          <View
+            style={[
+              styles.statCell,
+              {
+                backgroundColor: colors.background.surface,
+                borderColor: colors.border.subtle,
+              },
+            ]}
+          >
+            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+              {distValue}
+            </Text>
+            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}>
+              {distUnit}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.statCell,
+              {
+                backgroundColor: colors.background.surface,
+                borderColor: colors.border.subtle,
+              },
+            ]}
+          >
+            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+              {stats && stats.runCount > 0 ? stats.avgRpe.toFixed(1) : '—'}
+            </Text>
+            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}>Avg RPE</Text>
+          </View>
+        </View>
+
+        <MoodTimelineCard blockRuns={blockRuns} />
+
+        {/* Runs preview card */}
+        <View
+          style={[
+            styles.runsCard,
+            {
+              backgroundColor: colors.background.surface,
+              borderColor: colors.border.subtle,
+            },
+          ]}
+        >
+          <View style={styles.runsCardHeader}>
+            <Text style={[styles.sectionLabel, { color: colors.text.tertiary }]}>
+              RUNS THIS BLOCK
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.push(`/blocks/${block.id}/runs`)}
+              accessibilityRole="button"
+              accessibilityLabel={`See all ${blockRuns.length} runs`}
+            >
+              <Text style={[styles.seeAll, { color: colors.copper.default }]}>
+                See all {blockRuns.length}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {blockRuns.length === 0 ? (
+            <Text style={[styles.noRunsText, { color: colors.text.tertiary }]}>
+              No runs logged
+            </Text>
+          ) : (
+            blockRuns.slice(0, 3).map((run, index) => (
+              <View key={run.id}>
+                {index > 0 && (
+                  <View
+                    style={[styles.divider, { backgroundColor: colors.border.subtle }]}
+                  />
+                )}
+                <RunRow run={run} />
+              </View>
+            ))
+          )}
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  center: {
+  screen: {
     flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
+    marginLeft: -10,
   },
-  badgeRow: {
+  headerRight: {
+    width: 40, // balance back btn
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 4,
+  },
+  identityCard: {
+    marginHorizontal: 16,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 3,
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14,
+    padding: 16,
+  },
+  identityTop: {
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressTrack: {
-    overflow: 'hidden',
-  },
-  progressLabels: {
-    flexDirection: 'row',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
-  rowHeader: {
+  identityTypeRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
+  },
+  dot8: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    flexShrink: 0,
+  },
+  typeLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.06,
+  },
+  dayCounter: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    alignItems: 'flex-end',
+  },
+  dayLabel: {
+    fontSize: 10,
+  },
+  dayNumber: {
+    fontSize: 22,
+    fontWeight: '600',
+    lineHeight: 26,
+  },
+  tagline: {
+    fontSize: 22,
+    lineHeight: 28,
+    marginTop: 8,
+  },
+  completionBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginTop: 14,
+  },
+  completionBadgeText: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  progressMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 6,
+  },
+  progressMetaText: {
+    fontSize: 11,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginHorizontal: 16,
+    marginTop: 8,
+  },
+  statCell: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 11,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.5,
+  },
+  statUnit: {
+    fontSize: 10,
+    marginTop: 2,
+  },
+  sectionLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.06,
+    marginBottom: 10,
+  },
+  runsCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    overflow: 'hidden',
+    marginHorizontal: 16,
+    marginTop: 8,
+  },
+  runsCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  seeAll: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  noRunsText: {
+    fontSize: 14,
+    padding: 16,
+  },
+  divider: {
+    height: 1,
+    marginHorizontal: 14,
   },
 })

@@ -66,7 +66,9 @@ type BlockCardProps = {
 function BlockCard({ block, currentDay, totalDays, progressPercent }: BlockCardProps) {
   const { colors } = useTheme()
   return (
-    <View
+    <TouchableOpacity
+      onPress={() => router.push('/(tabs)/blocks')}
+      activeOpacity={0.8}
       style={[
         styles.blockCard,
         { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
@@ -110,7 +112,7 @@ function BlockCard({ block, currentDay, totalDays, progressPercent }: BlockCardP
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 

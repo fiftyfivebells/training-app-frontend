@@ -1,3 +1,4 @@
+import { parseISO } from 'date-fns'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
 import { useMemo, useState } from 'react'
@@ -13,6 +14,7 @@ import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
 import { DIM_FILL, QUADRANT_LABELS } from '@/domains/moods/moods.constants'
 import type { MoodCategoryKey } from '@/domains/moods/moods.types'
 import type { RunResponse } from '@/domains/runs/api/runsApi'
+import { formatDateLabel } from '@/domains/runs/utils/datetime'
 import { useTheme } from '@/theme/useTheme'
 
 const BREAKDOWN_ORDER: MoodCategoryKey[] = [
@@ -99,7 +101,7 @@ export function MoodTimelineCard({ blockRuns }: Props) {
                 key={run.id}
                 onPress={() => router.push(`/runs/${run.id}`)}
                 accessibilityRole="button"
-                accessibilityLabel={`Run on ${format(parseISO(run.date), 'MMM d')}`}
+                accessibilityLabel={`Run on ${formatDateLabel(new Date(run.date))}`}
               >
                 {isNewest ? (
                   <View style={[styles.dotRing, { borderColor: dotColor }]}>
@@ -260,8 +262,5 @@ const styles = StyleSheet.create({
   breakdownCount: {
     fontSize: 14,
     fontWeight: '600',
-  },
-})
-: '600',
   },
 })
