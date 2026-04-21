@@ -1,6 +1,6 @@
 import { StyleSheet, type TextInputProps, View } from 'react-native'
 
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 import { ThemedText } from './ThemedText'
 import { ThemedTextInput } from './ThemedTextInput'
@@ -20,16 +20,16 @@ export function Input({
   style,
   ...props
 }: InputProps) {
-  const theme = useTheme()
+  const { colors, space, radius } = useTheme()
 
   return (
-    <View style={{ marginBottom: theme.spacing.md }}>
+    <View style={{ marginBottom: space[4] }}>
       <ThemedText
         style={{
-          fontSize: theme.typography.size.sm,
-          fontWeight: theme.typography.weights.medium,
-          color: theme.semantic.text.primary,
-          marginBottom: theme.spacing.xs,
+          fontSize: 13,
+          fontWeight: '500',
+          color: colors.text.primary,
+          marginBottom: space[1],
         }}
       >
         {label}
@@ -38,19 +38,19 @@ export function Input({
         style={[
           styles.inputBase,
           {
-            backgroundColor: theme.semantic.surface.card,
-            borderColor: theme.semantic.border.default,
-            borderRadius: theme.radius.md,
-            paddingHorizontal: theme.spacing.md,
-            paddingVertical: theme.spacing.sm,
-            color: theme.semantic.text.primary,
+            backgroundColor: colors.background.surface,
+            borderColor: colors.border.default,
+            borderRadius: radius.md,
+            paddingHorizontal: space[4],
+            paddingVertical: space[2],
+            color: colors.text.primary,
           },
           error && {
-            borderColor: theme.semantic.mood.highTough.border,
+            borderColor: colors.mood.highTough,
             borderWidth: 2,
           },
           disabled && {
-            backgroundColor: theme.semantic.surface.cardAlt,
+            backgroundColor: colors.background.input,
             opacity: 0.6,
           },
           style,
@@ -64,7 +64,7 @@ export function Input({
         <View
           style={{
             position: 'absolute',
-            right: theme.spacing.md,
+            right: space[4],
             height: '100%',
             justifyContent: 'center',
           }}
@@ -76,9 +76,9 @@ export function Input({
       {error && (
         <ThemedText
           style={{
-            fontSize: theme.typography.size.xs,
-            color: theme.semantic.mood.highTough.text,
-            marginTop: theme.spacing.xs,
+            fontSize: 12,
+            color: colors.mood.highTough,
+            marginTop: space[1],
           }}
         >
           {error}

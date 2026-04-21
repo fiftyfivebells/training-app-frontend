@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-picker/picker'
 import { Platform, StyleSheet, View } from 'react-native'
 
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 import { ThemedText } from './ThemedText'
 
@@ -27,16 +27,16 @@ export function Select({
   disabled,
   error,
 }: SelectProps) {
-  const theme = useTheme()
+  const { colors, space, radius } = useTheme()
 
   return (
-    <View style={{ marginBottom: theme.spacing.md }}>
+    <View style={{ marginBottom: space[4] }}>
       <ThemedText
         style={{
-          fontSize: theme.typography.size.sm,
-          fontWeight: theme.typography.weights.medium,
-          color: theme.semantic.text.primary,
-          marginBottom: theme.spacing.xs,
+          fontSize: 13,
+          fontWeight: '500',
+          color: colors.text.primary,
+          marginBottom: space[1],
         }}
       >
         {label}
@@ -45,16 +45,16 @@ export function Select({
         style={[
           styles.selectContainer,
           {
-            backgroundColor: theme.semantic.surface.card,
-            borderColor: theme.semantic.border.default,
-            borderRadius: theme.radius.md,
+            backgroundColor: colors.background.surface,
+            borderColor: colors.border.default,
+            borderRadius: radius.md,
           },
           disabled && {
-            backgroundColor: theme.semantic.surface.cardAlt,
+            backgroundColor: colors.background.input,
             opacity: 0.6,
           },
           error && {
-            borderColor: theme.semantic.mood.highTough.border,
+            borderColor: colors.mood.highTough,
             borderWidth: 2,
           },
         ]}
@@ -66,7 +66,7 @@ export function Select({
           style={[
             styles.picker,
             Platform.OS === 'ios' ? styles.pickerIOS : styles.pickerAndroid,
-            { color: theme.semantic.text.primary },
+            { color: colors.text.primary },
           ]}
         >
           {options.map((option) => (
@@ -77,9 +77,9 @@ export function Select({
       {error && (
         <ThemedText
           style={{
-            fontSize: theme.typography.size.xs,
-            color: theme.semantic.mood.highTough.text,
-            marginTop: theme.spacing.xs,
+            fontSize: 12,
+            color: colors.mood.highTough,
+            marginTop: space[1],
           }}
         >
           {error}

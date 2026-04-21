@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 import { BLOCK_TYPE_CONFIG, Block } from '../blocks.types'
 
@@ -13,14 +13,14 @@ type Props = {
 }
 
 function ProgressBar({ percent, accentColor }: { percent: number; accentColor: string }) {
-  const theme = useTheme()
+  const { colors, radius } = useTheme()
   return (
     <View
       style={[
         styles.progressTrack,
         {
-          backgroundColor: theme.semantic.border.default,
-          borderRadius: theme.radius.full,
+          backgroundColor: colors.border.default,
+          borderRadius: radius.full,
           height: 4,
         },
       ]}
@@ -31,7 +31,7 @@ function ProgressBar({ percent, accentColor }: { percent: number; accentColor: s
           {
             width: `${percent}%`,
             backgroundColor: accentColor,
-            borderRadius: theme.radius.full,
+            borderRadius: radius.full,
             height: 4,
           },
         ]}
@@ -41,7 +41,7 @@ function ProgressBar({ percent, accentColor }: { percent: number; accentColor: s
 }
 
 export function ActiveBlockBanner({ block, onStartBlock }: Props) {
-  const theme = useTheme()
+  const { colors } = useTheme()
   const router = useRouter()
 
   const progress = useMemo(() => {
@@ -54,131 +54,35 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
     return Math.round(((now - start) / (end - start)) * 100)
   }, [block])
 
-  const daysRemaining = useMemo(() => {
-    if (!block) return 0
-    return Math.max(
-      0,
-      Math.ceil((new Date(block.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-    )
-  }, [block])
-
-  if (block === undefined) return null
-
-  if (block === null) {
-    return (
-      <View
-        style={[
-          styles.card,
-          {
-            backgroundColor: theme.semantic.surface.card,
-            borderRadius: theme.radius.lg,
-            borderColor: theme.semantic.border.default,
-            padding: theme.spacing.md,
-          },
-        ]}
-      >
-        <ThemedText
-          style={{
-            fontSize: theme.typography.size.sm,
-            color: theme.semantic.text.muted,
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          No active training block
-        </ThemedText>
-        <TouchableOpacity
-          onPress={onStartBlock ?? (() => router.push('/(drawer)/blocks/create'))}
-        >
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.sm,
-              fontWeight: theme.typography.weights.semibold,
-              color: theme.semantic.button.primary.bg,
-            }}
-          >
-            Start a Block →
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
-    )
-  }
+  if (!block) return null
 
   const config = BLOCK_TYPE_CONFIG[block.blockType]
-  const daysLabel = daysRemaining === 1 ? 'day' : 'days'
 
   return (
     <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() => router.push(`/(drawer)/blocks/${block.id}`)}
+      activeOpacity={0.9}
       style={[
-        styles.card,
+        styles.container,
         {
-          backgroundColor: theme.semantic.surface.card,
-          borderRadius: theme.radius.lg,
-          borderLeftColor: config.accentColor,
-          padding: theme.spacing.md,
+          backgroundColor: colors.background.surface,
+          borderColor: colors.border.subtle,
         },
       ]}
+      onPress={() => router.push(`/(tabs)/blocks`)}
     >
-      <View style={styles.headerRow}>
-        <View style={[styles.labelGroup, { marginRight: theme.spacing.sm }]}>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.xs,
-              fontWeight: theme.typography.weights.semibold,
-              color: config.accentColor,
-              textTransform: 'uppercase',
-              letterSpacing: 0.8,
-              marginBottom: 2,
-            }}
-          >
-            Active Block
-          </ThemedText>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.md,
-              fontWeight: theme.typography.weights.semibold,
-              color: theme.semantic.text.primary,
-            }}
-          >
-            {config.label}
-          </ThemedText>
-          <ThemedText
-            style={{
-              fontSize: theme.typography.size.sm,
-              color: theme.semantic.text.secondary,
-            }}
-          >
-            {config.description}
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <ThemedText style={styles.label}>ACTIVE BLOCK</ThemedText>
+          <ThemedText style={[styles.title, { color: colors.text.primary }]}>
+            {block.name}
           </ThemedText>
         </View>
-        <ThemedText
-          style={{
-            fontSize: theme.typography.size.sm,
-            color: theme.semantic.text.muted,
-          }}
-        >
-          {daysRemaining} {daysLabel} left
-        </ThemedText>
-      </View>
 
-      <View style={{ marginTop: theme.spacing.sm }}>
         <ProgressBar percent={progress} accentColor={config.accentColor} />
-        <View style={[styles.progressLabels, { marginTop: theme.spacing.xs }]}>
-          <ThemedText
-            style={{ fontSize: theme.typography.size.xs, color: theme.semantic.text.muted }}
-          >
-            {block.startDate}
-          </ThemedText>
-          <ThemedText
-            style={{ fontSize: theme.typography.size.xs, color: theme.semantic.text.muted }}
-          >
-            {progress}%
-          </ThemedText>
-          <ThemedText
-            style={{ fontSize: theme.typography.size.xs, color: theme.semantic.text.muted }}
-          >
-            {block.endDate}
+
+        <View style={styles.footer}>
+          <ThemedText style={styles.meta}>
+            Day {Math.round(progress / (100 / 30))} of 30
           </ThemedText>
         </View>
       </View>
@@ -187,24 +91,38 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
 }
 
 const styles = StyleSheet.create({
-  card: {
+  container: {
+    marginHorizontal: 16,
+    borderRadius: 12,
     borderWidth: 1,
-    borderLeftWidth: 4,
+    overflow: 'hidden',
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+  content: {
+    padding: 12,
   },
-  labelGroup: {
-    flex: 1,
+  header: {
+    marginBottom: 8,
+  },
+  label: {
+    fontSize: 10,
+    fontWeight: '600',
+    opacity: 0.6,
+    marginBottom: 2,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: '700',
   },
   progressTrack: {
+    width: '100%',
     overflow: 'hidden',
   },
   progressFill: {},
-  progressLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  footer: {
+    marginTop: 8,
+  },
+  meta: {
+    fontSize: 11,
+    opacity: 0.6,
   },
 })

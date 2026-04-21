@@ -5,7 +5,7 @@ import {
   type ViewStyle,
 } from 'react-native'
 
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 import { ThemedText } from './ThemedText'
 
@@ -29,36 +29,106 @@ export function Button({
   style,
 }: ButtonProps) {
   const isDisabled = disabled || loading
-  const theme = useTheme()
-  const variantStyles = theme.buttons.variants[variant] ?? theme.buttons.variants.primary
-  const sizeStyles = theme.buttons.sizes[size] ?? theme.buttons.sizes.md
+  const { colors, space, radius } = useTheme()
+
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'secondary':
+        return {
+          container: {
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderColor: colors.copper.default,
+          },
+          text: { color: colors.copper.default },
+          spinner: colors.copper.default,
+        }
+      case 'outline':
+        return {
+          container: {
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderColor: colors.copper.default,
+          },
+          text: { color: colors.copper.default },
+          spinner: colors.copper.default,
+        }
+      case 'ghost':
+        return {
+          container: { backgroundColor: 'transparent' },
+          text: { color: colors.copper.default },
+          spinner: colors.copper.default,
+        }
+      case 'primary':
+      default:
+        return {
+          container: { backgroundColor: colors.copper.default },
+          text: { color: colors.background.base },
+          spinner: colors.background.base,
+        }
+    }
+  }
+
+  const getSizeStyles = () => {
+    switch (size) {
+      case 'sm':
+        return {
+          paddingVertical: space[1],
+          paddingHorizontal: space[4],
+          minHeight: 36,
+          fontSize: 13,
+        }
+      case 'lg':
+        return {
+          paddingVertical: space[4],
+          paddingHorizontal: space[8],
+          minHeight: 56,
+          fontSize: 17,
+        }
+      case 'md':
+      default:
+        return {
+          paddingVertical: space[2],
+          paddingHorizontal: space[6],
+          minHeight: 48,
+          fontSize: 15,
+        }
+    }
+  }
+
+  const variantStyles = getVariantStyles()
+  const sizeStyles = getSizeStyles()
 
   return (
     <Pressable
       style={({ pressed }) => [
-        theme.buttons.base,
+        {
+          borderRadius: radius.full,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'row',
+        },
         variantStyles.container,
-        sizeStyles,
-        pressed && !isDisabled && theme.buttons.states.pressed,
-        isDisabled && theme.buttons.states.disabled,
+        {
+          paddingVertical: sizeStyles.paddingVertical,
+          paddingHorizontal: sizeStyles.paddingHorizontal,
+          minHeight: sizeStyles.minHeight,
+        },
+        pressed && !isDisabled && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+        isDisabled && { opacity: 0.5 },
         style,
       ]}
       onPress={onPress}
       disabled={isDisabled}
     >
       {loading ? (
-        <ActivityIndicator color={variantStyles.spinner ?? theme.semantic.text.inverse} />
+        <ActivityIndicator color={variantStyles.spinner} />
       ) : (
         <ThemedText
           style={[
             {
-              fontWeight: theme.typography.weights.semibold,
-              fontSize:
-                size === 'sm'
-                  ? theme.typography.size.sm
-                  : size === 'lg'
-                    ? theme.typography.size.lg
-                    : theme.typography.size.md,
+              fontWeight: '600',
+              fontSize: sizeStyles.fontSize,
             },
             variantStyles.text,
           ]}
@@ -69,3 +139,4 @@ export function Button({
     </Pressable>
   )
 }
+

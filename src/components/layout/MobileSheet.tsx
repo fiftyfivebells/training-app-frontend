@@ -5,7 +5,7 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated'
 import { ModalBackdrop } from './ModalBackdrop'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 import { useEffect } from 'react'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -17,7 +17,7 @@ type MobileSheetProps = {
 }
 
 export function MobileSheet({ visible, onClose, children }: MobileSheetProps) {
-  const theme = useTheme()
+  const { colors, space, radius } = useTheme()
   const translateY = useSharedValue(SCREEN_HEIGHT)
 
   useEffect(() => {
@@ -42,11 +42,10 @@ export function MobileSheet({ visible, onClose, children }: MobileSheetProps) {
           styles.sheet,
           animStyle,
           {
-            backgroundColor: theme.modal.sheet.backgroundColor,
-            padding: theme.spacing.xl,
-            borderTopLeftRadius: theme.radius.xl,
-            borderTopRightRadius: theme.radius.xl,
-            ...theme.modal.shadow,
+            backgroundColor: colors.background.surface,
+            padding: space[8],
+            borderTopLeftRadius: radius.xl,
+            borderTopRightRadius: radius.xl,
           },
         ]}
       >

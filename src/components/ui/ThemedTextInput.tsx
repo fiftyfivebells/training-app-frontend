@@ -1,11 +1,11 @@
 import { TextInput, TextInputProps } from 'react-native'
 
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 import React from 'react'
 
 export const ThemedTextInput = React.forwardRef<TextInput, TextInputProps>(
   ({ style, ...props }, ref) => {
-    const theme = useTheme()
+    const { colors } = useTheme()
 
     return (
       <TextInput
@@ -13,14 +13,14 @@ export const ThemedTextInput = React.forwardRef<TextInput, TextInputProps>(
         ref={ref}
         style={[
           {
-            fontFamily: theme.typography.fontFamily,
-            fontWeight: theme.typography.weights.regular,
-            fontSize: theme.typography.size.md,
-            color: theme.semantic.text.primary,
+            fontFamily: 'Manrope',
+            fontWeight: '400',
+            fontSize: 15,
+            color: colors.text.primary,
           },
           style,
         ]}
-        placeholderTextColor={theme.semantic.text.muted}
+        placeholderTextColor={colors.text.tertiary}
       />
     )
   },

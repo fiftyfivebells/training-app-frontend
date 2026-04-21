@@ -5,33 +5,33 @@ import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { ThemedText } from '@/components/ui/ThemedText'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 export default function VerifyEmailScreen() {
   const router = useRouter()
   const params = useLocalSearchParams<{ email?: string }>()
-  const theme = useTheme()
+  const { colors, space } = useTheme()
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+      style={[styles.container, { backgroundColor: colors.background.base }]}
     >
-      <View style={[styles.content, { padding: theme.spacing.lg }]}>
+      <View style={[styles.content, { padding: space[6] }]}>
         <ThemedText
           style={{
-            fontSize: theme.typography.size.xxxl,
-            fontWeight: theme.typography.weights.bold,
-            color: theme.semantic.text.primary,
-            marginBottom: theme.spacing.sm,
+            fontSize: 32,
+            fontWeight: '700',
+            color: colors.text.primary,
+            marginBottom: space[2],
           }}
         >
           Verify Email
         </ThemedText>
         <ThemedText
           style={{
-            fontSize: theme.typography.size.md,
-            color: theme.semantic.text.secondary,
-            marginBottom: theme.spacing.xl,
+            fontSize: 15,
+            color: colors.text.secondary,
+            marginBottom: space[8],
             textAlign: 'center',
           }}
         >
@@ -50,6 +50,7 @@ export default function VerifyEmailScreen() {
     </SafeAreaView>
   )
 }
+
 
 const styles = StyleSheet.create({
   container: {

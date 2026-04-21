@@ -1,5 +1,5 @@
 // components/ui/AppModal/WebDialog.tsx
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 import Animated, {
   FadeIn,
   FadeOut,
@@ -8,7 +8,7 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated'
 import { ModalBackdrop } from './ModalBackdrop'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 import { useEffect } from 'react'
 
 type WebDialogProps = {
@@ -18,7 +18,7 @@ type WebDialogProps = {
 }
 
 export function WebDialog({ visible, onClose, children }: WebDialogProps) {
-  const theme = useTheme()
+  const { colors, space, radius } = useTheme()
   const scale = useSharedValue(0.95)
 
   useEffect(() => {
@@ -48,10 +48,14 @@ export function WebDialog({ visible, onClose, children }: WebDialogProps) {
             styles.card,
             animStyle,
             {
-              backgroundColor: theme.modal.card.backgroundColor,
-              padding: theme.spacing.lg,
-              borderRadius: theme.radius.lg,
-              ...theme.modal.cardShadow,
+              backgroundColor: colors.background.surface,
+              padding: space[6],
+              borderRadius: radius.lg,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
             },
           ]}
         >
@@ -61,6 +65,7 @@ export function WebDialog({ visible, onClose, children }: WebDialogProps) {
     </>
   )
 }
+
 
 const styles = StyleSheet.create({
   center: {

@@ -9,7 +9,7 @@ import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 
 import { SessionChecker } from '@/domains/auth/components/SessionChecker'
-import { ThemeProvider, useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 import { BaseThemeProvider } from '@/theme/ThemeContext'
 import { AuthGate } from '@/domains/auth/context/AuthGate'
 
@@ -41,11 +41,9 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <AuthGate>
-              <ThemeProvider>
-                <AlertProvider>
-                  <ThemedAppShell />
-                </AlertProvider>
-              </ThemeProvider>
+              <AlertProvider>
+                <ThemedAppShell />
+              </AlertProvider>
             </AuthGate>
           </AuthProvider>
         </QueryClientProvider>
@@ -55,7 +53,7 @@ export default function RootLayout() {
 }
 
 function ThemedAppShell() {
-  const theme = useTheme()
+  const { colors } = useTheme()
 
   return (
     <>
@@ -64,7 +62,7 @@ function ThemedAppShell() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: theme.semantic.surface.background },
+          contentStyle: { backgroundColor: colors.background.base },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

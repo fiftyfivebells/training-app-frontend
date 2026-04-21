@@ -1,19 +1,19 @@
 import { Text, TextProps } from 'react-native'
 
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 export function ThemedText({ style, ...props }: TextProps) {
-  const theme = useTheme()
+  const { colors } = useTheme()
 
   return (
     <Text
       {...props}
       style={[
         {
-          fontFamily: theme.typography.fontFamily,
-          fontWeight: theme.typography.weights.regular,
-          fontSize: theme.typography.size.md,
-          color: theme.semantic.text.primary,
+          fontFamily: 'Manrope',
+          fontWeight: '400',
+          fontSize: 15,
+          color: colors.text.primary,
         },
         style,
       ]}

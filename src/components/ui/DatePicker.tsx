@@ -12,8 +12,8 @@ import {
   type ViewStyle,
 } from 'react-native'
 
-import { useTheme } from '@/theme/ThemeProvider'
-import type { Theme } from '@/theme/types'
+import { useTheme } from '@/theme/useTheme'
+import type { ThemeTokens } from '@/theme/tokens'
 
 import { Button } from './Button'
 import { ThemedText } from './ThemedText'
@@ -119,12 +119,12 @@ export function DatePicker({
   const inputBaseStyle = [
     styles.inputLayout,
     {
-      backgroundColor: theme.semantic.surface.card,
-      borderColor: theme.semantic.border.default,
+      backgroundColor: theme.colors.background.surface,
+      borderColor: theme.colors.border.default,
       borderRadius: theme.radius.md,
-      paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.md,
-      minHeight: theme.buttons.sizes.md.minHeight,
+      paddingVertical: theme.space[2],
+      paddingHorizontal: theme.space[4],
+      minHeight: 48,
     },
   ]
 
@@ -133,10 +133,10 @@ export function DatePicker({
       {label && (
         <ThemedText
           style={{
-            fontSize: theme.typography.size.sm,
-            fontWeight: theme.typography.weights.medium,
-            color: theme.semantic.text.primary,
-            marginBottom: theme.spacing.xs,
+            fontSize: 13,
+            fontWeight: '500',
+            color: theme.colors.text.primary,
+            marginBottom: theme.space[1],
           }}
         >
           {label}
@@ -157,7 +157,7 @@ export function DatePicker({
             ...webInputStyles.base,
             ...(disabled ? webInputStyles.disabled : {}),
             ...(error ? webInputStyles.error : {}),
-          }}
+          } as any}
         />
       ) : (
         <>
@@ -168,22 +168,22 @@ export function DatePicker({
               ...inputBaseStyle,
               disabled && {
                 opacity: 0.6,
-                backgroundColor: theme.semantic.surface.cardAlt,
+                backgroundColor: theme.colors.background.input,
               },
               error && {
-                borderColor: theme.semantic.mood.highTough.border,
+                borderColor: theme.colors.mood.highTough,
                 borderWidth: 2,
               },
-            ]}
+            ] as any}
           >
             <ThemedText
               style={[
                 {
-                  fontSize: theme.typography.size.md,
-                  color: theme.semantic.text.primary,
+                  fontSize: 15,
+                  color: theme.colors.text.primary,
                 },
-                !hasValue && { color: theme.semantic.text.muted },
-                disabled && { color: theme.semantic.text.muted },
+                !hasValue && { color: theme.colors.text.tertiary },
+                disabled && { color: theme.colors.text.tertiary },
               ]}
             >
               {formattedValue}
@@ -194,10 +194,10 @@ export function DatePicker({
               style={[
                 styles.pickerContainer,
                 {
-                  marginTop: theme.spacing.sm,
+                  marginTop: theme.space[2],
                   borderRadius: theme.radius.lg,
-                  borderColor: theme.semantic.border.default,
-                  backgroundColor: theme.semantic.surface.card,
+                  borderColor: theme.colors.border.default,
+                  backgroundColor: theme.colors.background.surface,
                 },
               ]}
             >
@@ -214,7 +214,7 @@ export function DatePicker({
                   onPress={() => {
                     setShowPicker(false)
                   }}
-                  style={{ marginTop: theme.spacing.sm }}
+                  style={{ marginTop: theme.space[2] }}
                 >
                   {confirmLabel}
                 </Button>
@@ -226,9 +226,9 @@ export function DatePicker({
       {helperText && !error && (
         <ThemedText
           style={{
-            fontSize: theme.typography.size.xs,
-            color: theme.semantic.text.secondary,
-            marginTop: theme.spacing.xs,
+            fontSize: 12,
+            color: theme.colors.text.secondary,
+            marginTop: theme.space[1],
           }}
         >
           {helperText}
@@ -237,9 +237,9 @@ export function DatePicker({
       {error && (
         <ThemedText
           style={{
-            fontSize: theme.typography.size.xs,
-            color: theme.semantic.mood.highTough.text,
-            marginTop: theme.spacing.xs,
+            fontSize: 12,
+            color: theme.colors.mood.highTough,
+            marginTop: theme.space[1],
           }}
         >
           {error}
@@ -259,29 +259,29 @@ const styles = StyleSheet.create({
   },
 })
 
-function getWebInputStyles(theme: Theme) {
+function getWebInputStyles(theme: ThemeTokens) {
   return {
     base: {
       width: '100%',
       borderWidth: 1,
       borderStyle: 'solid' as const,
-      borderColor: theme.semantic.border.default,
+      borderColor: theme.colors.border.default,
       borderRadius: theme.radius.md,
-      padding: theme.spacing.sm,
-      fontSize: theme.typography.size.md,
-      fontFamily: theme.typography.fontFamily,
-      backgroundColor: theme.semantic.surface.card,
-      color: theme.semantic.text.primary,
-      minHeight: theme.buttons.sizes.md.minHeight,
+      padding: theme.space[2],
+      fontSize: 15,
+      fontFamily: 'Manrope',
+      backgroundColor: theme.colors.background.surface,
+      color: theme.colors.text.primary,
+      minHeight: 48,
       boxSizing: 'border-box' as const,
     },
     disabled: {
       opacity: 0.6,
       cursor: 'not-allowed',
-      backgroundColor: theme.semantic.surface.cardAlt,
+      backgroundColor: theme.colors.background.input,
     },
     error: {
-      borderColor: theme.semantic.mood.highTough.border,
+      borderColor: theme.colors.mood.highTough,
       borderWidth: 2,
     },
   }

@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { ThemedText } from '@/components/ui/ThemedText'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 import type { CreateUserRequest } from '../api/authClient'
 import { useRegister } from '../hooks'
@@ -29,7 +29,7 @@ interface RegisterFormData {
 export function RegisterScreen() {
   const router = useRouter()
   const { alert } = useAlert()
-  const theme = useTheme()
+  const { colors, space, radius } = useTheme()
 
   const {
     control,
@@ -106,7 +106,7 @@ export function RegisterScreen() {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.semantic.surface.background }]}
+      style={[styles.container, { backgroundColor: colors.background.base }]}
       edges={['top']}
     >
       <KeyboardAvoidingView
@@ -116,19 +116,19 @@ export function RegisterScreen() {
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={{
-            padding: theme.spacing.lg,
-            paddingBottom: theme.spacing.xxl,
+            padding: space[6],
+            paddingBottom: 48,
           }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={{ marginBottom: theme.spacing.xl, paddingTop: theme.spacing.md }}>
+          <View style={{ marginBottom: space[8], paddingTop: space[4] }}>
             <ThemedText
               style={{
-                fontSize: theme.typography.size.xxxl,
-                fontWeight: theme.typography.weights.bold,
-                color: theme.semantic.text.primary,
-                marginBottom: theme.spacing.xs,
+                fontSize: 32,
+                fontWeight: '700',
+                color: colors.text.primary,
+                marginBottom: space[1],
                 textAlign: 'center',
               }}
             >
@@ -136,8 +136,8 @@ export function RegisterScreen() {
             </ThemedText>
             <ThemedText
               style={{
-                fontSize: theme.typography.size.md,
-                color: theme.semantic.text.secondary,
+                fontSize: 15,
+                color: colors.text.secondary,
                 textAlign: 'center',
               }}
             >
@@ -307,25 +307,25 @@ export function RegisterScreen() {
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               disabled={isLoading}
-              style={{ marginTop: theme.spacing.lg }}
+              style={{ marginTop: space[6] }}
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>
 
-            <View style={[styles.footer, { marginTop: theme.spacing.lg }]}>
+            <View style={[styles.footer, { marginTop: space[6] }]}>
               <ThemedText
                 style={{
-                  fontSize: theme.typography.size.md,
-                  color: theme.semantic.text.secondary,
+                  fontSize: 15,
+                  color: colors.text.secondary,
                 }}
               >
                 Already have an account?{' '}
               </ThemedText>
               <ThemedText
                 style={{
-                  fontSize: theme.typography.size.md,
-                  color: theme.semantic.button.secondary.text,
-                  fontWeight: theme.typography.weights.semibold,
+                  fontSize: 15,
+                  color: colors.copper.default,
+                  fontWeight: '600',
                 }}
                 onPress={() => {
                   router.push('/(auth)/login')

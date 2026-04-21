@@ -11,7 +11,7 @@ import { DatePicker } from '@/components/ui/DatePicker'
 import { ThemedText } from '@/components/ui/ThemedText'
 import { BLOCK_TYPE_CONFIG, BlockType } from '@/domains/blocks/blocks.types'
 import { useCreateBlock } from '@/domains/blocks/hooks/useCreateBlock'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 const BLOCK_TYPES: BlockType[] = [
   'base_building',
@@ -44,14 +44,14 @@ function fromDate(d: Date): string {
 }
 
 function SectionLabel({ children }: { children: string }) {
-  const theme = useTheme()
+  const { colors, space } = useTheme()
   return (
     <ThemedText
       style={{
-        fontSize: theme.typography.size.sm,
-        fontWeight: theme.typography.weights.semibold,
-        color: theme.semantic.text.secondary,
-        marginBottom: theme.spacing.sm,
+        fontSize: 13,
+        fontWeight: '600',
+        color: colors.text.secondary,
+        marginBottom: space[2],
       }}
     >
       {children}
@@ -60,14 +60,14 @@ function SectionLabel({ children }: { children: string }) {
 }
 
 function FieldError({ message }: { message?: string }) {
-  const theme = useTheme()
+  const { colors, space } = useTheme()
   if (!message) return null
   return (
     <ThemedText
       style={{
-        fontSize: theme.typography.size.sm,
-        color: theme.semantic.text.muted,
-        marginTop: theme.spacing.xs,
+        fontSize: 13,
+        color: colors.text.tertiary,
+        marginTop: space[1],
       }}
     >
       {message}
@@ -77,7 +77,7 @@ function FieldError({ message }: { message?: string }) {
 
 export function CreateBlockScreen() {
   const router = useRouter()
-  const theme = useTheme()
+  const { colors, space, radius } = useTheme()
   const { alert } = useAlert()
   const createBlock = useCreateBlock()
 
@@ -132,40 +132,40 @@ export function CreateBlockScreen() {
   }
 
   const inputStyle = {
-    backgroundColor: theme.semantic.surface.card,
-    borderColor: theme.semantic.border.default,
-    borderRadius: theme.radius.md,
+    backgroundColor: colors.background.surface,
+    borderColor: colors.border.default,
+    borderRadius: radius.md,
     borderWidth: 1 as const,
-    color: theme.semantic.text.primary,
-    fontSize: theme.typography.size.md,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    color: colors.text.primary,
+    fontSize: 15,
+    paddingHorizontal: space[4],
+    paddingVertical: space[2],
   }
 
   return (
     <Screen>
       <ThemedText
         style={{
-          fontSize: theme.typography.size.xxl,
-          fontWeight: theme.typography.weights.bold,
-          color: theme.semantic.text.primary,
-          marginBottom: theme.spacing.xs,
+          fontSize: 24,
+          fontWeight: '700',
+          color: colors.text.primary,
+          marginBottom: space[1],
         }}
       >
         Start a Block
       </ThemedText>
       <ThemedText
         style={{
-          fontSize: theme.typography.size.md,
-          color: theme.semantic.text.secondary,
-          marginBottom: theme.spacing.xl,
+          fontSize: 15,
+          color: colors.text.secondary,
+          marginBottom: space[8],
         }}
       >
         Choose your training phase.
       </ThemedText>
 
       {/* Block Type Selector */}
-      <View style={{ marginBottom: theme.spacing.lg }}>
+      <View style={{ marginBottom: space[6] }}>
         <SectionLabel>Block Type</SectionLabel>
         <Controller
           control={control}
@@ -185,14 +185,14 @@ export function CreateBlockScreen() {
                     {
                       backgroundColor: isSelected
                         ? `${config.accentColor}20`
-                        : theme.semantic.surface.card,
+                        : colors.background.surface,
                       borderColor: isSelected
                         ? config.accentColor
-                        : theme.semantic.border.default,
+                        : colors.border.default,
                       borderLeftColor: config.accentColor,
-                      borderRadius: theme.radius.md,
-                      padding: theme.spacing.md,
-                      marginBottom: index < BLOCK_TYPES.length - 1 ? theme.spacing.sm : 0,
+                      borderRadius: radius.md,
+                      padding: space[4],
+                      marginBottom: index < BLOCK_TYPES.length - 1 ? space[2] : 0,
                     },
                   ]}
                   onPress={() => {
@@ -209,17 +209,17 @@ export function CreateBlockScreen() {
                     <View style={{ flex: 1 }}>
                       <ThemedText
                         style={{
-                          fontSize: theme.typography.size.md,
-                          fontWeight: theme.typography.weights.semibold,
-                          color: theme.semantic.text.primary,
+                          fontSize: 15,
+                          fontWeight: '600',
+                          color: colors.text.primary,
                         }}
                       >
                         {config.label}
                       </ThemedText>
                       <ThemedText
                         style={{
-                          fontSize: theme.typography.size.sm,
-                          color: theme.semantic.text.secondary,
+                          fontSize: 13,
+                          color: colors.text.secondary,
                         }}
                       >
                         {config.description}
@@ -239,7 +239,7 @@ export function CreateBlockScreen() {
       </View>
 
       {/* Block Name */}
-      <View style={{ marginBottom: theme.spacing.lg }}>
+      <View style={{ marginBottom: space[6] }}>
         <SectionLabel>Block Name</SectionLabel>
         <Controller
           control={control}
@@ -252,9 +252,9 @@ export function CreateBlockScreen() {
               onBlur={onBlur}
               style={[
                 inputStyle,
-                errors.name && { borderColor: theme.semantic.mood.highTough.border },
+                errors.name && { borderColor: colors.semantic.errorFg },
               ]}
-              placeholderTextColor={theme.semantic.text.muted}
+              placeholderTextColor={colors.text.tertiary}
               placeholder="Name your block"
             />
           )}
@@ -263,7 +263,7 @@ export function CreateBlockScreen() {
       </View>
 
       {/* Start Date */}
-      <View style={{ marginBottom: theme.spacing.lg }}>
+      <View style={{ marginBottom: space[6] }}>
         <Controller
           control={control}
           name="startDate"
@@ -284,7 +284,7 @@ export function CreateBlockScreen() {
       </View>
 
       {/* End Date */}
-      <View style={{ marginBottom: theme.spacing.lg }}>
+      <View style={{ marginBottom: space[6] }}>
         <Controller
           control={control}
           name="endDate"
@@ -311,7 +311,7 @@ export function CreateBlockScreen() {
       </View>
 
       {/* Notes */}
-      <View style={{ marginBottom: theme.spacing.xl }}>
+      <View style={{ marginBottom: space[8] }}>
         <SectionLabel>Notes (optional)</SectionLabel>
         <Controller
           control={control}
@@ -325,9 +325,9 @@ export function CreateBlockScreen() {
               numberOfLines={4}
               style={[
                 inputStyle,
-                { minHeight: 96, textAlignVertical: 'top', paddingTop: theme.spacing.sm },
+                { minHeight: 96, textAlignVertical: 'top', paddingTop: space[2] },
               ]}
-              placeholderTextColor={theme.semantic.text.muted}
+              placeholderTextColor={colors.text.tertiary}
               placeholder="What are you training for? Any goals for this block?"
             />
           )}
@@ -340,6 +340,7 @@ export function CreateBlockScreen() {
     </Screen>
   )
 }
+
 
 const styles = StyleSheet.create({
   blockTypeCard: {

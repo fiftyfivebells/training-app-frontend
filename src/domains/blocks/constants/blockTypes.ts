@@ -1,10 +1,3 @@
-import { autumnRoadTheme } from '@/theme/themes/autumn'
-import { clubhouseTheme } from '@/theme/themes/clubhouse'
-import { fallTheme } from '@/theme/themes/fall'
-import { racebibTheme } from '@/theme/themes/racebib'
-import { verdeModernTheme } from '@/theme/themes/verdeModern'
-import type { Theme } from '@/theme/types'
-
 import type { BlockType } from '../blocks.types'
 
 export type BlockTypeConfig = {
@@ -16,9 +9,8 @@ export type BlockTypeConfig = {
   focus: string
   typicalRange: string
   defaultWeeks: number
-  // Legacy fields — used by BlockDetailScreen until it is replaced
+  // Legacy fields — kept for compatibility where needed, but with primitive types
   description: string
-  theme: Theme
   completionMessage: string
   recommendedWeeks: [number, number]
 }
@@ -33,7 +25,6 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     typicalRange: '4–8 weeks',
     defaultWeeks: 6,
     description: 'Patience & Foundation',
-    theme: verdeModernTheme,
     completionMessage: "You've built the foundation. Now it's time to build on it.",
     recommendedWeeks: [4, 12],
   },
@@ -46,7 +37,6 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     typicalRange: '3–6 weeks',
     defaultWeeks: 4,
     description: 'Structured Suffering',
-    theme: racebibTheme,
     completionMessage: 'The hard work is done. You earned every one of those miles.',
     recommendedWeeks: [4, 8],
   },
@@ -59,7 +49,6 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     typicalRange: '2–4 weeks',
     defaultWeeks: 3,
     description: 'Sharpen the Edge',
-    theme: autumnRoadTheme,
     completionMessage: "You're ready. Trust the work you've put in.",
     recommendedWeeks: [3, 6],
   },
@@ -72,7 +61,6 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     typicalRange: '1–3 weeks',
     defaultWeeks: 2,
     description: 'Less is More',
-    theme: autumnRoadTheme,
     completionMessage: 'The work is done. Time to race.',
     recommendedWeeks: [1, 3],
   },
@@ -85,7 +73,6 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     typicalRange: '1–3 weeks',
     defaultWeeks: 2,
     description: 'Rest Is Training',
-    theme: fallTheme,
     completionMessage: 'Well rested and ready. The body needed this.',
     recommendedWeeks: [1, 3],
   },
@@ -98,7 +85,6 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
     typicalRange: '2–6 weeks',
     defaultWeeks: 4,
     description: 'Run for the Joy of It',
-    theme: clubhouseTheme,
     completionMessage: "Another season in the books. Here's to the next one.",
     recommendedWeeks: [4, 12],
   },

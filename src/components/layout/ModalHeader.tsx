@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import { ThemedText } from '@/components/ui/ThemedText'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 type Props = {
   title: string
@@ -11,22 +11,16 @@ type Props = {
 }
 
 export function ModalHeader({ title, onClose }: Props) {
-  const theme = useTheme()
+  const { colors, space } = useTheme()
 
   return (
-    <View style={[styles.header, { marginBottom: theme.spacing.lg }]}>
-      <ThemedText
-        style={{
-          fontSize: theme.typography.size.xxl,
-          fontWeight: theme.typography.weights.bold,
-          color: theme.semantic.text.primary,
-        }}
-      >
+    <View style={[styles.header, { marginBottom: space[6] }]}>
+      <ThemedText style={styles.title}>
         {title}
       </ThemedText>
 
-      <TouchableOpacity onPress={onClose} style={{ padding: theme.spacing.xs }}>
-        <Feather name="x" size={28} color={theme.semantic.text.primary} />
+      <TouchableOpacity onPress={onClose} style={{ padding: space[1] }}>
+        <Feather name="x" size={28} color={colors.text.primary} />
       </TouchableOpacity>
     </View>
   )
@@ -37,5 +31,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
   },
 })

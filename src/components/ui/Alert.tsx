@@ -8,8 +8,7 @@ import {
   View,
 } from 'react-native'
 
-import { useTheme } from '@/theme/ThemeProvider'
-import type { Theme } from '@/theme/types'
+import { useTheme } from '@/theme/useTheme'
 
 import { ThemedText } from './ThemedText'
 
@@ -33,7 +32,7 @@ const AlertContext = createContext<AlertContextType | null>(null)
 
 export function AlertProvider({ children }: { children: ReactNode }) {
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null)
-  const theme = useTheme()
+  const { colors, space, radius } = useTheme()
 
   const alert = (title: string, message?: string, buttons?: AlertButton[]) => {
     if (Platform.OS === 'web') {
@@ -75,7 +74,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
           onRequestClose={handleBackdropPress}
         >
           <Pressable
-            style={[styles.backdrop, { backgroundColor: theme.modal.backdrop }]}
+            style={[styles.backdrop, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
             onPress={handleBackdropPress}
           >
             <Pressable
@@ -84,13 +83,22 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                 e.stopPropagation()
               }}
             >
-              <View style={[theme.modal.card, theme.modal.cardShadow]}>
+              <View
+                style={[
+                  {
+                    backgroundColor: colors.background.surface,
+                    borderRadius: radius.lg,
+                    padding: space[6],
+                  },
+                  styles.cardShadow,
+                ]}
+              >
                 <ThemedText
                   style={{
-                    fontSize: theme.typography.size.xl,
-                    fontWeight: theme.typography.weights.bold,
-                    color: theme.semantic.text.primary,
-                    marginBottom: theme.spacing.sm,
+                    fontSize: 20,
+                    fontWeight: '700',
+                    color: colors.text.primary,
+                    marginBottom: space[2],
                     textAlign: 'center',
                   }}
                 >
@@ -99,11 +107,11 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                 {alertConfig.message && (
                   <ThemedText
                     style={{
-                      fontSize: theme.typography.size.md,
-                      color: theme.semantic.text.secondary,
-                      marginBottom: theme.spacing.lg,
+                      fontSize: 15,
+                      color: colors.text.secondary,
+                      marginBottom: space[6],
                       textAlign: 'center',
-                      lineHeight: theme.typography.size.md * 1.4,
+                      lineHeight: 15 * 1.4,
                     }}
                   >
                     {alertConfig.message}
@@ -112,20 +120,23 @@ export function AlertProvider({ children }: { children: ReactNode }) {
 
                 <View style={styles.buttonContainer}>
                   {(alertConfig.buttons || [{ text: 'OK' }]).map((button, index, arr) => {
-                    const variantStyles = getButtonVariantStyles(theme, button.style)
+                    const variantStyles = getButtonVariantStyles({ colors, radius }, button.style)
                     return (
                       <Pressable
                         key={index}
                         style={({ pressed }) => [
                           styles.button,
-                          theme.buttons.base,
-                          variantStyles.container,
                           {
-                            paddingVertical: theme.spacing.sm,
-                            paddingHorizontal: theme.spacing.md,
+                            borderRadius: radius.full,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'row',
+                            paddingVertical: space[2],
+                            paddingHorizontal: space[4],
                           },
-                          index < arr.length - 1 && { marginBottom: theme.spacing.sm },
-                          pressed && theme.buttons.states.pressed,
+                          variantStyles.container,
+                          index < arr.length - 1 && { marginBottom: space[2] },
+                          pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
                         ]}
                         onPress={() => {
                           handleButtonPress(button)
@@ -134,8 +145,8 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                         <ThemedText
                           style={[
                             {
-                              fontSize: theme.typography.size.md,
-                              fontWeight: theme.typography.weights.semibold,
+                              fontSize: 15,
+                              fontWeight: '600',
                               textAlign: 'center',
                             },
                             variantStyles.text,
@@ -174,6 +185,13 @@ const styles = StyleSheet.create({
     width: '90%',
     maxWidth: 400,
   },
+  cardShadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
   buttonContainer: {
     width: '100%',
   },
@@ -182,30 +200,41 @@ const styles = StyleSheet.create({
   },
 })
 
-function getButtonVariantStyles(theme: Theme, variant?: AlertButton['style']) {
+function getButtonVariantStyles(
+  theme: { colors: any; radius: any },
+  variant?: AlertButton['style']
+) {
+  const { colors, radius } = theme
   switch (variant) {
     case 'cancel':
       return {
         container: {
-          backgroundColor: theme.semantic.surface.cardAlt,
+          backgroundColor: colors.background.elevated,
         },
         text: {
-          color: theme.semantic.text.primary,
+          color: colors.text.primary,
         },
       }
     case 'destructive':
       return {
         container: {
-          backgroundColor: theme.semantic.mood.highTough.border,
+          backgroundColor: colors.semantic.errorFg,
         },
         text: {
-          color: theme.semantic.text.inverse,
+          color: colors.background.base,
         },
       }
     default:
       return {
-        container: theme.buttons.variants.secondary.container,
-        text: theme.buttons.variants.secondary.text,
+        container: {
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderColor: colors.copper.default,
+        },
+        text: {
+          color: colors.copper.default,
+        },
       }
   }
 }
+

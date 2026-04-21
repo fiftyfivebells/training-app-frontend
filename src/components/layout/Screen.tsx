@@ -2,7 +2,7 @@ import React from 'react'
 import { ScrollView, StyleSheet, ViewStyle } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { useTheme } from '@/theme/ThemeProvider'
+import { useTheme } from '@/theme/useTheme'
 
 type ScreenProps = {
   children: React.ReactNode
@@ -17,13 +17,13 @@ export function Screen({
   style,
   contentContainerStyle,
 }: ScreenProps) {
-  const theme = useTheme()
+  const { colors, space } = useTheme()
   const safeAreaStyles = [
     styles.safeArea,
-    { backgroundColor: theme.semantic.surface.background },
+    { backgroundColor: colors.background.base },
     style,
   ]
-  const containerPadding = { padding: theme.spacing.lg }
+  const containerPadding = { padding: space[6] }
 
   if (scroll) {
     return (
@@ -43,6 +43,7 @@ export function Screen({
     <SafeAreaView style={[...safeAreaStyles, containerPadding]}>{children}</SafeAreaView>
   )
 }
+
 
 const styles = StyleSheet.create({
   safeArea: {

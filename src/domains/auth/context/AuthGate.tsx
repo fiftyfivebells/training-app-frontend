@@ -1,7 +1,6 @@
 import { Redirect, useSegments } from 'expo-router'
 import { useAuthContext } from '@/domains/auth/context/AuthContext'
 import React from 'react'
-import { useTheme } from '@/theme/ThemeProvider'
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthContext()
@@ -19,7 +18,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   }
 
   if (isAuthenticated && inAuthGroup) {
-    return <Redirect href="/(drawer)/" />
+    return <Redirect href="/(tabs)/" />
   }
 
   return <>{children}</>
