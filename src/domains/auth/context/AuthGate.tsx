@@ -18,7 +18,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   }
 
   if (isAuthenticated && inAuthGroup) {
-    return <Redirect href="/(tabs)/" />
+    return <Redirect href="/" />
   }
 
   return <>{children}</>

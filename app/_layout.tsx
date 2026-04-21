@@ -74,3 +74,4 @@ function ThemedAppShell() {
     </GestureHandlerRootView>
   )
 }
+

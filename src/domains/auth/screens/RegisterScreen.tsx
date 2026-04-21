@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Pressable,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -16,6 +17,7 @@ import { useTheme } from '@/theme/useTheme'
 
 import type { CreateUserRequest } from '../api/authClient'
 import { useRegister } from '../hooks'
+import { SocialAuthButtons } from '../components/SocialAuthButtons'
 
 interface RegisterFormData {
   email: string
@@ -116,19 +118,20 @@ export function RegisterScreen() {
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={{
-            padding: space[6],
-            paddingBottom: 48,
+            paddingHorizontal: space[6],
+            paddingTop: space[8],
+            paddingBottom: space[10],
           }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={{ marginBottom: space[8], paddingTop: space[4] }}>
+          <View style={styles.header}>
             <ThemedText
               style={{
-                fontSize: 32,
-                fontWeight: '700',
+                fontSize: 36,
+                fontFamily: 'Fraunces_400Regular',
                 color: colors.text.primary,
-                marginBottom: space[1],
+                marginBottom: space[2],
                 textAlign: 'center',
               }}
             >
@@ -136,7 +139,7 @@ export function RegisterScreen() {
             </ThemedText>
             <ThemedText
               style={{
-                fontSize: 15,
+                fontSize: 16,
                 color: colors.text.secondary,
                 textAlign: 'center',
               }}
@@ -145,7 +148,7 @@ export function RegisterScreen() {
             </ThemedText>
           </View>
 
-          <View>
+          <View style={styles.form}>
             <Controller
               control={control}
               name="firstName"
@@ -162,7 +165,7 @@ export function RegisterScreen() {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="First Name"
+                  label="FIRST NAME"
                   placeholder="Jane"
                   autoCapitalize="words"
                   onBlur={onBlur}
@@ -190,7 +193,7 @@ export function RegisterScreen() {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Last Name"
+                  label="LAST NAME"
                   placeholder="Doe"
                   autoCapitalize="words"
                   onBlur={onBlur}
@@ -214,7 +217,7 @@ export function RegisterScreen() {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Email"
+                  label="EMAIL"
                   placeholder="you@example.com"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -243,7 +246,7 @@ export function RegisterScreen() {
               }}
               render={({ field: { value, onChange } }) => (
                 <DatePicker
-                  label="Date of Birth"
+                  label="DATE OF BIRTH"
                   value={value}
                   onChange={onChange}
                   minimumDate={new Date(1900, 0, 1)}
@@ -270,7 +273,7 @@ export function RegisterScreen() {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Password"
+                  label="PASSWORD"
                   placeholder="At least 8 characters"
                   secureTextEntry
                   onBlur={onBlur}
@@ -291,7 +294,7 @@ export function RegisterScreen() {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Confirm Password"
+                  label="CONFIRM PASSWORD"
                   placeholder="Re-enter password"
                   secureTextEntry
                   onBlur={onBlur}
@@ -307,33 +310,27 @@ export function RegisterScreen() {
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               disabled={isLoading}
-              style={{ marginTop: space[6] }}
+              style={{ marginTop: space[4] }}
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>
+          </View>
 
-            <View style={[styles.footer, { marginTop: space[6] }]}>
-              <ThemedText
-                style={{
-                  fontSize: 15,
-                  color: colors.text.secondary,
-                }}
-              >
-                Already have an account?{' '}
-              </ThemedText>
-              <ThemedText
-                style={{
-                  fontSize: 15,
-                  color: colors.copper.default,
-                  fontWeight: '600',
-                }}
-                onPress={() => {
-                  router.push('/(auth)/login')
-                }}
-              >
+          <SocialAuthButtons 
+            onStravaPress={() => alert('Strava Registration', 'Integration coming soon.')}
+            onGooglePress={() => alert('Google Registration', 'Integration coming soon.')}
+            onApplePress={() => alert('Apple Registration', 'Integration coming soon.')}
+          />
+
+          <View style={styles.footer}>
+            <ThemedText style={{ color: colors.text.secondary }}>
+              Already have an account?{' '}
+            </ThemedText>
+            <Pressable onPress={() => router.push('/(auth)/login')}>
+              <ThemedText style={{ color: colors.copper.default, fontWeight: '600' }}>
                 Log in
               </ThemedText>
-            </View>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -351,9 +348,16 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  header: {
+    marginBottom: 32,
+  },
+  form: {
+    gap: 4,
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 40,
+    paddingBottom: 20,
   },
 })

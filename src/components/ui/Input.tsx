@@ -34,44 +34,47 @@ export function Input({
       >
         {label}
       </ThemedText>
-      <ThemedTextInput
-        style={[
-          styles.inputBase,
-          {
-            backgroundColor: colors.background.surface,
-            borderColor: colors.border.default,
-            borderRadius: radius.md,
-            paddingHorizontal: space[4],
-            paddingVertical: space[2],
-            color: colors.text.primary,
-          },
-          error && {
-            borderColor: colors.mood.highTough,
-            borderWidth: 2,
-          },
-          disabled && {
-            backgroundColor: colors.background.input,
-            opacity: 0.6,
-          },
-          style,
-        ]}
-        editable={!disabled}
-        autoCorrect={false}
-        {...props}
-      />
+      
+      <View style={{ position: 'relative', justifyContent: 'center' }}>
+        <ThemedTextInput
+          style={[
+            styles.inputBase,
+            {
+              backgroundColor: colors.background.surface,
+              borderColor: colors.border.default,
+              borderRadius: radius.md,
+              paddingLeft: space[4],
+              paddingRight: rightElement ? space[12] : space[4],
+              paddingVertical: space[2],
+              color: colors.text.primary,
+            },
+            error && {
+              borderColor: colors.mood.highTough,
+              borderWidth: 2,
+            },
+            disabled && {
+              backgroundColor: colors.background.input,
+              opacity: 0.6,
+            },
+            style,
+          ]}
+          editable={!disabled}
+          autoCorrect={false}
+          {...props}
+        />
 
-      {rightElement && (
-        <View
-          style={{
-            position: 'absolute',
-            right: space[4],
-            height: '100%',
-            justifyContent: 'center',
-          }}
-        >
-          {rightElement}
-        </View>
-      )}
+        {rightElement && (
+          <View
+            style={{
+              position: 'absolute',
+              right: space[4],
+              justifyContent: 'center',
+            }}
+          >
+            {rightElement}
+          </View>
+        )}
+      </View>
 
       {error && (
         <ThemedText

@@ -17,6 +17,7 @@ import { useTheme } from '@/theme/useTheme'
 
 import { useAuthContext } from '../context/AuthContext'
 import { useState } from 'react'
+import { SocialAuthButtons } from '../components/SocialAuthButtons'
 
 interface LoginFormData extends LoginRequest {
   email: string
@@ -68,31 +69,33 @@ export function LoginScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <View style={[styles.content, { padding: space[6] }]}>
-            <ThemedText
-              style={{
-                fontSize: 32,
-                fontWeight: '700',
-                color: colors.text.primary,
-                marginBottom: space[1],
-                textAlign: 'center',
-              }}
-            >
-              Welcome Back
-            </ThemedText>
-            <ThemedText
-              style={{
-                fontSize: 15,
-                color: colors.text.secondary,
-                marginBottom: space[8],
-                textAlign: 'center',
-              }}
-            >
-              Sign in to your account
-            </ThemedText>
+          <View style={[styles.content, { paddingHorizontal: space[6], paddingTop: space[8], paddingBottom: space[10] }]}>
+            <View style={styles.header}>
+              <ThemedText
+                style={{
+                  fontSize: 36,
+                  fontFamily: 'Fraunces_400Regular',
+                  color: colors.text.primary,
+                  marginBottom: space[2],
+                  textAlign: 'center',
+                }}
+              >
+                Welcome Back
+              </ThemedText>
+              <ThemedText
+                style={{
+                  fontSize: 16,
+                  color: colors.text.secondary,
+                  textAlign: 'center',
+                }}
+              >
+                Sign in to continue your journey
+              </ThemedText>
+            </View>
 
-            <View>
+            <View style={styles.form}>
               <Controller
                 control={control}
                 name="email"
@@ -105,7 +108,7 @@ export function LoginScreen() {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    label="Email"
+                    label="EMAIL"
                     placeholder="you@example.com"
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -115,105 +118,80 @@ export function LoginScreen() {
                     value={value}
                     error={errors.email?.message}
                     disabled={isSubmitting}
-                    onSubmitEditing={handleSubmit(onSubmit)}
                   />
                 )}
               />
 
-              <Controller
-                control={control}
-                name="password"
-                rules={{
-                  required: 'Password is required',
-                  minLength: {
-                    value: 8,
-                    message: 'Password must be at least 8 characters',
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    label="Password"
-                    placeholder="Enter your password"
-                    secureTextEntry={!showPassword}
-                    autoCapitalize="none"
-                    autoComplete="password"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    error={errors.password?.message}
-                    disabled={isSubmitting}
-                    onSubmitEditing={handleSubmit(onSubmit)}
-                    rightElement={
-                      <Pressable onPress={() => toggleShowPassword(!showPassword)}>
-                        <ThemedText
-                          style={{
-                            fontSize: 13,
-                            color: colors.copper.default,
-                            fontWeight: '600',
-                          }}
-                        >
-                          {showPassword ? 'Hide' : 'Show'}
-                        </ThemedText>
-                      </Pressable>
-                    }
-                  />
-                )}
-              />
-              <Pressable
-                onPress={() => {
-                  alert(
-                    'Forgot Password',
-                    'Forgot password functionality is not implemented yet.',
-                  )
-                  //router.push('/(auth)/forgot-password') // TODO: implement forgot password
-                }}
-                disabled={isSubmitting}
-                style={{ alignSelf: 'flex-end', marginBottom: space[4] }}
-              >
-                <ThemedText
-                  style={{
-                    fontSize: 13,
-                    color: colors.copper.default,
-                    fontWeight: '600',
+              <View style={styles.passwordContainer}>
+                <Controller
+                  control={control}
+                  name="password"
+                  rules={{
+                    required: 'Password is required',
                   }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      label="PASSWORD"
+                      placeholder="Enter your password"
+                      secureTextEntry={!showPassword}
+                      autoCapitalize="none"
+                      autoComplete="password"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      error={errors.password?.message}
+                      disabled={isSubmitting}
+                      rightElement={
+                        <Pressable onPress={() => toggleShowPassword(!showPassword)} style={styles.passwordToggle}>
+                          <ThemedText
+                            style={{
+                              fontSize: 12,
+                              color: colors.copper.default,
+                              fontWeight: '600',
+                            }}
+                          >
+                            {showPassword ? 'HIDE' : 'SHOW'}
+                          </ThemedText>
+                        </Pressable>
+                      }
+                    />
+                  )}
+                />
+                <Pressable
+                  onPress={() => {
+                    alert('Forgot Password', 'Not implemented yet.')
+                  }}
+                  style={styles.forgotBtn}
                 >
-                  Forgot password?
-                </ThemedText>
-              </Pressable>
+                  <ThemedText style={[styles.forgotText, { color: colors.copper.default }]}>
+                    Forgot password?
+                  </ThemedText>
+                </Pressable>
+              </View>
 
               <Button
                 onPress={handleSubmit(onSubmit)}
                 loading={isSubmitting}
                 disabled={isSubmitting}
-                style={{ marginTop: space[4] }}
+                style={styles.submitBtn}
               >
                 Sign In
               </Button>
             </View>
 
-            <View style={[styles.footer, { marginTop: space[8] }]}>
-              <ThemedText
-                style={{
-                  fontSize: 13,
-                  color: colors.text.secondary,
-                }}
-              >
+            <SocialAuthButtons 
+              onStravaPress={() => alert('Strava Login', 'Integration coming soon.')}
+              onGooglePress={() => alert('Google Login', 'Integration coming soon.')}
+              onApplePress={() => alert('Apple Login', 'Integration coming soon.')}
+            />
+
+            <View style={styles.footer}>
+              <ThemedText style={{ color: colors.text.secondary }}>
                 Don't have an account?{' '}
               </ThemedText>
-              <Pressable
-                onPress={() => {
-                  router.push('/(auth)/register')
-                }}
-                disabled={isSubmitting}
-              >
-                <ThemedText
-                  style={{
-                    fontSize: 13,
-                    color: colors.copper.default,
-                    fontWeight: '600',
-                  }}
-                >
-                  Create Account
+              <Pressable onPress={() => router.push('/(auth)/register')}>
+                <ThemedText style={{ color: colors.copper.default, fontWeight: '600' }}>
+                  Create one
                 </ThemedText>
               </Pressable>
             </View>
@@ -236,11 +214,35 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
+  },
+  header: {
+    marginBottom: 40,
+  },
+  form: {
+    gap: 4,
+  },
+  passwordContainer: {
+    marginBottom: 12,
+  },
+  passwordToggle: {
+    paddingHorizontal: 8,
+  },
+  forgotBtn: {
+    alignSelf: 'flex-end',
+    marginTop: -8,
+    paddingVertical: 8,
+  },
+  forgotText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  submitBtn: {
+    marginTop: 8,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 40,
+    paddingBottom: 20,
   },
 })

@@ -124,7 +124,7 @@ export function BlockCreateScreen() {
         endDate: format(endDate, 'yyyy-MM-dd'),
       },
       {
-        onSuccess: () => router.replace('/(tabs)/blocks'),
+        onSuccess: () => router.replace('/blocks'),
       },
     )
   }, [createBlock, selectedType, startDate, endDate])

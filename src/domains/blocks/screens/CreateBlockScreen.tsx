@@ -115,7 +115,7 @@ export function CreateBlockScreen() {
         notes: values.notes || undefined,
       },
       {
-        onSuccess: () => router.replace('/(drawer)/blocks'),
+        onSuccess: () => router.replace('/blocks'),
         onError: (error) => {
           if (error.isConflict) {
             alert(

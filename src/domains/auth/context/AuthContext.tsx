@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     queryClient.setQueryData(['users', 'me'], user)
 
-    router.replace('/(drawer)/')
+    router.replace('/')
   }, [])
 
   const logout = useCallback(async () => {
