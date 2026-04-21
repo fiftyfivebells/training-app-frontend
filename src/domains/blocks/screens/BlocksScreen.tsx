@@ -1,6 +1,7 @@
+import { format } from 'date-fns'
 import { router } from 'expo-router'
+import { useMemo } from 'react'
 import {
-  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -14,40 +15,42 @@ import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
 import { useTheme } from '@/theme/useTheme'
 
-import { BLOCK_TYPE_CONFIG } from '../constants/blockTypes'
-import { useActiveBlock } from '../hooks/useActiveBlock'
-import { useCompletedBlocks } from '../hooks/useCompletedBlocks'
+import { useBlocks } from '../hooks/useBlocks'
 import { PastBlockCard } from '../components/PastBlockCard'
 
 export function BlocksScreen() {
   const { colors } = useTheme()
   const insets = useSafeAreaInsets()
 
-  const { data: activeBlock, isLoading: activeLoading } = useActiveBlock()
-  const { data: completedBlocks = [], isLoading: pastLoading } = useCompletedBlocks()
+  const { data: blocks = [], isLoading: blocksLoading } = useBlocks()
   const { data: allRuns = [] } = useRuns()
   const { unit: distUnit } = useDistanceUnit()
 
-  const isLoading = activeLoading || pastLoading
-  const isEmpty = !isLoading && !activeBlock && completedBlocks.length === 0
+  const todayStr = useMemo(() => format(new Date(), 'yyyy-MM-dd'), [])
+
+  const { activeBlock, pendingBlocks, completedBlocks } = useMemo(() => {
+    const active = blocks.find(
+      (b) => b.status === 'active' && b.startDate <= todayStr && b.endDate >= todayStr,
+    )
+    const pending = blocks
+      .filter((b) => b.status === 'active' && b.startDate > todayStr)
+      .sort((a, b) => a.startDate.localeCompare(b.startDate))
+    const completed = blocks
+      .filter(
+        (b) =>
+          b.status === 'completed' ||
+          b.status === 'expired' ||
+          (b.status === 'active' && b.endDate < todayStr),
+      )
+      .sort((a, b) => b.endDate.localeCompare(a.endDate))
+
+    return { activeBlock: active, pendingBlocks: pending, completedBlocks: completed }
+  }, [blocks, todayStr])
+
+  const isEmpty = !blocksLoading && blocks.length === 0
 
   const openBlockCreate = () => {
-    if (activeBlock) {
-      const label = BLOCK_TYPE_CONFIG[activeBlock.blockType].label
-      Alert.alert(
-        'Start a new block?',
-        `Starting a new block will end your current ${label} block. Continue?`,
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Continue',
-            onPress: () => router.push('/(modals)/block-create'),
-          },
-        ],
-      )
-    } else {
-      router.push('/(modals)/block-create')
-    }
+    router.push('/(modals)/block-create')
   }
 
   return (
@@ -83,7 +86,10 @@ export function BlocksScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 32 }]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 32 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Full empty state */}
@@ -111,6 +117,23 @@ export function BlocksScreen() {
               runs={allRuns.filter((r) => r.blockId === activeBlock.id)}
               distUnit={distUnit}
             />
+          </View>
+        )}
+
+        {/* Pending Section */}
+        {pendingBlocks.length > 0 && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>
+              PENDING
+            </Text>
+            {pendingBlocks.map((block) => (
+              <PastBlockCard
+                key={block.id}
+                block={block}
+                runs={allRuns.filter((r) => r.blockId === block.id)}
+                distUnit={distUnit}
+              />
+            ))}
           </View>
         )}
 

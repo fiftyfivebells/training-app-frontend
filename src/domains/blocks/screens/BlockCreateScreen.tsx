@@ -5,6 +5,7 @@ import { addDays, differenceInDays, format } from 'date-fns'
 import { router } from 'expo-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  Alert,
   LayoutAnimation,
   Platform,
   Pressable,
@@ -23,6 +24,8 @@ import { useTheme } from '@/theme/useTheme'
 
 import type { BlockType } from '../blocks.types'
 import { BLOCK_TYPE_CONFIG, BLOCK_TYPE_ORDER } from '../constants/blockTypes'
+import { useActiveBlock } from '../hooks/useActiveBlock'
+import { useCompleteBlock } from '../hooks/useCompleteBlock'
 import { useCreateBlock } from '../hooks/useCreateBlock'
 
 const PRESET_WEEKS = [2, 3, 4, 5, 6, 7, 8, 10, 12]
@@ -37,7 +40,16 @@ function formatStartDate(date: Date, today: Date): string {
 export function BlockCreateScreen() {
   const { colors } = useTheme()
   const insets = useSafeAreaInsets()
-  const { mutate: createBlock, isPending } = useCreateBlock()
+  const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
+  const { data: activeBlock, isLoading: activeLoading } = useActiveBlock()
+  const { mutateAsync: completeBlock } = useCompleteBlock()
+  const { mutate: createBlock, isPending } = useCreateBlock({
+    onError: (error) => {
+      Alert.alert('Error', error.message || 'Failed to create block. Please try again.')
+    },
+  })
+
+  const isSubmitting = isPending || activeLoading || isManuallySubmitting
 
   const today = useMemo(() => {
     const d = new Date()
@@ -115,19 +127,32 @@ export function BlockCreateScreen() {
     }
   }, [customEndDate, startDate, durationWeeks])
 
-  const handleSubmit = useCallback(() => {
-    createBlock(
-      {
-        blockType: selectedType,
-        name: `${BLOCK_TYPE_CONFIG[selectedType].label} · ${format(startDate, 'MMM yyyy')}`,
-        startDate: format(startDate, 'yyyy-MM-dd'),
-        endDate: format(endDate, 'yyyy-MM-dd'),
-      },
-      {
-        onSuccess: () => router.replace('/blocks'),
-      },
-    )
-  }, [createBlock, selectedType, startDate, endDate])
+  const handleSubmit = useCallback(async () => {
+    setIsManuallySubmitting(true)
+    try {
+      const newStartStr = format(startDate, 'yyyy-MM-dd')
+
+      if (activeBlock && newStartStr <= activeBlock.endDate) {
+        await completeBlock(activeBlock.id)
+      }
+
+      createBlock(
+        {
+          blockType: selectedType,
+          name: `${BLOCK_TYPE_CONFIG[selectedType].label} · ${format(startDate, 'MMM yyyy')}`,
+          startDate: newStartStr,
+          endDate: format(endDate, 'yyyy-MM-dd'),
+        },
+        {
+          onSuccess: () => router.replace('/blocks'),
+          onSettled: () => setIsManuallySubmitting(false),
+        },
+      )
+    } catch (error) {
+      setIsManuallySubmitting(false)
+      Alert.alert('Error', 'Failed to prepare for new block. Please try again.')
+    }
+  }, [activeBlock, completeBlock, createBlock, selectedType, startDate, endDate])
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
@@ -150,13 +175,18 @@ export function BlockCreateScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>New block</Text>
+        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+          New block
+        </Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 48 }]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 48 },
+        ]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -223,7 +253,11 @@ export function BlockCreateScreen() {
                     ]}
                   >
                     {isSelected && (
-                      <Ionicons name="checkmark" size={11} color={colors.background.base} />
+                      <Ionicons
+                        name="checkmark"
+                        size={11}
+                        color={colors.background.base}
+                      />
                     )}
                   </View>
                 </View>
@@ -235,18 +269,26 @@ export function BlockCreateScreen() {
                   >
                     <View style={styles.detailCols}>
                       <View style={styles.detailCol}>
-                        <Text style={[styles.detailLabel, { color: colors.text.tertiary }]}>
+                        <Text
+                          style={[styles.detailLabel, { color: colors.text.tertiary }]}
+                        >
                           BEST FOR
                         </Text>
-                        <Text style={[styles.detailValue, { color: colors.text.secondary }]}>
+                        <Text
+                          style={[styles.detailValue, { color: colors.text.secondary }]}
+                        >
                           {config.bestFor}
                         </Text>
                       </View>
                       <View style={[styles.detailCol, styles.detailColRight]}>
-                        <Text style={[styles.detailLabel, { color: colors.text.tertiary }]}>
+                        <Text
+                          style={[styles.detailLabel, { color: colors.text.tertiary }]}
+                        >
                           FOCUS
                         </Text>
-                        <Text style={[styles.detailValue, { color: colors.text.secondary }]}>
+                        <Text
+                          style={[styles.detailValue, { color: colors.text.secondary }]}
+                        >
                           {config.focus}
                         </Text>
                       </View>
@@ -259,7 +301,9 @@ export function BlockCreateScreen() {
                     >
                       <Text style={[styles.typicalText, { color: colors.text.tertiary }]}>
                         {'Typical: '}
-                        <Text style={[styles.typicalRange, { color: colors.copper.default }]}>
+                        <Text
+                          style={[styles.typicalRange, { color: colors.copper.default }]}
+                        >
                           {config.typicalRange}
                         </Text>
                       </Text>
@@ -385,7 +429,13 @@ export function BlockCreateScreen() {
                 color={colors.copper.default}
                 style={styles.customPillIcon}
               />
-              <Text style={[styles.pillText, styles.customPillText, { color: colors.copper.default }]}>
+              <Text
+                style={[
+                  styles.pillText,
+                  styles.customPillText,
+                  { color: colors.copper.default },
+                ]}
+              >
                 Custom
               </Text>
             </TouchableOpacity>
@@ -434,31 +484,21 @@ export function BlockCreateScreen() {
         <View style={styles.submitArea}>
           <Pressable
             onPress={handleSubmit}
-            disabled={isPending}
+            disabled={isSubmitting}
             style={({ pressed }) => [
               styles.submitBtn,
               {
                 backgroundColor: pressed ? colors.copper.dim : colors.copper.default,
                 borderColor: colors.copper.muted,
-                opacity: isPending ? 0.6 : 1,
+                opacity: isSubmitting ? 0.6 : 1,
               },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Start block"
           >
             <View style={styles.plusIcon}>
-              <View
-                style={[
-                  styles.plusH,
-                  { backgroundColor: colors.background.base },
-                ]}
-              />
-              <View
-                style={[
-                  styles.plusV,
-                  { backgroundColor: colors.background.base },
-                ]}
-              />
+              <View style={[styles.plusH, { backgroundColor: colors.background.base }]} />
+              <View style={[styles.plusV, { backgroundColor: colors.background.base }]} />
             </View>
           </Pressable>
           <Text style={[styles.submitLabel, { color: colors.copper.default }]}>
