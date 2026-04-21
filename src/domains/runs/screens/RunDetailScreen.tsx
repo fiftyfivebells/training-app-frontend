@@ -46,9 +46,9 @@ function rpeZoneLabel(rating: number): string {
   return 'All-out'
 }
 
-function rpeZoneColor(rating: number, colors: ThemeTokens): string {
+function rpeZoneColor(rating: number, colors: ThemeTokens['colors']): string {
   if (rating <= 3) return colors.semantic.successFg
-  if (rating <= 6) return '#D4A843'
+  if (rating <= 6) return colors.semantic.warningFg
   if (rating <= 8) return colors.mood.highTough
   return colors.semantic.errorFg
 }

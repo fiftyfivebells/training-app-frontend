@@ -135,6 +135,21 @@ export function EditRunScreen() {
     setValue('moodId', storeMoodId)
   }, [storeMoodId, setValue])
 
+  const watchedDistance = watch('distance')
+  const watchedMoodId = watch('moodId')
+  const watchedHH = watch('hh')
+  const watchedMM = watch('mm')
+  const watchedSS = watch('ss')
+
+  const totalSeconds = useMemo(
+    () =>
+      (Number(watchedHH) || 0) * 3600 +
+      (Number(watchedMM) || 0) * 60 +
+      (Number(watchedSS) || 0),
+    [watchedHH, watchedMM, watchedSS],
+  )
+
+  // useController hooks for hh/mm/ss to avoid nested Controller render props
   const { field: hhField } = useController({
     control,
     name: 'hh',
@@ -142,17 +157,6 @@ export function EditRunScreen() {
   })
   const { field: mmField } = useController({ control, name: 'mm' })
   const { field: ssField } = useController({ control, name: 'ss' })
-
-  const watchedDistance = watch('distance')
-  const watchedMoodId = watch('moodId')
-
-  const totalSeconds = useMemo(
-    () =>
-      (Number(hhField.value) || 0) * 3600 +
-      (Number(mmField.value) || 0) * 60 +
-      (Number(ssField.value) || 0),
-    [hhField.value, mmField.value, ssField.value],
-  )
 
   const paceString = useMemo(() => {
     const meters = calculateMeters(

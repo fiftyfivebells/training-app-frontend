@@ -53,7 +53,7 @@ export function BlockCreateScreen() {
   const [showCustomPicker, setShowCustomPicker] = useState(false)
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true)
     }
   }, [])
