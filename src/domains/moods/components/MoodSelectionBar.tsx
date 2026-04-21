@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Animated from 'react-native-reanimated'
-import type { AnimatedStyleProp } from 'react-native-reanimated'
+import type { AnimatedStyle } from 'react-native-reanimated'
 import type { ViewStyle } from 'react-native'
 
 import type { MoodCategoryKey } from '../moods.types'
@@ -10,7 +10,7 @@ import { useTheme } from '@/theme/useTheme'
 interface MoodSelectionBarProps {
   selected: Cell | null
   quadColor: (q: MoodCategoryKey) => string
-  dotAnimStyle: AnimatedStyleProp<ViewStyle>
+  dotAnimStyle: AnimatedStyle<ViewStyle>
   onConfirm: () => void
   paddingBottom: number
 }
