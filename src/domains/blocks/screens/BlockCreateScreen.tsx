@@ -127,7 +127,7 @@ export function BlockCreateScreen() {
     }
   }, [customEndDate, startDate, durationWeeks])
 
-  const handleSubmit = useCallback(async () => {
+  const performSubmission = useCallback(async () => {
     setIsManuallySubmitting(true)
     try {
       const newStartStr = format(startDate, 'yyyy-MM-dd')
@@ -150,9 +150,36 @@ export function BlockCreateScreen() {
       )
     } catch (error) {
       setIsManuallySubmitting(false)
-      Alert.alert('Error', 'Failed to prepare for new block. Please try again.')
+      console.error('Failed to create block:', error)
+      Alert.alert(
+        'Error',
+        error instanceof Error
+          ? error.message
+          : 'Failed to prepare for new block. Please try again.',
+      )
     }
   }, [activeBlock, completeBlock, createBlock, selectedType, startDate, endDate])
+
+  const handleSubmit = useCallback(async () => {
+    const newStartStr = format(startDate, 'yyyy-MM-dd')
+
+    if (activeBlock && newStartStr <= activeBlock.endDate) {
+      const label = BLOCK_TYPE_CONFIG[activeBlock.blockType].label
+      Alert.alert(
+        'Start a new block?',
+        `Starting a new block will end your current ${label} block. Continue?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Continue',
+            onPress: () => performSubmission(),
+          },
+        ],
+      )
+    } else {
+      performSubmission()
+    }
+  }, [activeBlock, startDate, performSubmission])
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
