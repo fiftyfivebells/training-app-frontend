@@ -75,23 +75,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontFamily: 'Inter_500Medium',
+    fontWeight: '500',
     fontSize: 8,
     textTransform: 'uppercase',
   },
   headline: {
-    fontFamily: 'Inter_600SemiBold',
+    fontWeight: '600',
     fontSize: 13,
     marginTop: 4,
   },
   sub: {
-    fontFamily: 'Inter_400Regular',
+    fontWeight: '400',
     fontSize: 10,
     marginTop: 2,
   },
   chartContainer: {
     marginTop: 8,
-    height: 44,
+    height: 72,
     overflow: 'hidden',
   },
   noData: {

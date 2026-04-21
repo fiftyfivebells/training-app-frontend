@@ -1,8 +1,3 @@
-import { View } from 'react-native'
+import { MoodByRunTypeScreen } from '@/domains/analytics/screens/MoodByRunTypeScreen'
 
-import { useTheme } from '@/theme/useTheme'
-
-export default function MoodByRunTypeScreen() {
-  const { colors } = useTheme()
-  return <View style={{ flex: 1, backgroundColor: colors.background.base }} />
-}
+export default MoodByRunTypeScreen

@@ -7,6 +7,7 @@ import type { Sentiment, TimeRange } from './types'
 export type RunTypeBreakdown = {
   runType: string
   total: number
+  counts: Record<MoodCategoryKey, number>
   percentages: Record<MoodCategoryKey, number>
 }
 
@@ -70,6 +71,7 @@ export function computeMoodByRunType(
     .map(([runType, { counts, total }]) => ({
       runType,
       total,
+      counts,
       percentages: {
         'high-pleasant': total > 0 ? Math.round((counts['high-pleasant'] / total) * 100) : 0,
         'high-challenging': total > 0 ? Math.round((counts['high-challenging'] / total) * 100) : 0,

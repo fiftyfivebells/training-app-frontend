@@ -1,8 +1,3 @@
-import { View } from 'react-native'
+import { VolumeVsMoodScreen } from '@/domains/analytics/screens/VolumeVsMoodScreen'
 
-import { useTheme } from '@/theme/useTheme'
-
-export default function VolumeVsMoodScreen() {
-  const { colors } = useTheme()
-  return <View style={{ flex: 1, backgroundColor: colors.background.base }} />
-}
+export default VolumeVsMoodScreen

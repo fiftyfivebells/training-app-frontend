@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   expandedLabel: {
     width: 52,
-    fontFamily: 'Inter_500Medium',
+    fontWeight: '500',
     fontSize: 10,
   },
   expandedBar: {

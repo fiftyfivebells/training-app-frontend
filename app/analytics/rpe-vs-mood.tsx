@@ -1,8 +1,3 @@
-import { View } from 'react-native'
+import { RpeVsMoodScreen } from '@/domains/analytics/screens/RpeVsMoodScreen'
 
-import { useTheme } from '@/theme/useTheme'
-
-export default function RpeVsMoodScreen() {
-  const { colors } = useTheme()
-  return <View style={{ flex: 1, backgroundColor: colors.background.base }} />
-}
+export default RpeVsMoodScreen

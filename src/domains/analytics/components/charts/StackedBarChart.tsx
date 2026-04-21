@@ -25,7 +25,7 @@ export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
   const { colors } = useTheme()
   const [containerWidth, setContainerWidth] = useState(0)
 
-  const CHART_HEIGHT = compact ? 44 : 100
+  const CHART_HEIGHT = compact ? 72 : 100
 
   const SEGMENT_COLORS: Record<MoodCategoryKey, string> = {
     'high-pleasant': colors.mood.highGood,
@@ -119,7 +119,7 @@ export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
                     {
                       width: containerWidth / weeklyData.length,
                       color: isNow ? colors.text.primary : colors.text.tertiary,
-                      fontFamily: isNow ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                      fontWeight: isNow ? '600' : '400',
                     },
                   ]}
                   numberOfLines={1}
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   legendText: {
-    fontFamily: 'Inter_400Regular',
+    fontWeight: '400',
     fontSize: 9,
   },
 })

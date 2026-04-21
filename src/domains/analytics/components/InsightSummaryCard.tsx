@@ -41,11 +41,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headline: {
-    fontFamily: 'Inter_600SemiBold',
+    fontWeight: '600',
     fontSize: 14,
   },
   body: {
-    fontFamily: 'Inter_400Regular',
+    fontWeight: '400',
     fontSize: 11,
     lineHeight: 17,
     marginTop: 6,

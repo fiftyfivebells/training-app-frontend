@@ -14,7 +14,7 @@ export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
   const { colors } = useTheme()
   const [containerWidth, setContainerWidth] = useState(0)
 
-  const CHART_HEIGHT = compact ? 44 : 100
+  const CHART_HEIGHT = compact ? 72 : 100
 
   const { bars, path, lastPoint } = useMemo<{
     bars: { x: number; y: number; width: number; height: number }[]
@@ -105,7 +105,7 @@ export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
                   {
                     width: containerWidth / weeklyData.length,
                     color: isNow ? colors.text.primary : colors.text.tertiary,
-                    fontFamily: isNow ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                    fontWeight: isNow ? '600' : '400',
                   },
                 ]}
                 numberOfLines={1}
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     height: 1.5,
   },
   legendText: {
-    fontFamily: 'Inter_400Regular',
+    fontWeight: '400',
     fontSize: 9,
   },
 })

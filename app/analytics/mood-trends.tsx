@@ -1,8 +1,3 @@
-import { View } from 'react-native'
+import { MoodTrendsScreen } from '@/domains/analytics/screens/MoodTrendsScreen'
 
-import { useTheme } from '@/theme/useTheme'
-
-export default function MoodTrendsScreen() {
-  const { colors } = useTheme()
-  return <View style={{ flex: 1, backgroundColor: colors.background.base }} />
-}
+export default MoodTrendsScreen

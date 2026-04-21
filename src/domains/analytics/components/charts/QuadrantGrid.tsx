@@ -34,17 +34,20 @@ export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
     const count = grid[key]
 
     if (compact) {
+      const rpeLabel = key.startsWith('high') ? 'HI' : 'LO'
       return (
         <View
           key={key}
           style={[
             styles.compactCell,
+            { backgroundColor: CELL_BG[key], opacity: 0.8 },
             isWarningActive && {
               borderWidth: 2,
               borderColor: colors.mood.lowTough,
             },
           ]}
         >
+          <Text style={[styles.compactLabel, { color: colors.text.tertiary }]}>{rpeLabel}</Text>
           <Text style={[styles.compactCount, { color: CELL_COLOR[key] }]}>{count}</Text>
         </View>
       )
@@ -92,13 +95,20 @@ const styles = StyleSheet.create({
   },
   compactCell: {
     width: '50%',
-    padding: 8,
+    padding: 4,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
   },
   compactCount: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 18,
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  compactLabel: {
+    fontWeight: '500',
+    fontSize: 8,
   },
   expandedCell: {
     width: '50%',
@@ -107,11 +117,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   expandedCount: {
-    fontFamily: 'Inter_600SemiBold',
+    fontWeight: '600',
     fontSize: 28,
   },
   expandedLabel: {
-    fontFamily: 'Inter_400Regular',
+    fontWeight: '400',
     fontSize: 9,
     marginTop: 4,
     textAlign: 'center',
