@@ -222,56 +222,6 @@ export function RunDetailScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
       >
-        {/* Primary stats card */}
-        <View
-          style={[
-            styles.statsCard,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
-          ]}
-        >
-          <View style={styles.heroRow}>
-            <View style={styles.statCol}>
-              <Text style={[styles.heroValue, { color: colors.text.primary }]}>{distValue}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
-                {distUnit.toUpperCase()}
-              </Text>
-            </View>
-            <View style={[styles.statDivider, { backgroundColor: colors.border.subtle }]} />
-            <View style={styles.statCol}>
-              <Text style={[styles.heroValue, { color: colors.text.primary }]}>{durationStr}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>DURATION</Text>
-            </View>
-            <View style={[styles.statDivider, { backgroundColor: colors.border.subtle }]} />
-            <View style={styles.statCol}>
-              <Text style={[styles.heroValue, { color: colors.text.primary }]}>{paceStr}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
-                /{unit.toUpperCase()}
-              </Text>
-            </View>
-          </View>
-
-          <View style={[styles.secondaryRow, { borderTopColor: colors.border.subtle }]}>
-            <View style={styles.secondaryLeft}>
-              <RunTypeBadge runType={runType} />
-              <Text style={[styles.runTypeLabel, { color: colors.text.tertiary }]}>run type</Text>
-            </View>
-            <View style={styles.rpeGroup}>
-              <Text style={[styles.rpeHeaderLabel, { color: colors.text.tertiary }]}>RPE</Text>
-              <View style={[styles.rpeChip, { backgroundColor: colors.background.input }]}>
-                <Text style={[styles.rpeValue, { color: colors.text.primary }]}>
-                  {run.exertionRating}
-                </Text>
-                <Text style={[styles.rpeDenom, { color: colors.text.tertiary }]}>/10</Text>
-              </View>
-              <Text
-                style={[styles.rpeZone, { color: rpeZoneColor(run.exertionRating, colors) }]}
-              >
-                {rpeZoneLabel(run.exertionRating)}
-              </Text>
-            </View>
-          </View>
-        </View>
-
         {/* Mood card */}
         {mood && (
           <View
@@ -300,6 +250,74 @@ export function RunDetailScreen() {
             </View>
           </View>
         )}
+
+        {/* Primary stats card */}
+        <View
+          style={[
+            styles.statsCard,
+            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+          ]}
+        >
+          <View style={styles.heroRow}>
+            <View style={styles.statCol}>
+              <Text
+                style={[styles.heroValue, { color: colors.text.primary }]}
+                adjustsFontSizeToFit
+                numberOfLines={1}
+              >
+                {distValue}
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
+                {distUnit.toUpperCase()}
+              </Text>
+            </View>
+            <View style={[styles.statDivider, { backgroundColor: colors.border.subtle }]} />
+            <View style={styles.statCol}>
+              <Text
+                style={[styles.heroValue, { color: colors.text.primary }]}
+                adjustsFontSizeToFit
+                numberOfLines={1}
+              >
+                {durationStr}
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>DURATION</Text>
+            </View>
+            <View style={[styles.statDivider, { backgroundColor: colors.border.subtle }]} />
+            <View style={styles.statCol}>
+              <Text
+                style={[styles.heroValue, { color: colors.text.primary }]}
+                adjustsFontSizeToFit
+                numberOfLines={1}
+              >
+                {paceStr}
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
+                /{unit.toUpperCase()}
+              </Text>
+            </View>
+          </View>
+
+          <View style={[styles.secondaryRow, { borderTopColor: colors.border.subtle }]}>
+            <View style={styles.secondaryLeft}>
+              <RunTypeBadge runType={runType} />
+              <Text style={[styles.runTypeLabel, { color: colors.text.tertiary }]}>run type</Text>
+            </View>
+            <View style={styles.rpeGroup}>
+              <Text style={[styles.rpeHeaderLabel, { color: colors.text.tertiary }]}>RPE</Text>
+              <View style={[styles.rpeChip, { backgroundColor: colors.background.input }]}>
+                <Text style={[styles.rpeValue, { color: colors.text.primary }]}>
+                  {run.exertionRating}
+                </Text>
+                <Text style={[styles.rpeDenom, { color: colors.text.tertiary }]}>/10</Text>
+              </View>
+              <Text
+                style={[styles.rpeZone, { color: rpeZoneColor(run.exertionRating, colors) }]}
+              >
+                {rpeZoneLabel(run.exertionRating)}
+              </Text>
+            </View>
+          </View>
+        </View>
 
         {/* Block context row */}
         {run.blockId && block && (
