@@ -24,10 +24,6 @@ interface DurationFieldProps {
   onLayout?: (e: LayoutChangeEvent) => void
 }
 
-function clamp(v: number, min: number, max: number): number {
-  return Math.min(Math.max(v, min), max)
-}
-
 export function DurationField({
   hh,
   mm,
@@ -40,16 +36,16 @@ export function DurationField({
   const { colors } = useTheme()
 
   const fields = [
-    { handlers: hh,  label: 'HH', accessLabel: 'Hours',   isClamp: false },
-    { handlers: mm,  label: 'MM', accessLabel: 'Minutes',  isClamp: true  },
-    { handlers: ss,  label: 'SS', accessLabel: 'Seconds',  isClamp: true  },
+    { handlers: hh,  label: 'HH', accessLabel: 'Hours'   },
+    { handlers: mm,  label: 'MM', accessLabel: 'Minutes' },
+    { handlers: ss,  label: 'SS', accessLabel: 'Seconds' },
   ] as const
 
   return (
     <View style={styles.root} onLayout={onLayout}>
       <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>DURATION</Text>
       <View style={styles.durationRow}>
-        {fields.map(({ handlers, label, accessLabel, isClamp }) => (
+        {fields.map(({ handlers, label, accessLabel }) => (
           <View key={label} style={styles.durationCell}>
             <TextInput
               style={[
@@ -65,15 +61,9 @@ export function DurationField({
               ]}
               value={handlers.value}
               onChangeText={handlers.onChange}
-              onBlur={() => {
-                if (isClamp) {
-                  const n = Number(handlers.value)
-                  if (!Number.isNaN(n)) handlers.onChange(String(clamp(n, 0, 59)))
-                }
-                handlers.onBlur()
-              }}
+              onBlur={handlers.onBlur}
               keyboardType="number-pad"
-              maxLength={2}
+              maxLength={3}
               textAlign="center"
               placeholder="00"
               placeholderTextColor={colors.text.tertiary}

@@ -25,7 +25,7 @@ import { QUADRANT_DESCRIPTOR } from '@/domains/moods/moods.constants'
 import { useUpdateRun } from '@/domains/runs/hooks/useUpdateRun'
 import { useRun } from '@/domains/runs/hooks/useRun'
 import { calculateMeters, metersToDistanceUnit } from '@/domains/runs/utils/distance'
-import { normalizeDuration } from '@/domains/runs/utils/duration'
+import { normalizeDuration, redistributeTime } from '@/domains/runs/utils/duration'
 import { formatDateForApi, formatDateLabel, timeOfDay } from '@/domains/runs/utils/datetime'
 import { formatPace } from '@/domains/runs/utils/formatters'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
@@ -108,7 +108,7 @@ export function EditRunScreen() {
     const [ry, rm, rd] = run.date.split('-').map(Number)
     setDate(new Date(ry, rm - 1, rd))
 
-    const { hours, minutes, seconds } = normalizeDuration(run.durationSeconds)
+    const { hh, mm, ss } = redistributeTime('', '', String(run.durationSeconds))
     const displayVal = metersToDistanceUnit(
       run.distanceMeters,
       displayUnit === 'mi' ? 'miles' : 'km',
@@ -116,9 +116,9 @@ export function EditRunScreen() {
 
     reset({
       distance: displayVal.toFixed(2),
-      hh: hours,
-      mm: minutes,
-      ss: seconds,
+      hh,
+      mm,
+      ss,
       runType: run.runType
         ? run.runType.charAt(0).toUpperCase() + run.runType.slice(1).toLowerCase()
         : '',
@@ -179,6 +179,13 @@ export function EditRunScreen() {
     () => moods.find((m) => m.id === watchedMoodId) ?? null,
     [watchedMoodId, moods],
   )
+
+  const handleDurationBlur = useCallback(() => {
+    const { hh, mm, ss } = redistributeTime(watchedHH, watchedMM, watchedSS)
+    setValue('hh', hh)
+    setValue('mm', mm)
+    setValue('ss', ss)
+  }, [watchedHH, watchedMM, watchedSS, setValue])
 
   const handleBack = useCallback(() => {
     storeClear()
@@ -371,9 +378,9 @@ export function EditRunScreen() {
 
         {/* Duration + pace */}
         <DurationField
-          hh={{ value: hhField.value, onChange: hhField.onChange, onBlur: hhField.onBlur }}
-          mm={{ value: mmField.value, onChange: mmField.onChange, onBlur: mmField.onBlur }}
-          ss={{ value: ssField.value, onChange: ssField.onChange, onBlur: ssField.onBlur }}
+          hh={{ value: hhField.value, onChange: hhField.onChange, onBlur: handleDurationBlur }}
+          mm={{ value: mmField.value, onChange: mmField.onChange, onBlur: handleDurationBlur }}
+          ss={{ value: ssField.value, onChange: ssField.onChange, onBlur: handleDurationBlur }}
           hhHasError={!!errors.hh}
           hhErrorMessage={errors.hh?.message}
           paceString={paceString}
