@@ -1,10 +1,15 @@
 import { differenceInCalendarDays, format, parseISO } from 'date-fns'
 import { router, useLocalSearchParams } from 'expo-router'
+import { useCallback, useState } from 'react'
 import {
+  ActionSheetIOS,
+  Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -12,7 +17,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 
 import { RunRow } from '@/domains/runs/components/RunRow'
-import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { metersToDistanceUnit } from '@/domains/runs/utils/distance'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
 import { useTheme } from '@/theme/useTheme'
@@ -21,6 +25,8 @@ import { BLOCK_TYPE_CONFIG } from '../constants/blockTypes'
 import { useBlock } from '../hooks/useBlock'
 import { useBlockRuns } from '../hooks/useBlockRuns'
 import { useBlockStats } from '../hooks/useBlockStats'
+import { useCompleteBlock } from '../hooks/useCompleteBlock'
+import { useDeleteBlock } from '../hooks/useDeleteBlock'
 import { MoodTimelineCard } from '../components/MoodTimelineCard'
 
 export function BlockDetailScreen() {
@@ -32,6 +38,78 @@ export function BlockDetailScreen() {
   const { data: block, isLoading: blockLoading } = useBlock(id ?? '')
   const { data: blockRuns = [] } = useBlockRuns(id ?? '')
   const { data: stats } = useBlockStats(id ?? '')
+
+  const completeBlock = useCompleteBlock()
+  const deleteBlock = useDeleteBlock()
+
+  const [dropdownVisible, setDropdownVisible] = useState(false)
+  const [overflowActive, setOverflowActive] = useState(false)
+
+  const dismissDropdown = useCallback(() => {
+    setDropdownVisible(false)
+    setOverflowActive(false)
+  }, [])
+
+  const handleCompleteConfirm = useCallback(() => {
+    if (!block) return
+    Alert.alert(
+      'Finish training block?',
+      'This will mark the block as completed and stop its affirmations.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Finish Block',
+          onPress: () => completeBlock.mutate(block.id),
+        },
+      ],
+    )
+  }, [block, completeBlock])
+
+  const handleDeleteConfirm = useCallback(() => {
+    if (!block) return
+    Alert.alert(
+      'Delete training block?',
+      'This cannot be undone. Runs in this block will not be deleted.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => deleteBlock.mutate(block.id, { onSuccess: () => router.back() }),
+        },
+      ],
+    )
+  }, [block, deleteBlock])
+
+  const handleOverflowMenu = useCallback(() => {
+    if (!block) return
+    const isIOS = Platform.OS === 'ios'
+    const isActive = block.status === 'active'
+
+    const options = ['Cancel']
+    if (isActive) options.push('Finish block')
+    options.push('Delete block')
+
+    if (isIOS) {
+      setOverflowActive(true)
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options,
+          destructiveButtonIndex: options.indexOf('Delete block'),
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          setOverflowActive(false)
+          const selected = options[buttonIndex]
+          if (selected === 'Finish block') handleCompleteConfirm()
+          if (selected === 'Delete block') handleDeleteConfirm()
+        },
+      )
+    } else {
+      setOverflowActive(true)
+      setDropdownVisible(true)
+    }
+  }, [block, handleCompleteConfirm, handleDeleteConfirm])
 
   if (blockLoading || !block) {
     return <View style={[styles.screen, { backgroundColor: colors.background.base }]} />
@@ -72,8 +150,66 @@ export function BlockDetailScreen() {
         <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
           {config.label}
         </Text>
-        <View style={styles.headerRight} />
+        <TouchableOpacity
+          style={styles.overflowBtn}
+          onPress={handleOverflowMenu}
+          accessibilityLabel="More options"
+          accessibilityRole="button"
+        >
+          <Ionicons
+            name="ellipsis-vertical"
+            size={22}
+            color={colors.text.secondary}
+          />
+        </TouchableOpacity>
       </View>
+
+      {Platform.OS === 'android' && dropdownVisible && (
+        <TouchableWithoutFeedback onPress={dismissDropdown}>
+          <View style={styles.dimOverlay} />
+        </TouchableWithoutFeedback>
+      )}
+
+      {Platform.OS === 'android' && dropdownVisible && (
+        <View
+          style={[
+            styles.dropdown,
+            {
+              top: insets.top + 52,
+              backgroundColor: colors.background.elevated,
+              borderColor: colors.border.default,
+            },
+          ]}
+        >
+          {block.status === 'active' && (
+            <>
+              <TouchableOpacity
+                style={styles.dropdownRow}
+                onPress={() => {
+                  dismissDropdown()
+                  handleCompleteConfirm()
+                }}
+              >
+                <Ionicons name="checkmark-circle-outline" size={16} color={colors.text.primary} />
+                <Text style={[styles.dropdownLabel, { color: colors.text.primary }]}>Finish block</Text>
+              </TouchableOpacity>
+              <View style={[styles.dropdownDivider, { backgroundColor: colors.border.subtle }]} />
+            </>
+          )}
+          <TouchableOpacity
+            style={styles.dropdownRow}
+            onPress={() => {
+              dismissDropdown()
+              handleDeleteConfirm()
+            }}
+          >
+            <Ionicons name="trash" size={16} color={colors.semantic.errorFg} />
+            <Text style={[styles.dropdownLabel, { color: colors.semantic.errorFg }]}>
+              Delete block
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <ScrollView
         style={styles.scroll}
@@ -124,23 +260,31 @@ export function BlockDetailScreen() {
             {config.tagline}
           </Text>
 
-          <View
-            style={[
-              styles.completionBadge,
-              {
-                backgroundColor: colors.semantic.successBg,
-              },
-            ]}
-          >
-            <Text
+          {block.status === 'completed' ? (
+            <View
               style={[
-                styles.completionBadgeText,
-                { color: colors.semantic.successFg },
+                styles.completionBadge,
+                {
+                  backgroundColor: colors.semantic.successBg,
+                },
               ]}
             >
-              Completed · {format(parseISO(block.endDate), 'MMM d')}
-            </Text>
-          </View>
+              <Text
+                style={[
+                  styles.completionBadgeText,
+                  { color: colors.semantic.successFg },
+                ]}
+              >
+                Completed · {format(parseISO(block.endDate), 'MMM d')}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.progressMeta}>
+              <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+                Ends {format(parseISO(block.endDate), 'MMM d')}
+              </Text>
+            </View>
+          )}
 
           <View style={styles.progressMeta}>
             <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
@@ -264,16 +408,52 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     flex: 1,
     textAlign: 'center',
+    marginHorizontal: 8,
   },
   backBtn: {
     width: 40,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: -10,
   },
-  headerRight: {
-    width: 40, // balance back btn
+  overflowBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dimOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 50,
+  },
+  dropdown: {
+    position: 'absolute',
+    right: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    width: 180,
+    zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+  dropdownRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  dropdownLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  dropdownDivider: {
+    height: 1,
   },
   scroll: {
     flex: 1,
