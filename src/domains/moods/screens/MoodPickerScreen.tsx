@@ -18,9 +18,11 @@ import {
 } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
+  cancelAnimation,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
+  withDecay,
   withSequence,
   withSpring,
 } from 'react-native-reanimated'
@@ -36,16 +38,18 @@ import {
   CANVAS_MID_X,
   CANVAS_MID_Y,
   CANVAS_W,
+  CLUSTER_CENTERS,
   DIM_FILL,
   QUADRANT_LABELS,
   R,
   R_SELECTED,
+  ROW,
 } from '@/domains/moods/moods.constants'
 import { useMoodSelectionStore } from '@/store/moodSelectionStore'
 import { useTheme } from '@/theme/useTheme'
 
 import { MoodSelectionBar } from '../components/MoodSelectionBar'
-import { type Cell, makeHexPath, makeLinePath, moodToCanvas } from '../utils/canvas'
+import { type Cell, layoutMoods, makeHexPath, makeLinePath } from '../utils/canvas'
 
 export function MoodPickerScreen() {
   const { colors } = useTheme()
@@ -60,6 +64,8 @@ export function MoodPickerScreen() {
 
   const tx = useSharedValue(0)
   const ty = useSharedValue(0)
+  const vw = useSharedValue(0)
+  const vh = useSharedValue(0)
   const startTx = useSharedValue(0)
   const startTy = useSharedValue(0)
 
@@ -71,11 +77,13 @@ export function MoodPickerScreen() {
   const handleLayout = useCallback(
     (e: LayoutChangeEvent) => {
       const { width, height } = e.nativeEvent.layout
+      vw.value = width
+      vh.value = height
       tx.value = (width - CANVAS_W) / 2
       ty.value = (height - CANVAS_H) / 2
       setLayoutReady(true)
     },
-    [tx, ty],
+    [tx, ty, vw, vh],
   )
 
   const transform = useDerivedValue(() => [
@@ -83,10 +91,7 @@ export function MoodPickerScreen() {
     { translateY: ty.value },
   ])
 
-  const cells = useMemo<Cell[]>(
-    () => moods.map((mood) => ({ ...moodToCanvas(mood), mood })),
-    [moods],
-  )
+  const cells = useMemo<Cell[]>(() => layoutMoods(moods), [moods])
 
   const selected = cells.find((c) => c.mood.id === selectedId) ?? null
 
@@ -98,34 +103,35 @@ export function MoodPickerScreen() {
     return { restingPaths: resting, selectedPaths: sel, vAxisPath: vAxis, hAxisPath: hAxis }
   }, [cells])
 
-  const clusterCenters = useMemo(() => {
-    const groups: Partial<Record<MoodCategoryKey, { sumX: number; sumY: number; count: number; minY: number }>> = {}
-    for (const cell of cells) {
-      const q = cell.mood.quadrant
-      if (!groups[q]) groups[q] = { sumX: 0, sumY: 0, count: 0, minY: Infinity }
-      groups[q]!.sumX += cell.x
-      groups[q]!.sumY += cell.y
-      groups[q]!.count++
-      if (cell.y < groups[q]!.minY) groups[q]!.minY = cell.y
-    }
-    const centers: Partial<Record<MoodCategoryKey, { x: number; y: number; minY: number }>> = {}
-    for (const [q, g] of Object.entries(groups) as [MoodCategoryKey, { sumX: number; sumY: number; count: number; minY: number }][]) {
-      centers[q] = { x: g.sumX / g.count, y: g.sumY / g.count, minY: g.minY }
-    }
-    return centers
-  }, [cells])
+  const hexFont = useFont(Inter_400Regular, 12)
+  const axisFont = useFont(Inter_400Regular, 12)
 
-  const hexFont = useFont(Inter_400Regular, 8)
-  const axisFont = useFont(Inter_400Regular, 9)
+  const BOUNDARY_MARGIN = 100
 
   const pan = Gesture.Pan()
     .onBegin(() => {
+      cancelAnimation(tx)
+      cancelAnimation(ty)
       startTx.value = tx.value
       startTy.value = ty.value
     })
     .onUpdate((e) => {
-      tx.value = startTx.value + e.translationX
-      ty.value = startTy.value + e.translationY
+      const minTx = vw.value - CANVAS_W - BOUNDARY_MARGIN
+      const minTy = vh.value - CANVAS_H - BOUNDARY_MARGIN
+      const maxTx = BOUNDARY_MARGIN
+      const maxTy = BOUNDARY_MARGIN
+
+      tx.value = Math.min(maxTx, Math.max(minTx, startTx.value + e.translationX))
+      ty.value = Math.min(maxTy, Math.max(minTy, startTy.value + e.translationY))
+    })
+    .onEnd((e) => {
+      const minTx = vw.value - CANVAS_W - BOUNDARY_MARGIN
+      const minTy = vh.value - CANVAS_H - BOUNDARY_MARGIN
+      const maxTx = BOUNDARY_MARGIN
+      const maxTy = BOUNDARY_MARGIN
+
+      tx.value = withDecay({ velocity: e.velocityX, clamp: [minTx, maxTx] })
+      ty.value = withDecay({ velocity: e.velocityY, clamp: [minTy, maxTy] })
     })
 
   const tap = Gesture.Tap()
@@ -252,14 +258,13 @@ export function MoodPickerScreen() {
                 {/* Quadrant name labels — above each cluster centroid */}
                 {axisFont &&
                   (Object.keys(QUADRANT_LABELS) as MoodCategoryKey[]).map((q) => {
-                    const center = clusterCenters[q]
-                    if (!center) return null
+                    const center = CLUSTER_CENTERS[q]
                     const label = QUADRANT_LABELS[q]
                     return (
                       <Group key={q} opacity={0.44}>
                         <SkiaText
                           x={center.x - textWidth(label, axisFont) / 2}
-                          y={center.minY - R - 8}
+                          y={center.y - ROW - R - 8}
                           text={label}
                           font={axisFont}
                           color={quadColor(q)}
