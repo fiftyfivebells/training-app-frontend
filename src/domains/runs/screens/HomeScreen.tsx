@@ -120,6 +120,7 @@ type AffirmationCardProps = { affirmation: string | undefined }
 
 function AffirmationCard({ affirmation }: AffirmationCardProps) {
   const { colors } = useTheme()
+  if (!affirmation) return null
   return (
     <View
       style={[
@@ -129,7 +130,7 @@ function AffirmationCard({ affirmation }: AffirmationCardProps) {
     >
       <Text style={[styles.sectionLabel, { color: colors.copper.default }]}>TODAY</Text>
       <Text style={[styles.affirmationText, { color: colors.text.primary }]}>
-        {affirmation ?? ''}
+        {affirmation}
       </Text>
     </View>
   )
@@ -249,6 +250,10 @@ export function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {activeBlock != null && affirmation?.affirmation != null && (
+          <AffirmationCard affirmation={affirmation.affirmation} />
+        )}
+
         {activeBlock != null && (
           <BlockCard
             block={activeBlock}
@@ -257,8 +262,6 @@ export function HomeScreen() {
             progressPercent={progressPercent}
           />
         )}
-
-        <AffirmationCard affirmation={affirmation?.affirmation} />
 
         <View style={styles.statsRow}>
           <StatCell label="THIS WEEK" value={weeklyValue} unit={weeklyUnit} />
