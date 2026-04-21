@@ -1,3 +1,4 @@
+import { View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import { AlertProvider } from '@components/ui'
@@ -36,19 +37,17 @@ export default function RootLayout() {
   if (!fontsLoaded) return null
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BaseThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <AuthGate>
-              <AlertProvider>
-                <ThemedAppShell />
-              </AlertProvider>
-            </AuthGate>
-          </AuthProvider>
-        </QueryClientProvider>
-      </BaseThemeProvider>
-    </GestureHandlerRootView>
+    <BaseThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AuthGate>
+            <AlertProvider>
+              <ThemedAppShell />
+            </AlertProvider>
+          </AuthGate>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BaseThemeProvider>
   )
 }
 
@@ -56,9 +55,9 @@ function ThemedAppShell() {
   const { colors } = useTheme()
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background.base }}>
       <SessionChecker />
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <Stack
         screenOptions={{
           headerShown: false,
@@ -72,6 +71,6 @@ function ThemedAppShell() {
         <Stack.Screen name="(modals)/block-create" options={{ presentation: 'fullScreenModal', headerShown: false }} />
         <Stack.Screen name="(modals)/profile" options={{ presentation: 'card', headerShown: false }} />
       </Stack>
-    </>
+    </GestureHandlerRootView>
   )
 }
