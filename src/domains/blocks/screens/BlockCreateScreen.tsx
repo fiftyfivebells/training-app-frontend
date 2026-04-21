@@ -25,6 +25,7 @@ import { useTheme } from '@/theme/useTheme'
 import type { BlockType } from '../blocks.types'
 import { BLOCK_TYPE_CONFIG, BLOCK_TYPE_ORDER } from '../constants/blockTypes'
 import { useActiveBlock } from '../hooks/useActiveBlock'
+import { useBlocks } from '../hooks/useBlocks'
 import { useCompleteBlock } from '../hooks/useCompleteBlock'
 import { useCreateBlock } from '../hooks/useCreateBlock'
 
@@ -42,6 +43,7 @@ export function BlockCreateScreen() {
   const insets = useSafeAreaInsets()
   const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
   const { data: activeBlock, isLoading: activeLoading } = useActiveBlock()
+  const { data: blocks = [], isLoading: blocksLoading } = useBlocks()
   const { mutateAsync: completeBlock } = useCompleteBlock()
   const { mutate: createBlock, isPending } = useCreateBlock({
     onError: (error) => {
@@ -49,7 +51,7 @@ export function BlockCreateScreen() {
     },
   })
 
-  const isSubmitting = isPending || activeLoading || isManuallySubmitting
+  const isSubmitting = isPending || activeLoading || blocksLoading || isManuallySubmitting
 
   const today = useMemo(() => {
     const d = new Date()
@@ -131,9 +133,16 @@ export function BlockCreateScreen() {
     setIsManuallySubmitting(true)
     try {
       const newStartStr = format(startDate, 'yyyy-MM-dd')
+      const newEndStr = format(endDate, 'yyyy-MM-dd')
 
-      if (activeBlock && newStartStr <= activeBlock.endDate) {
-        await completeBlock(activeBlock.id)
+      // Find ALL active/pending blocks that overlap with this new range
+      const overlapping = blocks.filter(
+        (b) => b.status === 'active' && b.startDate <= newEndStr && b.endDate >= newStartStr,
+      )
+
+      // Complete all of them sequentially
+      for (const b of overlapping) {
+        await completeBlock(b.id)
       }
 
       createBlock(
@@ -158,28 +167,34 @@ export function BlockCreateScreen() {
           : 'Failed to prepare for new block. Please try again.',
       )
     }
-  }, [activeBlock, completeBlock, createBlock, selectedType, startDate, endDate])
+  }, [blocks, completeBlock, createBlock, selectedType, startDate, endDate])
 
   const handleSubmit = useCallback(async () => {
     const newStartStr = format(startDate, 'yyyy-MM-dd')
+    const newEndStr = format(endDate, 'yyyy-MM-dd')
 
-    if (activeBlock && newStartStr <= activeBlock.endDate) {
-      const label = BLOCK_TYPE_CONFIG[activeBlock.blockType].label
-      Alert.alert(
-        'Start a new block?',
-        `Starting a new block will end your current ${label} block. Continue?`,
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Continue',
-            onPress: () => performSubmission(),
-          },
-        ],
-      )
+    // Find overlapping blocks (Active or Pending)
+    const overlapping = blocks.filter(
+      (b) => b.status === 'active' && b.startDate <= newEndStr && b.endDate >= newStartStr,
+    )
+
+    if (overlapping.length > 0) {
+      const isPlural = overlapping.length > 1
+      const message = isPlural
+        ? `This new block overlaps with ${overlapping.length} existing blocks. Starting it will end or cancel them. Continue?`
+        : `This overlaps with your "${overlapping[0].name}" block. Starting a new block will end it. Continue?`
+
+      Alert.alert('Overlap detected', message, [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Continue',
+          onPress: () => performSubmission(),
+        },
+      ])
     } else {
       performSubmission()
     }
-  }, [activeBlock, startDate, performSubmission])
+  }, [blocks, startDate, endDate, performSubmission])
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
