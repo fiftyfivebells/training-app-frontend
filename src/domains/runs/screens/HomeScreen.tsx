@@ -237,7 +237,7 @@ export function HomeScreen() {
               borderColor: colors.border.default,
             },
           ]}
-          onPress={() => router.push('/profile')}
+          onPress={() => router.push('/(modals)/profile')}
           accessibilityLabel="Profile"
           accessibilityRole="button"
         >

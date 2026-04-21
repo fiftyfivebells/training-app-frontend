@@ -1,327 +1,221 @@
-import { useRouter } from 'expo-router'
-import React, { useEffect, useRef } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { ActivityIndicator, Switch, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native'
+import { router } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
+import { useForm, Controller } from 'react-hook-form'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Picker } from '@react-native-picker/picker'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import { Screen } from '@/components/layout/Screen'
-import { useAlert } from '@/components/ui/Alert'
-import { Button } from '@/components/ui/Button'
-import { DatePicker } from '@/components/ui/DatePicker'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
-import { ThemedText } from '@/components/ui/ThemedText'
-import { useTheme } from '@/theme/ThemeProvider'
+import { useGetCurrentUser } from '@/domains/users/hooks/useGetCurrentUser'
+import { useUpdateProfile } from '@/domains/users/hooks/useUpdateProfile'
+import { useTheme } from '@/theme/useTheme'
 
-import { UpdatePreferencesRequest, UpdateProfileRequest } from '../api/userApi'
-import { SectionLabel, UnitToggle } from '../components'
-import { type DistanceUnitPreference } from '../hooks/useDistanceUnitPreference'
-import { useGetCurrentUser } from '../hooks/useGetCurrentUser'
-import { useGetUserPreferences } from '../hooks/useGetUserPreferences'
-import { useUpdatePreferences } from '../hooks/useUpdatePreferences'
-import { useUpdateProfile } from '../hooks/useUpdateProfile'
-
-type FormValues = {
+interface EditProfileForm {
   firstName: string
   lastName: string
-  dateOfBirth: Date | null
-  timeZone: string
-  preferredUnits: DistanceUnitPreference
-  weekStartDay: string
-  dailyPushEnabled: boolean
-}
-
-const WEEK_START_OPTIONS = [
-  { label: 'Monday', value: 'monday' },
-  { label: 'Sunday', value: 'sunday' },
-]
-
-function parseLocalDate(s: string): Date {
-  const [y, m, d] = s.split('-').map(Number)
-  return new Date(y!, (m ?? 1) - 1, d ?? 1)
-}
-
-function fromDate(d: Date): string {
-  const year = d.getFullYear()
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+  email: string
+  timezone: string
 }
 
 export function EditProfileScreen() {
-  const theme = useTheme()
-  const router = useRouter()
-  const { alert } = useAlert()
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
+  const { data: user } = useGetCurrentUser()
+  const { mutate: updateProfile, isPending } = useUpdateProfile()
 
-  const { data: user, isLoading: userLoading } = useGetCurrentUser()
-  const { data: prefs, isLoading: prefsLoading } = useGetUserPreferences()
-
-  const updateProfile = useUpdateProfile()
-  const updatePreferences = useUpdatePreferences()
+  const [affirmationTime, setAffirmationTime] = useState<Date>(() => {
+    const d = new Date()
+    d.setHours(8, 0, 0, 0)
+    return d
+  })
+  const [showTimePicker, setShowTimePicker] = useState(false)
 
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<EditProfileForm>({
     defaultValues: {
       firstName: '',
       lastName: '',
-      dateOfBirth: null,
-      timeZone: '',
-      preferredUnits: 'imperial',
-      weekStartDay: 'monday',
-      dailyPushEnabled: false,
+      email: '',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
   })
 
-  const initialized = useRef(false)
-
   useEffect(() => {
-    if (user && prefs && !initialized.current) {
-      initialized.current = true
+    if (user) {
       reset({
         firstName: user.firstName,
         lastName: user.lastName,
-        dateOfBirth: user.dateOfBirth ? parseLocalDate(user.dateOfBirth) : null,
-        timeZone: user.timeZone,
-        preferredUnits:
-          prefs.preferredUnits === 'imperial' || prefs.preferredUnits === 'metric'
-            ? (prefs.preferredUnits as DistanceUnitPreference)
-            : 'imperial',
-        weekStartDay: prefs.weekStartDay || 'monday',
-        dailyPushEnabled: prefs.dailyPushEnabled,
+        email: user.email,
+        timezone: user.timeZone,
       })
     }
-  }, [user, prefs, reset])
+  }, [user, reset])
 
-  const isPending = updateProfile.isPending || updatePreferences.isPending
+  useEffect(() => {
+    AsyncStorage.getItem('@basephase/affirmationTime').then((time) => {
+      if (time) setAffirmationTime(new Date(time))
+    }).catch(() => {})
+  }, [])
 
-  const onSubmit = async (values: FormValues) => {
-    const profilePayload: UpdateProfileRequest = {
-      firstName: values.firstName.trim() || undefined,
-      lastName: values.lastName.trim() || undefined,
-      dateOfBirth: values.dateOfBirth ? fromDate(values.dateOfBirth) : undefined,
-      timeZone: values.timeZone.trim() || undefined,
-    }
-
-    const prefsPayload: UpdatePreferencesRequest = {
-      preferredUnits: values.preferredUnits,
-      weekStartDay: values.weekStartDay,
-      dailyPushEnabled: values.dailyPushEnabled,
-    }
-
-    try {
-      await Promise.all([
-        updateProfile.mutateAsync(profilePayload),
-        updatePreferences.mutateAsync(prefsPayload),
-      ])
-      router.replace('/(drawer)/profile')
-    } catch {
-      alert('Unable to save', 'Please check your connection and try again.')
+  const handleTimeChange = (event: any, selectedDate?: Date) => {
+    setShowTimePicker(false)
+    if (selectedDate) {
+      setAffirmationTime(selectedDate)
+      AsyncStorage.setItem('@basephase/affirmationTime', selectedDate.toISOString()).catch(() => {})
     }
   }
 
-  const isLoading = userLoading || prefsLoading
+  const onSubmit = (data: EditProfileForm) => {
+    updateProfile(
+      { firstName: data.firstName, lastName: data.lastName, timeZone: data.timezone },
+      { onSuccess: () => router.back() }
+    )
+  }
 
   return (
-    <Screen>
-      <ThemedText
-        style={{
-          fontSize: theme.typography.size.xxxl,
-          fontWeight: theme.typography.weights.bold,
-          color: theme.semantic.text.primary,
-          marginBottom: theme.spacing.xs,
-        }}
-      >
-        Edit Profile
-      </ThemedText>
-      <ThemedText
-        style={{
-          fontSize: theme.typography.size.md,
-          color: theme.semantic.text.secondary,
-          marginBottom: theme.spacing.xl,
-        }}
-      >
-        Update your personal info and preferences.
-      </ThemedText>
+    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 4, backgroundColor: colors.background.base }]}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Edit profile</Text>
+        <TouchableOpacity style={styles.headerRight} onPress={handleSubmit(onSubmit)} disabled={isPending}>
+          <Text style={[styles.saveBtnText, { color: colors.copper.default }]}>Save</Text>
+        </TouchableOpacity>
+      </View>
 
-      {isLoading && (
-        <View style={{ alignItems: 'center', paddingVertical: theme.spacing.xxl }}>
-          <ActivityIndicator color={theme.semantic.button.primary.bg} />
-        </View>
-      )}
-
-      {!isLoading && (
-        <>
-          {/* Personal info */}
-          <View style={{ marginBottom: theme.spacing.lg }}>
-            <SectionLabel>Personal info</SectionLabel>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: theme.spacing.sm,
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Controller
-                  control={control}
-                  name="firstName"
-                  rules={{ required: 'Required' }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <Input
-                      label="First name"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      error={errors.firstName?.message}
-                      autoCorrect={false}
-                    />
-                  )}
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Controller
-                  control={control}
-                  name="lastName"
-                  rules={{ required: 'Required' }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <Input
-                      label="Last name"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      error={errors.lastName?.message}
-                      autoCorrect={false}
-                    />
-                  )}
-                />
-              </View>
-            </View>
-
-            <Controller
-              control={control}
-              name="dateOfBirth"
-              render={({ field: { value, onChange } }) => (
-                <View style={{ marginBottom: theme.spacing.md }}>
-                  <DatePicker
-                    label="Date of birth"
-                    value={value}
-                    onChange={onChange}
-                    maximumDate={new Date()}
-                  />
-                </View>
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="timeZone"
-              rules={{ required: 'Required' }}
-              render={({ field: { value, onChange, onBlur } }) => (
-                <Input
-                  label="Timezone"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={errors.timeZone?.message}
-                  autoCorrect={false}
-                  autoCapitalize="none"
-                  placeholder="e.g. America/New_York"
-                />
-              )}
-            />
-          </View>
-
-          {/* Preferences */}
-          <View style={{ marginBottom: theme.spacing.xl }}>
-            <SectionLabel>Preferences</SectionLabel>
-
-            <ThemedText
-              style={{
-                fontSize: theme.typography.size.sm,
-                fontWeight: theme.typography.weights.medium,
-                color: theme.semantic.text.primary,
-                marginBottom: theme.spacing.xs,
-              }}
-            >
-              Distance unit
-            </ThemedText>
-            <Controller
-              control={control}
-              name="preferredUnits"
-              render={({ field: { value, onChange } }) => (
-                <View style={{ marginBottom: theme.spacing.md }}>
-                  <UnitToggle value={value} onChange={onChange} />
-                </View>
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="weekStartDay"
-              render={({ field: { value, onChange } }) => (
-                <Select
-                  label="Week starts on"
-                  value={value}
-                  onValueChange={onChange}
-                  options={WEEK_START_OPTIONS}
-                />
-              )}
-            />
-
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingVertical: theme.spacing.sm,
-              }}
-            >
-              <View style={{ flex: 1, marginRight: theme.spacing.md }}>
-                <ThemedText
-                  style={{
-                    fontSize: theme.typography.size.sm,
-                    fontWeight: theme.typography.weights.medium,
-                    color: theme.semantic.text.primary,
-                  }}
-                >
-                  Daily reminders
-                </ThemedText>
-                <ThemedText
-                  style={{
-                    fontSize: theme.typography.size.xs,
-                    color: theme.semantic.text.secondary,
-                    marginTop: 2,
-                  }}
-                >
-                  Push notification each morning
-                </ThemedText>
-              </View>
-              <Controller
-                control={control}
-                name="dailyPushEnabled"
-                render={({ field: { value, onChange } }) => (
-                  <Switch
-                    value={value}
-                    onValueChange={onChange}
-                    trackColor={{
-                      true: theme.semantic.button.primary.bg,
-                      false: theme.semantic.border.default,
-                    }}
-                    thumbColor={theme.semantic.surface.card}
-                  />
-                )}
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
+        <View style={styles.fieldContainer}>
+          <Text style={[styles.label, { color: colors.text.tertiary }]}>First name</Text>
+          <Controller
+            control={control}
+            name="firstName"
+            rules={{ required: 'First name is required' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, color: colors.text.primary }]}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                placeholder="First name"
+                placeholderTextColor={colors.text.tertiary}
               />
-            </View>
-          </View>
+            )}
+          />
+          {errors.firstName && <Text style={[styles.error, { color: colors.semantic.errorFg }]}>{errors.firstName.message}</Text>}
+        </View>
 
-          <Button onPress={handleSubmit(onSubmit)} loading={isPending} size="lg">
-            Save changes
-          </Button>
-        </>
+        <View style={styles.fieldContainer}>
+          <Text style={[styles.label, { color: colors.text.tertiary }]}>Last name</Text>
+          <Controller
+            control={control}
+            name="lastName"
+            rules={{ required: 'Last name is required' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, color: colors.text.primary }]}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                placeholder="Last name"
+                placeholderTextColor={colors.text.tertiary}
+              />
+            )}
+          />
+          {errors.lastName && <Text style={[styles.error, { color: colors.semantic.errorFg }]}>{errors.lastName.message}</Text>}
+        </View>
+
+        <View style={styles.fieldContainer}>
+          <Text style={[styles.label, { color: colors.text.tertiary }]}>Email</Text>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, color: colors.text.tertiary }]}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholder="Email"
+                placeholderTextColor={colors.text.tertiary}
+                editable={false}
+              />
+            )}
+          />
+          {errors.email && <Text style={[styles.error, { color: colors.semantic.errorFg }]}>{errors.email.message}</Text>}
+        </View>
+
+        <View style={styles.fieldContainer}>
+          <Text style={[styles.label, { color: colors.text.tertiary }]}>Timezone</Text>
+          <Controller
+            control={control}
+            name="timezone"
+            rules={{ required: 'Timezone is required' }}
+            render={({ field: { value, onChange } }) => (
+              <View style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, justifyContent: 'center', paddingHorizontal: 0, overflow: 'hidden' }]}>
+                <Picker
+                  selectedValue={value}
+                  onValueChange={onChange}
+                  style={{ color: colors.text.primary, height: 50, width: '100%' }}
+                  dropdownIconColor={colors.text.tertiary}
+                >
+                  <Picker.Item label="America/New York" value="America/New_York" />
+                  <Picker.Item label="America/Chicago" value="America/Chicago" />
+                  <Picker.Item label="America/Denver" value="America/Denver" />
+                  <Picker.Item label="America/Los Angeles" value="America/Los_Angeles" />
+                  <Picker.Item label="Europe/London" value="Europe/London" />
+                  <Picker.Item label="Europe/Paris" value="Europe/Paris" />
+                  <Picker.Item label="Asia/Tokyo" value="Asia/Tokyo" />
+                  <Picker.Item label="Australia/Sydney" value="Australia/Sydney" />
+                </Picker>
+              </View>
+            )}
+          />
+        </View>
+        
+        <View style={styles.fieldContainer}>
+          <Text style={[styles.label, { color: colors.text.tertiary }]}>Affirmation time</Text>
+          <TouchableOpacity
+            style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, justifyContent: 'center' }]}
+            onPress={() => setShowTimePicker(true)}
+          >
+            <Text style={{ color: colors.text.primary }}>
+              {affirmationTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+      </ScrollView>
+      
+      {showTimePicker && (
+        <DateTimePicker
+          value={affirmationTime}
+          mode="time"
+          display="spinner"
+          onChange={handleTimeChange}
+        />
       )}
-    </Screen>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  screen: { flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 16 },
+  headerTitle: { fontSize: 17, fontWeight: '600', textAlign: 'center' },
+  backBtn: { width: 40, height: 40, justifyContent: 'center', marginLeft: -10 },
+  headerRight: { width: 40, alignItems: 'flex-end', justifyContent: 'center' },
+  saveBtnText: { fontSize: 15, fontWeight: '500' },
+  fieldContainer: { marginBottom: 20 },
+  label: { fontSize: 13, marginBottom: 8, fontWeight: '500' },
+  input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 16, height: 50, fontSize: 15 },
+  error: { fontSize: 12, marginTop: 6 },
+})
