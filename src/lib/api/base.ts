@@ -5,7 +5,7 @@ import { tokenStorage } from '../../domains/auth/utils/tokenStorage'
 import { ApiError } from './error'
 
 // TODO: use env var for production
-const API_BASE_URL = Platform.OS === 'web' ? '' : 'http://192.168.0.17:8080'
+const API_BASE_URL = Platform.OS === 'web' ? '' : 'http://192.168.0.18:8080'
 
 export abstract class BaseApiClient {
   protected baseUrl: string

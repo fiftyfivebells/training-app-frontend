@@ -7,7 +7,7 @@ const { execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
-const BACKEND = 'http://192.168.0.17:8080'
+const BACKEND = 'http://192.168.0.18:8080'
 const METRO = 'http://localhost:8081'
 const PORT = 8443
 
