@@ -151,7 +151,7 @@ function RecentRunsCard({ runs }: RecentRunsCardProps) {
     >
       <View style={styles.recentRunsHeader}>
         <Text style={[styles.recentRunsTitle, { color: colors.text.primary }]}>Recent runs</Text>
-        <TouchableOpacity onPress={() => router.navigate('/(tabs)/logbook')}>
+        <TouchableOpacity onPress={() => router.navigate('/logbook')}>
           <Text style={[styles.seeAll, { color: colors.copper.default }]}>See all</Text>
         </TouchableOpacity>
       </View>

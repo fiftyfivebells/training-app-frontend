@@ -16,9 +16,12 @@ export function useCompleteBlock(
       const response = await blocksClient.completeBlock(blockId)
       return blockResponseToBlock(response)
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: blocksKeys.all })
-    },
     ...options,
+    onSuccess: async (data, variables, context) => {
+      await queryClient.invalidateQueries({ queryKey: blocksKeys.all })
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, context)
+      }
+    },
   })
 }

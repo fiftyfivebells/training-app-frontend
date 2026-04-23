@@ -536,7 +536,7 @@ export function BlockCreateScreen() {
               },
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Start block"
+            accessibilityLabel="Create block"
           >
             <View style={styles.plusIcon}>
               <View style={[styles.plusH, { backgroundColor: colors.background.base }]} />
@@ -544,7 +544,7 @@ export function BlockCreateScreen() {
             </View>
           </Pressable>
           <Text style={[styles.submitLabel, { color: colors.copper.default }]}>
-            Start block
+            Create block
           </Text>
         </View>
       </ScrollView>

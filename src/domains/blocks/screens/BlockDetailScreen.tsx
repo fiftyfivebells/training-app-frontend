@@ -81,12 +81,21 @@ export function BlockDetailScreen() {
     )
   }, [block, deleteBlock])
 
+  const handleEdit = useCallback(() => {
+    if (!block) return
+    router.push({
+      pathname: '/(modals)/block-edit',
+      params: { id: block.id },
+    })
+  }, [block])
+
   const handleOverflowMenu = useCallback(() => {
     if (!block) return
     const isIOS = Platform.OS === 'ios'
     const isActive = block.status === 'active'
 
     const options = ['Cancel']
+    options.push('Edit block')
     if (isActive) options.push('Finish block')
     options.push('Delete block')
 
@@ -101,6 +110,7 @@ export function BlockDetailScreen() {
         (buttonIndex) => {
           setOverflowActive(false)
           const selected = options[buttonIndex]
+          if (selected === 'Edit block') handleEdit()
           if (selected === 'Finish block') handleCompleteConfirm()
           if (selected === 'Delete block') handleDeleteConfirm()
         },
@@ -109,7 +119,7 @@ export function BlockDetailScreen() {
       setOverflowActive(true)
       setDropdownVisible(true)
     }
-  }, [block, handleCompleteConfirm, handleDeleteConfirm])
+  }, [block, handleEdit, handleCompleteConfirm, handleDeleteConfirm])
 
   if (blockLoading || !block) {
     return <View style={[styles.screen, { backgroundColor: colors.background.base }]} />
@@ -181,6 +191,18 @@ export function BlockDetailScreen() {
             },
           ]}
         >
+          <TouchableOpacity
+            style={styles.dropdownRow}
+            onPress={() => {
+              dismissDropdown()
+              handleEdit()
+            }}
+          >
+            <Ionicons name="create-outline" size={16} color={colors.text.primary} />
+            <Text style={[styles.dropdownLabel, { color: colors.text.primary }]}>Edit block</Text>
+          </TouchableOpacity>
+          <View style={[styles.dropdownDivider, { backgroundColor: colors.border.subtle }]} />
+
           {block.status === 'active' && (
             <>
               <TouchableOpacity

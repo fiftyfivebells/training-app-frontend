@@ -68,7 +68,7 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
           borderColor: colors.border.subtle,
         },
       ]}
-      onPress={() => router.push(`/(tabs)/blocks`)}
+      onPress={() => router.push(`/blocks`)}
     >
       <View style={styles.content}>
         <View style={styles.header}>

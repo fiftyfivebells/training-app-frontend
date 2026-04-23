@@ -42,7 +42,11 @@ export function BlocksScreen() {
           b.status === 'expired' ||
           (b.status === 'active' && b.endDate < todayStr),
       )
-      .sort((a, b) => b.endDate.localeCompare(a.endDate))
+      .sort((a, b) => {
+        const dateA = a.completedAt || a.endDate
+        const dateB = b.completedAt || b.endDate
+        return dateB.localeCompare(dateA)
+      })
 
     return { activeBlock: active, pendingBlocks: pending, completedBlocks: completed }
   }, [blocks, todayStr])

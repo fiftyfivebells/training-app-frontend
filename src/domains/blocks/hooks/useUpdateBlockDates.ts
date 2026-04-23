@@ -4,16 +4,21 @@ import { ApiError } from '@/lib/api/error'
 
 import { blocksClient } from '../api/blocksApi'
 import { blocksKeys } from '../blocks.constants'
-import { Block, blockResponseToBlock, CreateBlockRequest } from '../blocks.types'
+import { Block, blockResponseToBlock, UpdateBlockDatesRequest } from '../blocks.types'
 
-export function useCreateBlock(
-  options?: UseMutationOptions<Block, ApiError, CreateBlockRequest>,
+type UpdateParams = {
+  id: string
+  body: UpdateBlockDatesRequest
+}
+
+export function useUpdateBlockDates(
+  options?: UseMutationOptions<Block, ApiError, UpdateParams>,
 ) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (body: CreateBlockRequest) => {
-      const response = await blocksClient.createBlock(body)
+    mutationFn: async ({ id, body }: UpdateParams) => {
+      const response = await blocksClient.updateBlockDates(id, body)
       return blockResponseToBlock(response)
     },
     ...options,

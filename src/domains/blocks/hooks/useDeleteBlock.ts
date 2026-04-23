@@ -10,10 +10,13 @@ export function useDeleteBlock(options?: UseMutationOptions<void, ApiError, stri
 
   return useMutation({
     mutationFn: (blockId: string) => blocksClient.deleteBlock(blockId),
-    onSuccess: (_, blockId) => {
-      queryClient.removeQueries({ queryKey: blocksKeys.detail(blockId) })
-      queryClient.invalidateQueries({ queryKey: blocksKeys.all })
-    },
     ...options,
+    onSuccess: async (data, variables, context) => {
+      queryClient.removeQueries({ queryKey: blocksKeys.detail(variables) })
+      await queryClient.invalidateQueries({ queryKey: blocksKeys.all })
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, context)
+      }
+    },
   })
 }

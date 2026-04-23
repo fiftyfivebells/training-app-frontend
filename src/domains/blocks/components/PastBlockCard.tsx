@@ -24,6 +24,9 @@ export function PastBlockCard({ block, runs, distUnit }: Props) {
   const totalMeters = runs.reduce((s, r) => s + r.distanceMeters, 0)
   const distStr = formatDistanceDisplay(totalMeters, distUnit)
 
+  const displayEndDate =
+    block.status !== 'active' && block.completedAt ? block.completedAt : block.endDate
+
   return (
     <TouchableOpacity
       onPress={() => router.push(`/blocks/${block.id}`)}
@@ -48,7 +51,7 @@ export function PastBlockCard({ block, runs, distUnit }: Props) {
         </View>
         <Text style={[styles.pastCardDates, { color: colors.text.tertiary }]}>
           {format(parseISO(block.startDate), 'MMM d')} –{' '}
-          {format(parseISO(block.endDate), 'MMM d')}
+          {format(parseISO(displayEndDate), 'MMM d')}
         </Text>
       </View>
 

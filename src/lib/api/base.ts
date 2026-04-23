@@ -104,6 +104,13 @@ export abstract class BaseApiClient {
     })
   }
 
+  protected patch<T>(path: string, body?: unknown): Promise<T> {
+    return this.makeRequest<T>(path, {
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+    })
+  }
+
   protected delete<T>(path: string): Promise<T> {
     return this.makeRequest<T>(path, { method: 'DELETE' })
   }

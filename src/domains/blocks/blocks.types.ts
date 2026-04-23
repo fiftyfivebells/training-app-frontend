@@ -2,6 +2,7 @@ import type { components } from '@/generated/api/types'
 
 export type BlockResponse = components['schemas']['BlockResponse']
 export type CreateBlockRequest = components['schemas']['CreateBlockRequest']
+export type UpdateBlockDatesRequest = components['schemas']['UpdateBlockDatesRequest']
 export type AffirmationResponse = components['schemas']['AffirmationResponse']
 
 export type BlockType =

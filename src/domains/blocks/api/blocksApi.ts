@@ -1,12 +1,24 @@
 import { BaseApiClient } from '@lib/api/base'
 
-import type { AffirmationResponse, BlockResponse, CreateBlockRequest } from '../blocks.types'
+import type {
+  AffirmationResponse,
+  BlockResponse,
+  CreateBlockRequest,
+  UpdateBlockDatesRequest,
+} from '../blocks.types'
 
 export class BlocksClient extends BaseApiClient {
   private baseRoute = 'blocks'
 
   async createBlock(body: CreateBlockRequest): Promise<BlockResponse> {
     return this.post<BlockResponse>(this.baseRoute, body)
+  }
+
+  async updateBlockDates(
+    blockId: string,
+    body: UpdateBlockDatesRequest,
+  ): Promise<BlockResponse> {
+    return this.patch<BlockResponse>(`${this.baseRoute}/${blockId}/dates`, body)
   }
 
   async getUserBlocks(): Promise<BlockResponse[]> {
