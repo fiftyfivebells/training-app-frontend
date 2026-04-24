@@ -29,7 +29,7 @@ type Props = {
 }
 
 export function MoodTimelineCard({ blockRuns }: Props) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const { data: moods = [] } = useGetAllMoods()
 
   const [timelineContainerWidth, setTimelineContainerWidth] = useState(0)
@@ -41,10 +41,10 @@ export function MoodTimelineCard({ blockRuns }: Props) {
   )
 
   const QUAD_COLOR: Record<MoodCategoryKey, string> = {
-    'high-pleasant': colors.mood.highGood,
-    'high-challenging': colors.mood.highTough,
-    'low-pleasant': colors.mood.lowGood,
-    'low-challenging': colors.mood.lowTough,
+    'high-pleasant': mood.highGood,
+    'high-challenging': mood.highTough,
+    'low-pleasant': mood.lowGood,
+    'low-challenging': mood.lowTough,
   }
 
   const timelineRuns = useMemo(() => [...blockRuns].reverse(), [blockRuns])
@@ -72,12 +72,12 @@ export function MoodTimelineCard({ blockRuns }: Props) {
       style={[
         styles.card,
         {
-          backgroundColor: colors.background.surface,
-          borderColor: colors.border.subtle,
+          backgroundColor: bg.surface,
+          borderColor: rule.subtle,
         },
       ]}
     >
-      <Text style={[styles.sectionLabel, { color: colors.text.tertiary }]}>
+      <Text style={[styles.sectionLabel, { color: text.tertiary }]}>
         HOW IT FELT
       </Text>
 
@@ -117,7 +117,7 @@ export function MoodTimelineCard({ blockRuns }: Props) {
 
         {showTimelineFade && (
           <LinearGradient
-            colors={['transparent', colors.background.surface]}
+            colors={['transparent', bg.surface]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.timelineFade}
@@ -127,8 +127,8 @@ export function MoodTimelineCard({ blockRuns }: Props) {
       </View>
 
       <View style={styles.axisRow}>
-        <Text style={[styles.axisLabel, { color: colors.text.tertiary }]}>Start</Text>
-        <Text style={[styles.axisLabel, { color: colors.text.tertiary }]}>Today</Text>
+        <Text style={[styles.axisLabel, { color: text.tertiary }]}>Start</Text>
+        <Text style={[styles.axisLabel, { color: text.tertiary }]}>Today</Text>
       </View>
 
       <View style={styles.breakdownGrid}>
@@ -153,7 +153,7 @@ export function MoodTimelineCard({ blockRuns }: Props) {
                   <View style={styles.breakdownCellHeader}>
                     <View style={[styles.dot10, { backgroundColor: QUAD_COLOR[key] }]} />
                     <Text
-                      style={[styles.breakdownLabel, { color: colors.text.tertiary }]}
+                      style={[styles.breakdownLabel, { color: text.tertiary }]}
                     >
                       {QUADRANT_LABELS[key]}
                     </Text>
@@ -161,7 +161,7 @@ export function MoodTimelineCard({ blockRuns }: Props) {
                   <Text
                     style={[
                       styles.breakdownCount,
-                      { color: count > 0 ? QUAD_COLOR[key] : colors.text.tertiary },
+                      { color: count > 0 ? QUAD_COLOR[key] : text.tertiary },
                     ]}
                   >
                     {count === 1 ? '1 run' : `${count} runs`}

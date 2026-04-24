@@ -53,7 +53,7 @@ interface FormValues {
 }
 
 export function EditRunScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { id } = useLocalSearchParams<{ id: string }>()
 
@@ -264,15 +264,15 @@ export function EditRunScreen() {
 
   if (isLoading || !run) {
     return (
-      <View style={[styles.loadingScreen, { backgroundColor: colors.background.base }]}>
-        <ActivityIndicator color={colors.copper.default} />
+      <View style={[styles.loadingScreen, { backgroundColor: bg.base }]}>
+        <ActivityIndicator color={accent.default} />
       </View>
     )
   }
 
   return (
     <KeyboardAvoidingView
-      style={[styles.screen, { backgroundColor: colors.background.base }]}
+      style={[styles.screen, { backgroundColor: bg.base }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {/* Header */}
@@ -281,8 +281,8 @@ export function EditRunScreen() {
           styles.header,
           {
             paddingTop: insets.top + 8,
-            borderBottomColor: colors.border.subtle,
-            backgroundColor: colors.background.base,
+            borderBottomColor: rule.subtle,
+            backgroundColor: bg.base,
           },
         ]}
       >
@@ -292,9 +292,9 @@ export function EditRunScreen() {
           accessibilityLabel="Dismiss"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Edit run</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Edit run</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -309,12 +309,12 @@ export function EditRunScreen() {
         <View
           style={[
             styles.titleBanner,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+            { backgroundColor: bg.surface, borderColor: rule.subtle },
           ]}
         >
-          <Text style={[styles.titleBannerLabel, { color: colors.text.tertiary }]}>
+          <Text style={[styles.titleBannerLabel, { color: text.tertiary }]}>
             Saving as{' '}
-            <Text style={[styles.titleBannerValue, { color: colors.copper.default }]}>
+            <Text style={[styles.titleBannerValue, { color: accent.default }]}>
               {titleString}
             </Text>
           </Text>
@@ -327,19 +327,19 @@ export function EditRunScreen() {
             fieldPositions.current.date = e.nativeEvent.layout.y
           }}
         >
-          <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>DATE</Text>
+          <Text style={[styles.fieldLabel, { color: text.tertiary }]}>DATE</Text>
           <TouchableOpacity
             onPress={openDatePicker}
             style={[
               styles.dateInput,
-              { backgroundColor: colors.background.input, borderColor: colors.border.subtle },
+              { backgroundColor: bg.input, borderColor: rule.subtle },
             ]}
             accessibilityLabel="Select date"
           >
-            <Text style={[styles.dateInputText, { color: colors.text.primary }]}>
+            <Text style={[styles.dateInputText, { color: text.primary }]}>
               {formatDateLabel(date)}
             </Text>
-            <Ionicons name="calendar-outline" size={18} color={colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={18} color={text.tertiary} />
           </TouchableOpacity>
           {showDatePicker && Platform.OS === 'ios' && (
             <DateTimePicker
@@ -445,7 +445,7 @@ export function EditRunScreen() {
 
         {/* Notes */}
         <View style={styles.section}>
-          <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>NOTES</Text>
+          <Text style={[styles.fieldLabel, { color: text.tertiary }]}>NOTES</Text>
           <Controller
             control={control}
             name="notes"
@@ -454,9 +454,9 @@ export function EditRunScreen() {
                 style={[
                   styles.notesInput,
                   {
-                    backgroundColor: colors.background.input,
-                    borderColor: colors.border.subtle,
-                    color: colors.text.primary,
+                    backgroundColor: bg.input,
+                    borderColor: rule.subtle,
+                    color: text.primary,
                   },
                 ]}
                 value={value}
@@ -464,7 +464,7 @@ export function EditRunScreen() {
                 onBlur={onBlur}
                 multiline
                 placeholder="How did your run feel today?"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={text.tertiary}
                 accessibilityLabel="Notes"
               />
             )}
@@ -479,17 +479,17 @@ export function EditRunScreen() {
             style={({ pressed }) => [
               styles.submitBtn,
               {
-                backgroundColor: pressed ? colors.copper.dim : colors.copper.default,
-                borderColor: colors.copper.muted,
+                backgroundColor: pressed ? accent.pressed : accent.default,
+                borderColor: bg.elevated,
                 opacity: isPending ? 0.6 : 1,
               },
             ]}
             accessibilityLabel="Save changes"
             accessibilityRole="button"
           >
-            <Ionicons name="checkmark" size={32} color={colors.background.base} />
+            <Ionicons name="checkmark" size={32} color={bg.base} />
           </Pressable>
-          <Text style={[styles.submitLabel, { color: colors.copper.default }]}>Save changes</Text>
+          <Text style={[styles.submitLabel, { color: accent.default }]}>Save changes</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

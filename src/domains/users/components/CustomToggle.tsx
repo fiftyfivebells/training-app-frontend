@@ -9,7 +9,7 @@ interface CustomToggleProps {
 }
 
 export function CustomToggle({ value, onValueChange, disabled }: CustomToggleProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const translateX = useRef(new Animated.Value(value ? 18 : 0)).current
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function CustomToggle({ value, onValueChange, disabled }: CustomTogglePro
     }).start()
   }, [value, translateX])
 
-  const backgroundColor = value ? colors.copper.default : colors.border.default
+  const backgroundColor = value ? accent.default : rule.default
 
   return (
     <Pressable
@@ -36,7 +36,7 @@ export function CustomToggle({ value, onValueChange, disabled }: CustomTogglePro
       <Animated.View
         style={[
           styles.thumb,
-          { transform: [{ translateX }], backgroundColor: colors.text.primary }
+          { transform: [{ translateX }], backgroundColor: text.primary }
         ]}
       />
     </Pressable>

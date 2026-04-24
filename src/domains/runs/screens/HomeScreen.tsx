@@ -34,24 +34,24 @@ type StatCellProps = {
 }
 
 function StatCell({ label, value, unit, dimmed = false }: StatCellProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   return (
     <View
       style={[
         styles.statCell,
-        { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+        { backgroundColor: bg.surface, borderColor: rule.subtle },
       ]}
     >
-      <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>{label}</Text>
+      <Text style={[styles.statLabel, { color: text.tertiary }]}>{label}</Text>
       <Text
         style={[
           styles.statValue,
-          { color: dimmed ? colors.text.tertiary : colors.text.primary },
+          { color: dimmed ? text.tertiary : text.primary },
         ]}
       >
         {value}
       </Text>
-      <Text style={[styles.statUnit, { color: colors.text.tertiary }]}>{unit}</Text>
+      <Text style={[styles.statUnit, { color: text.tertiary }]}>{unit}</Text>
     </View>
   )
 }
@@ -64,50 +64,50 @@ type BlockCardProps = {
 }
 
 function BlockCard({ block, currentDay, totalDays, progressPercent }: BlockCardProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   return (
     <TouchableOpacity
       onPress={() => router.push(`/blocks/${block.id}`)}
       activeOpacity={0.8}
       style={[
         styles.blockCard,
-        { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+        { backgroundColor: bg.surface, borderColor: rule.subtle },
       ]}
     >
-      <View style={[styles.blockAccent, { backgroundColor: colors.copper.default }]} />
+      <View style={[styles.blockAccent, { backgroundColor: accent.default }]} />
       <View style={styles.blockContent}>
-        <Text style={[styles.sectionLabel, { color: colors.copper.default }]}>ACTIVE BLOCK</Text>
+        <Text style={[styles.sectionLabel, { color: accent.default }]}>ACTIVE BLOCK</Text>
         <View style={styles.blockNameRow}>
-          <Text style={[styles.blockName, { color: colors.text.primary }]} numberOfLines={1}>
+          <Text style={[styles.blockName, { color: text.primary }]} numberOfLines={1}>
             {block.name}
           </Text>
           <View
             style={[
               styles.dayPill,
-              { backgroundColor: colors.copper.subtle, borderColor: colors.copper.muted },
+              { backgroundColor: bg.surface, borderColor: bg.elevated },
             ]}
           >
-            <Text style={[styles.dayPillText, { color: colors.copper.default }]}>
+            <Text style={[styles.dayPillText, { color: accent.default }]}>
               Day {currentDay}
             </Text>
           </View>
         </View>
-        <View style={[styles.progressTrack, { backgroundColor: colors.background.base }]}>
+        <View style={[styles.progressTrack, { backgroundColor: bg.base }]}>
           <View
             style={[
               styles.progressFill,
               {
-                backgroundColor: colors.copper.default,
+                backgroundColor: accent.default,
                 width: `${Math.round(progressPercent)}%` as `${number}%`,
               },
             ]}
           />
         </View>
         <View style={styles.progressMeta}>
-          <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+          <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
             {block.startDate}
           </Text>
-          <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+          <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
             {totalDays} days total
           </Text>
         </View>
@@ -119,17 +119,17 @@ function BlockCard({ block, currentDay, totalDays, progressPercent }: BlockCardP
 type AffirmationCardProps = { affirmation: string | undefined }
 
 function AffirmationCard({ affirmation }: AffirmationCardProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   if (!affirmation) return null
   return (
     <View
       style={[
         styles.affirmationCard,
-        { backgroundColor: colors.copper.subtle, borderColor: colors.copper.muted },
+        { backgroundColor: bg.surface, borderColor: bg.elevated },
       ]}
     >
-      <Text style={[styles.sectionLabel, { color: colors.copper.default }]}>TODAY</Text>
-      <Text style={[styles.affirmationText, { color: colors.text.primary }]}>
+      <Text style={[styles.sectionLabel, { color: accent.default }]}>TODAY</Text>
+      <Text style={[styles.affirmationText, { color: text.primary }]}>
         {affirmation}
       </Text>
     </View>
@@ -141,27 +141,27 @@ type RecentRunsCardProps = {
 }
 
 function RecentRunsCard({ runs }: RecentRunsCardProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   return (
     <View
       style={[
         styles.recentRunsCard,
-        { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+        { backgroundColor: bg.surface, borderColor: rule.subtle },
       ]}
     >
       <View style={styles.recentRunsHeader}>
-        <Text style={[styles.recentRunsTitle, { color: colors.text.primary }]}>Recent runs</Text>
+        <Text style={[styles.recentRunsTitle, { color: text.primary }]}>Recent runs</Text>
         <TouchableOpacity onPress={() => router.navigate('/logbook')}>
-          <Text style={[styles.seeAll, { color: colors.copper.default }]}>See all</Text>
+          <Text style={[styles.seeAll, { color: accent.default }]}>See all</Text>
         </TouchableOpacity>
       </View>
       {runs.length === 0 ? (
         <View style={styles.emptyState}>
-          <Text style={[styles.emptyStateText, { color: colors.text.tertiary }]}>
+          <Text style={[styles.emptyStateText, { color: text.tertiary }]}>
             Nothing logged yet.
           </Text>
           <TouchableOpacity onPress={() => router.push('/log')}>
-            <Text style={[styles.emptyStateCta, { color: colors.copper.default }]}>
+            <Text style={[styles.emptyStateCta, { color: accent.default }]}>
               Log your first run
             </Text>
           </TouchableOpacity>
@@ -169,7 +169,7 @@ function RecentRunsCard({ runs }: RecentRunsCardProps) {
       ) : (
         runs.map((run, i) => (
           <View key={run.id}>
-            {i > 0 && <View style={[styles.divider, { backgroundColor: colors.border.subtle }]} />}
+            {i > 0 && <View style={[styles.divider, { backgroundColor: rule.subtle }]} />}
             <RunRow run={run} compact />
           </View>
         ))
@@ -181,7 +181,7 @@ function RecentRunsCard({ runs }: RecentRunsCardProps) {
 // ---------- main screen ----------
 
 export function HomeScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { unit } = useDistanceUnit()
 
@@ -214,19 +214,19 @@ export function HomeScreen() {
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header — sticky above scroll */}
       <View
         style={[
           styles.header,
-          { paddingTop: insets.top + 8, backgroundColor: colors.background.base },
+          { paddingTop: insets.top + 8, backgroundColor: bg.base },
         ]}
       >
         <View>
-          <Text style={[styles.greetingSub, { color: colors.text.tertiary }]}>
+          <Text style={[styles.greetingSub, { color: text.tertiary }]}>
             {getGreeting()}
           </Text>
-          <Text style={[styles.greetingName, { color: colors.text.primary }]}>
+          <Text style={[styles.greetingName, { color: text.primary }]}>
             {user?.firstName ?? ''}
           </Text>
         </View>
@@ -234,15 +234,15 @@ export function HomeScreen() {
           style={[
             styles.avatarBtn,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.default,
+              backgroundColor: bg.surface,
+              borderColor: rule.default,
             },
           ]}
           onPress={() => router.push('/(modals)/profile')}
           accessibilityLabel="Profile"
           accessibilityRole="button"
         >
-          <Text style={[styles.avatarText, { color: colors.text.secondary }]}>{initials}</Text>
+          <Text style={[styles.avatarText, { color: text.secondary }]}>{initials}</Text>
         </TouchableOpacity>
       </View>
 

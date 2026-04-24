@@ -18,7 +18,7 @@ type Props = {
 }
 
 export function PastBlockCard({ block, runs, distUnit }: Props) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const config = BLOCK_TYPE_CONFIG[block.blockType]
 
   const totalMeters = runs.reduce((s, r) => s + r.distanceMeters, 0)
@@ -36,8 +36,8 @@ export function PastBlockCard({ block, runs, distUnit }: Props) {
       style={[
         styles.pastCard,
         {
-          backgroundColor: colors.background.surface,
-          borderColor: colors.border.subtle,
+          backgroundColor: bg.surface,
+          borderColor: rule.subtle,
           borderLeftColor: config.accentColor,
         },
       ]}
@@ -49,22 +49,22 @@ export function PastBlockCard({ block, runs, distUnit }: Props) {
             {config.label.toUpperCase()}
           </Text>
         </View>
-        <Text style={[styles.pastCardDates, { color: colors.text.tertiary }]}>
+        <Text style={[styles.pastCardDates, { color: text.tertiary }]}>
           {format(parseISO(block.startDate), 'MMM d')} –{' '}
           {format(parseISO(displayEndDate), 'MMM d')}
         </Text>
       </View>
 
-      <Text style={[styles.pastCardStats, { color: colors.text.primary }]}>
+      <Text style={[styles.pastCardStats, { color: text.primary }]}>
         {runs.length}{' '}
-        <Text style={[styles.pastCardStatsUnit, { color: colors.text.tertiary }]}>
+        <Text style={[styles.pastCardStatsUnit, { color: text.tertiary }]}>
           {runs.length === 1 ? 'run' : 'runs'}
         </Text>
         {'  '}
         {distStr}
       </Text>
 
-      <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
+      <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
     </TouchableOpacity>
   )
 }

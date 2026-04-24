@@ -31,7 +31,7 @@ import { MoodTimelineCard } from '../components/MoodTimelineCard'
 
 export function BlockDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { unit: distUnit } = useDistanceUnit()
 
@@ -122,7 +122,7 @@ export function BlockDetailScreen() {
   }, [block, handleEdit, handleCompleteConfirm, handleDeleteConfirm])
 
   if (blockLoading || !block) {
-    return <View style={[styles.screen, { backgroundColor: colors.background.base }]} />
+    return <View style={[styles.screen, { backgroundColor: bg.base }]} />
   }
 
   const config = BLOCK_TYPE_CONFIG[block.blockType]
@@ -138,14 +138,14 @@ export function BlockDetailScreen() {
     : 0
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View
         style={[
           styles.header,
           {
             paddingTop: insets.top + 8,
-            backgroundColor: colors.background.base,
+            backgroundColor: bg.base,
           },
         ]}
       >
@@ -155,9 +155,9 @@ export function BlockDetailScreen() {
           accessibilityLabel="Go back"
           style={styles.backBtn}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>
           {config.label}
         </Text>
         <TouchableOpacity
@@ -169,7 +169,7 @@ export function BlockDetailScreen() {
           <Ionicons
             name="ellipsis-vertical"
             size={22}
-            color={colors.text.secondary}
+            color={text.secondary}
           />
         </TouchableOpacity>
       </View>
@@ -186,8 +186,8 @@ export function BlockDetailScreen() {
             styles.dropdown,
             {
               top: insets.top + 52,
-              backgroundColor: colors.background.elevated,
-              borderColor: colors.border.default,
+              backgroundColor: bg.elevated,
+              borderColor: rule.default,
             },
           ]}
         >
@@ -198,10 +198,10 @@ export function BlockDetailScreen() {
               handleEdit()
             }}
           >
-            <Ionicons name="create-outline" size={16} color={colors.text.primary} />
-            <Text style={[styles.dropdownLabel, { color: colors.text.primary }]}>Edit block</Text>
+            <Ionicons name="create-outline" size={16} color={text.primary} />
+            <Text style={[styles.dropdownLabel, { color: text.primary }]}>Edit block</Text>
           </TouchableOpacity>
-          <View style={[styles.dropdownDivider, { backgroundColor: colors.border.subtle }]} />
+          <View style={[styles.dropdownDivider, { backgroundColor: rule.subtle }]} />
 
           {block.status === 'active' && (
             <>
@@ -212,10 +212,10 @@ export function BlockDetailScreen() {
                   handleCompleteConfirm()
                 }}
               >
-                <Ionicons name="checkmark-circle-outline" size={16} color={colors.text.primary} />
-                <Text style={[styles.dropdownLabel, { color: colors.text.primary }]}>Finish block</Text>
+                <Ionicons name="checkmark-circle-outline" size={16} color={text.primary} />
+                <Text style={[styles.dropdownLabel, { color: text.primary }]}>Finish block</Text>
               </TouchableOpacity>
-              <View style={[styles.dropdownDivider, { backgroundColor: colors.border.subtle }]} />
+              <View style={[styles.dropdownDivider, { backgroundColor: rule.subtle }]} />
             </>
           )}
           <TouchableOpacity
@@ -225,8 +225,8 @@ export function BlockDetailScreen() {
               handleDeleteConfirm()
             }}
           >
-            <Ionicons name="trash" size={16} color={colors.semantic.errorFg} />
-            <Text style={[styles.dropdownLabel, { color: colors.semantic.errorFg }]}>
+            <Ionicons name="trash" size={16} color={semantic.error} />
+            <Text style={[styles.dropdownLabel, { color: semantic.error }]}>
               Delete block
             </Text>
           </TouchableOpacity>
@@ -243,8 +243,8 @@ export function BlockDetailScreen() {
           style={[
             styles.identityCard,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.subtle,
+              backgroundColor: bg.surface,
+              borderColor: rule.subtle,
               borderLeftColor: config.accentColor,
             },
           ]}
@@ -266,17 +266,17 @@ export function BlockDetailScreen() {
                 },
               ]}
             >
-              <Text style={[styles.dayNumber, { color: colors.text.primary }]}>
+              <Text style={[styles.dayNumber, { color: text.primary }]}>
                 {totalDays}
               </Text>
-              <Text style={[styles.dayLabel, { color: colors.text.tertiary }]}>Days</Text>
+              <Text style={[styles.dayLabel, { color: text.tertiary }]}>Days</Text>
             </View>
           </View>
 
           <Text
             style={[
               styles.tagline,
-              { color: colors.text.primary, fontFamily: 'Fraunces_400Regular' },
+              { color: text.primary, fontFamily: 'Fraunces_400Regular' },
             ]}
           >
             {config.tagline}
@@ -287,14 +287,14 @@ export function BlockDetailScreen() {
               style={[
                 styles.completionBadge,
                 {
-                  backgroundColor: colors.semantic.successBg,
+                  backgroundColor: semantic.successBg,
                 },
               ]}
             >
               <Text
                 style={[
                   styles.completionBadgeText,
-                  { color: colors.semantic.successFg },
+                  { color: semantic.success },
                 ]}
               >
                 Completed · {format(parseISO(block.endDate), 'MMM d')}
@@ -302,14 +302,14 @@ export function BlockDetailScreen() {
             </View>
           ) : (
             <View style={styles.progressMeta}>
-              <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+              <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
                 Ends {format(parseISO(block.endDate), 'MMM d')}
               </Text>
             </View>
           )}
 
           <View style={styles.progressMeta}>
-            <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+            <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
               Started {format(parseISO(block.startDate), 'MMM d')}
             </Text>
           </View>
@@ -321,30 +321,30 @@ export function BlockDetailScreen() {
             style={[
               styles.statCell,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.subtle,
+                backgroundColor: bg.surface,
+                borderColor: rule.subtle,
               },
             ]}
           >
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+            <Text style={[styles.statValue, { color: text.primary }]}>
               {stats?.runCount ?? 0}
             </Text>
-            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}>Runs</Text>
+            <Text style={[styles.statUnit, { color: text.tertiary }]}>Runs</Text>
           </View>
 
           <View
             style={[
               styles.statCell,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.subtle,
+                backgroundColor: bg.surface,
+                borderColor: rule.subtle,
               },
             ]}
           >
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+            <Text style={[styles.statValue, { color: text.primary }]}>
               {distValue}
             </Text>
-            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}>
+            <Text style={[styles.statUnit, { color: text.tertiary }]}>
               {distUnit}
             </Text>
           </View>
@@ -353,15 +353,15 @@ export function BlockDetailScreen() {
             style={[
               styles.statCell,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.subtle,
+                backgroundColor: bg.surface,
+                borderColor: rule.subtle,
               },
             ]}
           >
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+            <Text style={[styles.statValue, { color: text.primary }]}>
               {stats && stats.runCount > 0 ? stats.avgRpe.toFixed(1) : '—'}
             </Text>
-            <Text style={[styles.statUnit, { color: colors.text.tertiary }]}>Avg RPE</Text>
+            <Text style={[styles.statUnit, { color: text.tertiary }]}>Avg RPE</Text>
           </View>
         </View>
 
@@ -372,13 +372,13 @@ export function BlockDetailScreen() {
           style={[
             styles.runsCard,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.subtle,
+              backgroundColor: bg.surface,
+              borderColor: rule.subtle,
             },
           ]}
         >
           <View style={styles.runsCardHeader}>
-            <Text style={[styles.sectionLabel, { color: colors.text.tertiary }]}>
+            <Text style={[styles.sectionLabel, { color: text.tertiary }]}>
               RUNS THIS BLOCK
             </Text>
             <TouchableOpacity
@@ -386,14 +386,14 @@ export function BlockDetailScreen() {
               accessibilityRole="button"
               accessibilityLabel={`See all ${blockRuns.length} runs`}
             >
-              <Text style={[styles.seeAll, { color: colors.copper.default }]}>
+              <Text style={[styles.seeAll, { color: accent.default }]}>
                 See all {blockRuns.length}
               </Text>
             </TouchableOpacity>
           </View>
 
           {blockRuns.length === 0 ? (
-            <Text style={[styles.noRunsText, { color: colors.text.tertiary }]}>
+            <Text style={[styles.noRunsText, { color: text.tertiary }]}>
               No runs logged
             </Text>
           ) : (
@@ -401,7 +401,7 @@ export function BlockDetailScreen() {
               <View key={run.id}>
                 {index > 0 && (
                   <View
-                    style={[styles.divider, { backgroundColor: colors.border.subtle }]}
+                    style={[styles.divider, { backgroundColor: rule.subtle }]}
                   />
                 )}
                 <RunRow run={run} />

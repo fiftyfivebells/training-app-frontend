@@ -35,7 +35,7 @@ const RANGE_LABELS = {
 }
 
 export function AnalyticsScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -66,13 +66,13 @@ export function AnalyticsScreen() {
   }
 
   if (runsLoading || moodsLoading) {
-    return <View style={[styles.container, { backgroundColor: colors.background.base }]} />
+    return <View style={[styles.container, { backgroundColor: bg.base }]} />
   }
 
   if (runs.length < 5) {
     return (
-      <View style={[styles.container, styles.empty, { backgroundColor: colors.background.base }]}>
-        <Text style={[styles.emptyText, { color: colors.text.secondary }]}>
+      <View style={[styles.container, styles.empty, { backgroundColor: bg.base }]}>
+        <Text style={[styles.emptyText, { color: text.secondary }]}>
           Log more runs to start seeing patterns in your training.
         </Text>
       </View>
@@ -85,20 +85,20 @@ export function AnalyticsScreen() {
   const volumeVsMood = computeVolumeVsMood(runs, timeRange, moods)
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background.base }]}>
+    <ScrollView style={[styles.container, { backgroundColor: bg.base }]}>
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>Analytics</Text>
+        <Text style={[styles.title, { color: text.primary }]}>Analytics</Text>
         <Pressable
           onPress={handleRangePress}
           style={[
             styles.rangePicker,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.default },
+            { backgroundColor: bg.surface, borderColor: rule.default },
           ]}
         >
-          <Text style={[styles.rangeLabel, { color: colors.copper.default }]}>
+          <Text style={[styles.rangeLabel, { color: accent.default }]}>
             {RANGE_LABELS[timeRange]}
           </Text>
-          <Ionicons name="chevron-down" size={12} color={colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={12} color={text.tertiary} />
         </Pressable>
       </View>
 

@@ -51,7 +51,7 @@ interface FormValues {
 }
 
 export function LogScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
 
   const { unit: savedUnit, loaded: unitLoaded } = useDistanceUnit()
@@ -217,7 +217,7 @@ export function LogScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.screen, { backgroundColor: colors.background.base }]}
+      style={[styles.screen, { backgroundColor: bg.base }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {/* Header */}
@@ -226,8 +226,8 @@ export function LogScreen() {
           styles.header,
           {
             paddingTop: insets.top + 8,
-            borderBottomColor: colors.border.subtle,
-            backgroundColor: colors.background.base,
+            borderBottomColor: rule.subtle,
+            backgroundColor: bg.base,
           },
         ]}
       >
@@ -237,9 +237,9 @@ export function LogScreen() {
           accessibilityLabel="Dismiss"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Log run</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Log run</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -254,12 +254,12 @@ export function LogScreen() {
         <View
           style={[
             styles.titleBanner,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+            { backgroundColor: bg.surface, borderColor: rule.subtle },
           ]}
         >
-          <Text style={[styles.titleBannerLabel, { color: colors.text.tertiary }]}>
+          <Text style={[styles.titleBannerLabel, { color: text.tertiary }]}>
             Saving as{' '}
-            <Text style={[styles.titleBannerValue, { color: colors.copper.default }]}>
+            <Text style={[styles.titleBannerValue, { color: accent.default }]}>
               {titleString}
             </Text>
           </Text>
@@ -270,16 +270,16 @@ export function LogScreen() {
           style={styles.section}
           onLayout={(e) => { fieldPositions.current.date = e.nativeEvent.layout.y }}
         >
-          <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>DATE</Text>
+          <Text style={[styles.fieldLabel, { color: text.tertiary }]}>DATE</Text>
           <TouchableOpacity
             onPress={openDatePicker}
-            style={[styles.dateInput, { backgroundColor: colors.background.input, borderColor: colors.border.subtle }]}
+            style={[styles.dateInput, { backgroundColor: bg.input, borderColor: rule.subtle }]}
             accessibilityLabel="Select date"
           >
-            <Text style={[styles.dateInputText, { color: colors.text.primary }]}>
+            <Text style={[styles.dateInputText, { color: text.primary }]}>
               {formatDateLabel(date)}
             </Text>
-            <Ionicons name="calendar-outline" size={18} color={colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={18} color={text.tertiary} />
           </TouchableOpacity>
           {showDatePicker && Platform.OS === 'ios' && (
             <DateTimePicker
@@ -375,7 +375,7 @@ export function LogScreen() {
 
         {/* Notes */}
         <View style={styles.section}>
-          <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>NOTES</Text>
+          <Text style={[styles.fieldLabel, { color: text.tertiary }]}>NOTES</Text>
           <Controller
             control={control}
             name="notes"
@@ -384,9 +384,9 @@ export function LogScreen() {
                 style={[
                   styles.notesInput,
                   {
-                    backgroundColor: colors.background.input,
-                    borderColor: colors.border.subtle,
-                    color: colors.text.primary,
+                    backgroundColor: bg.input,
+                    borderColor: rule.subtle,
+                    color: text.primary,
                   },
                 ]}
                 value={value}
@@ -394,7 +394,7 @@ export function LogScreen() {
                 onBlur={onBlur}
                 multiline
                 placeholder="How did your run feel today?"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={text.tertiary}
                 accessibilityLabel="Notes"
               />
             )}
@@ -409,8 +409,8 @@ export function LogScreen() {
             style={({ pressed }) => [
               styles.submitBtn,
               {
-                backgroundColor: pressed ? colors.copper.dim : colors.copper.default,
-                borderColor: colors.copper.muted,
+                backgroundColor: pressed ? accent.pressed : accent.default,
+                borderColor: bg.elevated,
                 opacity: isPending ? 0.6 : 1,
               },
             ]}
@@ -419,11 +419,11 @@ export function LogScreen() {
           >
             {/* Plus icon — two rectangles */}
             <View style={styles.plusContainer}>
-              <View style={[styles.plusH, { backgroundColor: colors.background.base }]} />
-              <View style={[styles.plusV, { backgroundColor: colors.background.base }]} />
+              <View style={[styles.plusH, { backgroundColor: bg.base }]} />
+              <View style={[styles.plusV, { backgroundColor: bg.base }]} />
             </View>
           </Pressable>
-          <Text style={[styles.submitLabel, { color: colors.copper.default }]}>Log this run</Text>
+          <Text style={[styles.submitLabel, { color: accent.default }]}>Log this run</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

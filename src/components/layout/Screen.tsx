@@ -17,10 +17,10 @@ export function Screen({
   style,
   contentContainerStyle,
 }: ScreenProps) {
-  const { colors, space } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space } = useTheme()
   const safeAreaStyles = [
     styles.safeArea,
-    { backgroundColor: colors.background.base },
+    { backgroundColor: bg.base },
     style,
   ]
   const containerPadding = { padding: space[6] }

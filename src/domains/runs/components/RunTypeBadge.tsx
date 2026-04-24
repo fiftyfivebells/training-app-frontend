@@ -13,24 +13,24 @@ type BadgeStyle = {
 }
 
 export function RunTypeBadge({ runType }: RunTypeBadgeProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   if (!runType) return null
 
   const normalized = runType.charAt(0).toUpperCase() + runType.slice(1).toLowerCase()
 
   const styleMap: Record<string, BadgeStyle> = {
-    Easy: { bg: colors.semantic.successBg, text: colors.semantic.successFg },
-    Recovery: { bg: colors.background.surface, text: colors.text.tertiary, border: colors.border.subtle },
-    Long: { bg: colors.background.surface, text: colors.text.tertiary, border: colors.border.subtle },
-    Tempo: { bg: '#1E1510', text: colors.mood.highTough },
-    Speed: { bg: '#1E1510', text: colors.mood.highTough },
+    Easy: { bg: semantic.successBg, text: semantic.success },
+    Recovery: { bg: bg.surface, text: text.tertiary, border: rule.subtle },
+    Long: { bg: bg.surface, text: text.tertiary, border: rule.subtle },
+    Tempo: { bg: '#1E1510', text: mood.highTough },
+    Speed: { bg: '#1E1510', text: mood.highTough },
   }
 
   const style = styleMap[normalized] ?? {
-    bg: colors.background.surface,
-    text: colors.text.tertiary,
-    border: colors.border.subtle,
+    bg: bg.surface,
+    text: text.tertiary,
+    border: rule.subtle,
   }
 
   return (

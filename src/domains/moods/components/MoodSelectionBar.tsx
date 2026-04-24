@@ -22,15 +22,15 @@ export function MoodSelectionBar({
   onConfirm,
   paddingBottom,
 }: MoodSelectionBarProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   return (
     <View
       style={[
         styles.bar,
         {
-          backgroundColor: colors.background.surface,
-          borderTopColor: colors.border.subtle,
+          backgroundColor: bg.surface,
+          borderTopColor: rule.subtle,
           minHeight: 82,
           paddingBottom,
         },
@@ -46,7 +46,7 @@ export function MoodSelectionBar({
                   backgroundColor: 'transparent',
                   borderWidth: 1.5,
                   borderStyle: 'dashed',
-                  borderColor: colors.border.default,
+                  borderColor: rule.default,
                 },
             dotAnimStyle,
           ]}
@@ -54,15 +54,15 @@ export function MoodSelectionBar({
         <View style={styles.textBlock}>
           {selected ? (
             <>
-              <Text style={[styles.selectionName, { color: colors.text.primary }]}>
+              <Text style={[styles.selectionName, { color: text.primary }]}>
                 {selected.mood.label}
               </Text>
-              <Text style={[styles.selectionDesc, { color: colors.text.secondary }]}>
+              <Text style={[styles.selectionDesc, { color: text.secondary }]}>
                 {selected.mood.description}
               </Text>
             </>
           ) : (
-            <Text style={[styles.selectionPrompt, { color: colors.text.tertiary }]}>
+            <Text style={[styles.selectionPrompt, { color: text.tertiary }]}>
               Select how your run felt
             </Text>
           )}
@@ -73,7 +73,7 @@ export function MoodSelectionBar({
         style={[
           styles.confirmBtn,
           {
-            backgroundColor: colors.copper.default,
+            backgroundColor: accent.default,
             opacity: selected ? 1 : 0.3,
           },
         ]}
@@ -82,7 +82,7 @@ export function MoodSelectionBar({
         accessibilityLabel="Confirm mood selection"
         accessibilityRole="button"
       >
-        <Text style={[styles.confirmBtnText, { color: colors.background.base }]}>Confirm</Text>
+        <Text style={[styles.confirmBtnText, { color: bg.base }]}>Confirm</Text>
       </TouchableOpacity>
     </View>
   )

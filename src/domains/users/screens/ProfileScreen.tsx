@@ -18,7 +18,7 @@ import { CustomToggle } from '../components/CustomToggle'
 import { AppearanceControl } from '../components/AppearanceControl'
 
 export function ProfileScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { data: user } = useGetCurrentUser()
   const { data: prefs } = useGetUserPreferences()
@@ -147,86 +147,86 @@ export function ProfileScreen() {
   const initials = user ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase() : ''
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 4, backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 4, backgroundColor: bg.base }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Profile</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Profile</Text>
         <View style={styles.headerRight} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
         {/* Identity Card */}
-        <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle, marginHorizontal: 16, marginTop: 4, paddingVertical: 20, paddingHorizontal: 16 }]}>
+        <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle, marginHorizontal: 16, marginTop: 4, paddingVertical: 20, paddingHorizontal: 16 }]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View style={[styles.avatar, { backgroundColor: colors.copper.subtle, borderColor: colors.copper.default }]}>
-                <Text style={[styles.avatarText, { color: colors.copper.default }]}>{initials}</Text>
+              <View style={[styles.avatar, { backgroundColor: bg.surface, borderColor: accent.default }]}>
+                <Text style={[styles.avatarText, { color: accent.default }]}>{initials}</Text>
               </View>
               <View style={{ marginLeft: 16 }}>
-                <Text style={[styles.fullName, { color: colors.text.primary }]}>{user?.firstName} {user?.lastName}</Text>
-                <Text style={[styles.email, { color: colors.text.tertiary }]}>{user?.email}</Text>
-                <Text style={[styles.timezone, { color: colors.text.tertiary }]}>{formatTimezone(user?.timeZone)}</Text>
+                <Text style={[styles.fullName, { color: text.primary }]}>{user?.firstName} {user?.lastName}</Text>
+                <Text style={[styles.email, { color: text.tertiary }]}>{user?.email}</Text>
+                <Text style={[styles.timezone, { color: text.tertiary }]}>{formatTimezone(user?.timeZone)}</Text>
               </View>
             </View>
-            <TouchableOpacity style={[styles.editBtn, { backgroundColor: colors.background.input, borderColor: colors.border.default }]} onPress={() => router.push('/(modals)/profile/edit')}>
-              <Text style={[styles.editBtnText, { color: colors.text.secondary }]}>Edit</Text>
+            <TouchableOpacity style={[styles.editBtn, { backgroundColor: bg.input, borderColor: rule.default }]} onPress={() => router.push('/(modals)/profile/edit')}>
+              <Text style={[styles.editBtnText, { color: text.secondary }]}>Edit</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.statsRow, { borderTopColor: colors.border.subtle }]}>
-            <View style={[styles.statCol, { borderRightWidth: 1, borderRightColor: colors.border.subtle }]}>
-              <Text style={[styles.statVal, { color: colors.text.primary }]}>{lifetimeStats?.runCount ?? 0}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>RUNS</Text>
+          <View style={[styles.statsRow, { borderTopColor: rule.subtle }]}>
+            <View style={[styles.statCol, { borderRightWidth: 1, borderRightColor: rule.subtle }]}>
+              <Text style={[styles.statVal, { color: text.primary }]}>{lifetimeStats?.runCount ?? 0}</Text>
+              <Text style={[styles.statLabel, { color: text.tertiary }]}>RUNS</Text>
             </View>
-            <View style={[styles.statCol, { borderRightWidth: 1, borderRightColor: colors.border.subtle }]}>
-              <Text style={[styles.statVal, { color: colors.text.primary }]}>
+            <View style={[styles.statCol, { borderRightWidth: 1, borderRightColor: rule.subtle }]}>
+              <Text style={[styles.statVal, { color: text.primary }]}>
                 {Math.round((lifetimeStats?.totalDistanceMeters ?? 0) / (unit === 'imperial' ? 1609.344 : 1000))}
               </Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>{unit === 'imperial' ? 'MI' : 'KM'}</Text>
+              <Text style={[styles.statLabel, { color: text.tertiary }]}>{unit === 'imperial' ? 'MI' : 'KM'}</Text>
             </View>
             <View style={styles.statCol}>
-              <Text style={[styles.statVal, { color: colors.text.primary }]}>{lifetimeStats?.blockCount ?? 0}</Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>BLOCKS</Text>
+              <Text style={[styles.statVal, { color: text.primary }]}>{lifetimeStats?.blockCount ?? 0}</Text>
+              <Text style={[styles.statLabel, { color: text.tertiary }]}>BLOCKS</Text>
             </View>
           </View>
         </View>
 
         {/* Running */}
-        <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>RUNNING</Text>
-        <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle }]}>
-          <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border.subtle }]} onPress={handleDistanceUnitPress}>
+        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>RUNNING</Text>
+        <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
+          <TouchableOpacity style={[styles.row, { borderBottomColor: rule.subtle }]} onPress={handleDistanceUnitPress}>
             <View style={styles.rowLeft}>
               <View style={[styles.iconBg, { backgroundColor: '#1C1E10' }]} />
-              <Text style={[styles.rowLabel, { color: colors.text.primary }]}>Distance unit</Text>
+              <Text style={[styles.rowLabel, { color: text.primary }]}>Distance unit</Text>
             </View>
             <View style={styles.rowRight}>
-              <Text style={[styles.rowValue, { color: colors.text.tertiary }]}>{unit === 'metric' ? 'Kilometres' : 'Miles'}</Text>
-              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
+              <Text style={[styles.rowValue, { color: text.tertiary }]}>{unit === 'metric' ? 'Kilometres' : 'Miles'}</Text>
+              <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row, { borderBottomWidth: 0 }]} onPress={handleRunTypePress}>
             <View style={styles.rowLeft}>
               <View style={[styles.iconBg, { backgroundColor: '#101C1E' }]} />
-              <Text style={[styles.rowLabel, { color: colors.text.primary }]}>Default run type</Text>
+              <Text style={[styles.rowLabel, { color: text.primary }]}>Default run type</Text>
             </View>
             <View style={styles.rowRight}>
-              <Text style={[styles.rowValue, { color: colors.text.tertiary }]}>{defaultRunType}</Text>
-              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
+              <Text style={[styles.rowValue, { color: text.tertiary }]}>{defaultRunType}</Text>
+              <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
             </View>
           </TouchableOpacity>
         </View>
 
         {/* Notifications */}
-        <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>NOTIFICATIONS</Text>
-        <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle }]}>
-          <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border.subtle }]} onPress={() => setShowTimePicker(true)}>
+        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>NOTIFICATIONS</Text>
+        <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
+          <TouchableOpacity style={[styles.row, { borderBottomColor: rule.subtle }]} onPress={() => setShowTimePicker(true)}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconBg, { backgroundColor: colors.copper.subtle }]} />
+              <View style={[styles.iconBg, { backgroundColor: bg.surface }]} />
               <View>
-                <Text style={[styles.rowLabel, { color: colors.text.primary }]}>Daily affirmation</Text>
-                <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>{formatAffirmationTime(affirmationTime)}</Text>
+                <Text style={[styles.rowLabel, { color: text.primary }]}>Daily affirmation</Text>
+                <Text style={[styles.rowSub, { color: text.tertiary }]}>{formatAffirmationTime(affirmationTime)}</Text>
               </View>
             </View>
             <CustomToggle value={prefs?.dailyPushEnabled ?? false} onValueChange={handleToggleAffirmation} />
@@ -235,8 +235,8 @@ export function ProfileScreen() {
             <View style={styles.rowLeft}>
               <View style={[styles.iconBg, { backgroundColor: '#101618' }]} />
               <View>
-                <Text style={[styles.rowLabel, { color: colors.text.secondary }]}>Block reminders</Text>
-                <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>Coming soon</Text>
+                <Text style={[styles.rowLabel, { color: text.secondary }]}>Block reminders</Text>
+                <Text style={[styles.rowSub, { color: text.tertiary }]}>Coming soon</Text>
               </View>
             </View>
             <CustomToggle value={false} onValueChange={() => {}} disabled={true} />
@@ -244,40 +244,40 @@ export function ProfileScreen() {
         </View>
 
         {/* App */}
-        <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>APP</Text>
-        <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle }]}>
-          <View style={[styles.row, { borderBottomColor: colors.border.subtle }]}>
+        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>APP</Text>
+        <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
+          <View style={[styles.row, { borderBottomColor: rule.subtle }]}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconBg, { backgroundColor: colors.background.surface, borderWidth: 1, borderColor: colors.border.subtle }]} />
-              <Text style={[styles.rowLabel, { color: colors.text.primary }]}>Appearance</Text>
+              <View style={[styles.iconBg, { backgroundColor: bg.surface, borderWidth: 1, borderColor: rule.subtle }]} />
+              <Text style={[styles.rowLabel, { color: text.primary }]}>Appearance</Text>
             </View>
             <AppearanceControl />
           </View>
           <TouchableOpacity style={[styles.row, { borderBottomWidth: 0 }]} onPress={() => {}}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconBg, { backgroundColor: colors.background.surface, borderWidth: 1, borderColor: colors.border.subtle }]} />
-              <Text style={[styles.rowLabel, { color: colors.text.primary }]}>About BasePhase</Text>
+              <View style={[styles.iconBg, { backgroundColor: bg.surface, borderWidth: 1, borderColor: rule.subtle }]} />
+              <Text style={[styles.rowLabel, { color: text.primary }]}>About BasePhase</Text>
             </View>
             <View style={styles.rowRight}>
-              <Text style={[styles.rowValue, { color: colors.text.tertiary }]}>{Constants.expoConfig?.version ?? '1.0.0'}</Text>
-              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
+              <Text style={[styles.rowValue, { color: text.tertiary }]}>{Constants.expoConfig?.version ?? '1.0.0'}</Text>
+              <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
             </View>
           </TouchableOpacity>
         </View>
 
         {/* Account */}
-        <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>ACCOUNT</Text>
-        <View style={[styles.card, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle }]}>
+        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>ACCOUNT</Text>
+        <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
           <TouchableOpacity style={[styles.row, { borderBottomWidth: 0 }]} onPress={handleSignOut}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconBg, { backgroundColor: colors.background.surface, borderWidth: 1, borderColor: colors.border.subtle }]} />
-              <Text style={[styles.rowLabel, { color: colors.text.primary }]}>Sign out</Text>
+              <View style={[styles.iconBg, { backgroundColor: bg.surface, borderWidth: 1, borderColor: rule.subtle }]} />
+              <Text style={[styles.rowLabel, { color: text.primary }]}>Sign out</Text>
             </View>
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity onPress={handleDeleteAccount} style={{ marginTop: 24, alignItems: 'center' }}>
-          <Text style={{ color: colors.semantic.errorFg, opacity: 0.5, fontSize: 13 }}>Delete account</Text>
+          <Text style={{ color: semantic.error, opacity: 0.5, fontSize: 13 }}>Delete account</Text>
         </TouchableOpacity>
 
       </ScrollView>

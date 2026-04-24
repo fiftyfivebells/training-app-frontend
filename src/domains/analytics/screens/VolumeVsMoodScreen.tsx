@@ -27,7 +27,7 @@ const RANGE_LABELS = {
 }
 
 export function VolumeVsMoodScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -72,23 +72,23 @@ export function VolumeVsMoodScreen() {
   }, null as any)
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.container, { backgroundColor: bg.base }]}>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Pressable onPress={() => router.back()} style={styles.headerLeft}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={text.primary} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Volume vs mood</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Volume vs mood</Text>
         <Pressable
           onPress={handleRangePress}
           style={[
             styles.rangePicker,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.default },
+            { backgroundColor: bg.surface, borderColor: rule.default },
           ]}
         >
-          <Text style={[styles.rangeLabel, { color: colors.copper.default }]}>
+          <Text style={[styles.rangeLabel, { color: accent.default }]}>
             {RANGE_LABELS[timeRange]}
           </Text>
-          <Ionicons name="chevron-down" size={12} color={colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={12} color={text.tertiary} />
         </Pressable>
       </View>
 
@@ -102,40 +102,40 @@ export function VolumeVsMoodScreen() {
         <View
           style={[
             styles.chartCard,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+            { backgroundColor: bg.surface, borderColor: rule.subtle },
           ]}
         >
           <DualAxisChart weeklyData={volumeVsMood.weeklyData} compact={false} />
         </View>
 
         <View style={styles.statsGrid}>
-          <View style={[styles.statCell, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle }]}>
-            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>AVG WEEKLY</Text>
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+          <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
+            <Text style={[styles.statLabel, { color: text.tertiary }]}>AVG WEEKLY</Text>
+            <Text style={[styles.statValue, { color: text.primary }]}>
               {avgKm.toFixed(1)}<Text style={styles.unit}>km</Text>
             </Text>
           </View>
-          <View style={[styles.statCell, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle }]}>
-            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>BEST MOOD</Text>
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+          <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
+            <Text style={[styles.statLabel, { color: text.tertiary }]}>BEST MOOD</Text>
+            <Text style={[styles.statValue, { color: text.primary }]}>
               {bestMoodWeek?.weekLabel ?? '—'}
             </Text>
-            <Text style={[styles.statSub, { color: colors.text.tertiary }]}>
+            <Text style={[styles.statSub, { color: text.tertiary }]}>
               {bestMoodWeek ? `${bestMoodWeek.distanceKm.toFixed(1)}km` : 'No data'}
             </Text>
           </View>
-          <View style={[styles.statCell, { backgroundColor: colors.background.surface, borderColor: colors.border.subtle }]}>
-            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>HIGHEST VOL</Text>
-            <Text style={[styles.statValue, { color: colors.text.primary }]}>
+          <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
+            <Text style={[styles.statLabel, { color: text.tertiary }]}>HIGHEST VOL</Text>
+            <Text style={[styles.statValue, { color: text.primary }]}>
               {highestVolumeWeek?.weekLabel ?? '—'}
             </Text>
-            <Text style={[styles.statSub, { color: colors.text.tertiary }]}>
+            <Text style={[styles.statSub, { color: text.tertiary }]}>
               {highestVolumeWeek ? `${Math.round(highestVolumeWeek.goodMoodPct)}% good` : 'No data'}
             </Text>
           </View>
         </View>
 
-        <Text style={[styles.contextNote, { color: colors.text.tertiary }]}>
+        <Text style={[styles.contextNote, { color: text.tertiary }]}>
           Based on your last {volumeVsMood.weeklyData.length} weeks. Patterns become clearer with more data.
         </Text>
       </ScrollView>

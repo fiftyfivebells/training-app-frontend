@@ -18,7 +18,7 @@ type WebDialogProps = {
 }
 
 export function WebDialog({ visible, onClose, children }: WebDialogProps) {
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
   const scale = useSharedValue(0.95)
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function WebDialog({ visible, onClose, children }: WebDialogProps) {
             styles.card,
             animStyle,
             {
-              backgroundColor: colors.background.surface,
+              backgroundColor: bg.surface,
               padding: space[6],
               borderRadius: radius.lg,
               shadowColor: '#000',

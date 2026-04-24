@@ -32,7 +32,7 @@ const AlertContext = createContext<AlertContextType | null>(null)
 
 export function AlertProvider({ children }: { children: ReactNode }) {
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null)
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
 
   const alert = (title: string, message?: string, buttons?: AlertButton[]) => {
     if (Platform.OS === 'web') {
@@ -86,7 +86,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
               <View
                 style={[
                   {
-                    backgroundColor: colors.background.surface,
+                    backgroundColor: bg.surface,
                     borderRadius: radius.lg,
                     padding: space[6],
                   },
@@ -97,7 +97,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                   style={{
                     fontSize: 20,
                     fontWeight: '700',
-                    color: colors.text.primary,
+                    color: text.primary,
                     marginBottom: space[2],
                     textAlign: 'center',
                   }}
@@ -108,7 +108,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
                   <ThemedText
                     style={{
                       fontSize: 15,
-                      color: colors.text.secondary,
+                      color: text.secondary,
                       marginBottom: space[6],
                       textAlign: 'center',
                       lineHeight: 15 * 1.4,
@@ -120,14 +120,14 @@ export function AlertProvider({ children }: { children: ReactNode }) {
 
                 <View style={styles.buttonContainer}>
                   {(alertConfig.buttons || [{ text: 'OK' }]).map((button, index, arr) => {
-                    const variantStyles = getButtonVariantStyles({ colors, radius }, button.style)
+                    const variantStyles = getButtonVariantStyles({ bg, text, accent, semantic, radius }, button.style)
                     return (
                       <Pressable
                         key={index}
                         style={({ pressed }) => [
                           styles.button,
                           {
-                            borderRadius: radius.full,
+                            borderRadius: radius.pill,
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexDirection: 'row',
@@ -201,27 +201,27 @@ const styles = StyleSheet.create({
 })
 
 function getButtonVariantStyles(
-  theme: { colors: any; radius: any },
+  theme: { bg: any; text: any; accent: any; semantic: any; radius: any },
   variant?: AlertButton['style']
 ) {
-  const { colors, radius } = theme
+  const { bg, text, accent, semantic, radius } = theme
   switch (variant) {
     case 'cancel':
       return {
         container: {
-          backgroundColor: colors.background.elevated,
+          backgroundColor: bg.elevated,
         },
         text: {
-          color: colors.text.primary,
+          color: text.primary,
         },
       }
     case 'destructive':
       return {
         container: {
-          backgroundColor: colors.semantic.errorFg,
+          backgroundColor: semantic.error,
         },
         text: {
-          color: colors.background.base,
+          color: bg.base,
         },
       }
     default:
@@ -229,10 +229,10 @@ function getButtonVariantStyles(
         container: {
           backgroundColor: 'transparent',
           borderWidth: 2,
-          borderColor: colors.copper.default,
+          borderColor: accent.default,
         },
         text: {
-          color: colors.copper.default,
+          color: accent.default,
         },
       }
   }

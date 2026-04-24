@@ -46,15 +46,15 @@ function rpeZoneLabel(rating: number): string {
   return 'All-out'
 }
 
-function rpeZoneColor(rating: number, colors: ThemeTokens['colors']): string {
-  if (rating <= 3) return colors.semantic.successFg
-  if (rating <= 6) return colors.semantic.warningFg
-  if (rating <= 8) return colors.mood.highTough
-  return colors.semantic.errorFg
+function rpeZoneColor(rating: number, semantic: ThemeTokens['semantic'], moodColors: ThemeTokens['mood']): string {
+  if (rating <= 3) return semantic.success
+  if (rating <= 6) return semantic.warning
+  if (rating <= 8) return moodColors.highTough
+  return semantic.error
 }
 
 export function RunDetailScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { id } = useLocalSearchParams<{ id: string }>()
 
@@ -68,14 +68,14 @@ export function RunDetailScreen() {
   const [overflowActive, setOverflowActive] = useState(false)
 
   const QUAD_COLOR: Record<MoodCategoryKey, string> = {
-    'high-pleasant':    colors.mood.highGood,
-    'high-challenging': colors.mood.highTough,
-    'low-pleasant':     colors.mood.lowGood,
-    'low-challenging':  colors.mood.lowTough,
+    'high-pleasant':    mood.highGood,
+    'high-challenging': mood.highTough,
+    'low-pleasant':     mood.lowGood,
+    'low-challenging':  mood.lowTough,
   }
 
-  const mood = moods?.find((m) => m.id === run?.moodId) ?? null
-  const quadrantColor = mood ? QUAD_COLOR[mood.quadrant] : colors.text.tertiary
+  const runMood = moods?.find((m) => m.id === run?.moodId) ?? null
+  const quadrantColor = runMood ? QUAD_COLOR[runMood.quadrant] : text.tertiary
 
   const dismissDropdown = () => {
     setDropdownVisible(false)
@@ -118,8 +118,8 @@ export function RunDetailScreen() {
 
   if (isLoading || !run) {
     return (
-      <View style={[styles.loadingScreen, { backgroundColor: colors.background.base }]}>
-        <ActivityIndicator color={colors.copper.default} />
+      <View style={[styles.loadingScreen, { backgroundColor: bg.base }]}>
+        <ActivityIndicator color={accent.default} />
       </View>
     )
   }
@@ -127,14 +127,14 @@ export function RunDetailScreen() {
   const runType = run.runType
     ? run.runType.charAt(0).toUpperCase() + run.runType.slice(1).toLowerCase()
     : undefined
-  const title = generateRunTitle(runType, mood?.label)
+  const title = generateRunTitle(runType, runMood?.label)
   const dateLabel = formatRunDate(run.date)
   const { value: distValue, unit: distUnit } = formatDistanceParts(run.distanceMeters, unit)
   const durationStr = formatDurationDisplay(run.durationSeconds)
   const paceStr = formatPace(run.distanceMeters, run.durationSeconds, unit)
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
         <TouchableOpacity
@@ -143,14 +143,14 @@ export function RunDetailScreen() {
           accessibilityLabel="Back"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
 
         <View style={styles.headerCenter}>
-          <Text style={[styles.headerTitle, { color: colors.text.primary }]} numberOfLines={1}>
+          <Text style={[styles.headerTitle, { color: text.primary }]} numberOfLines={1}>
             {title}
           </Text>
-          <Text style={[styles.headerDate, { color: colors.text.tertiary }]}>{dateLabel}</Text>
+          <Text style={[styles.headerDate, { color: text.tertiary }]}>{dateLabel}</Text>
         </View>
 
         <TouchableOpacity
@@ -158,9 +158,9 @@ export function RunDetailScreen() {
             styles.overflowBtn,
             {
               backgroundColor: overflowActive
-                ? colors.background.input
-                : colors.background.surface,
-              borderColor: overflowActive ? colors.copper.default : colors.border.default,
+                ? bg.input
+                : bg.surface,
+              borderColor: overflowActive ? accent.default : rule.default,
             },
           ]}
           onPress={handleOverflowMenu}
@@ -170,7 +170,7 @@ export function RunDetailScreen() {
           <Ionicons
             name="ellipsis-vertical"
             size={16}
-            color={overflowActive ? colors.copper.default : colors.text.secondary}
+            color={overflowActive ? accent.default : text.secondary}
           />
         </TouchableOpacity>
       </View>
@@ -187,8 +187,8 @@ export function RunDetailScreen() {
             styles.dropdown,
             {
               top: insets.top + 52,
-              backgroundColor: colors.background.elevated,
-              borderColor: colors.border.default,
+              backgroundColor: bg.elevated,
+              borderColor: rule.default,
             },
           ]}
         >
@@ -199,10 +199,10 @@ export function RunDetailScreen() {
               router.push(`/runs/${run.id}/edit`)
             }}
           >
-            <Ionicons name="pencil" size={16} color={colors.text.primary} />
-            <Text style={[styles.dropdownLabel, { color: colors.text.primary }]}>Edit run</Text>
+            <Ionicons name="pencil" size={16} color={text.primary} />
+            <Text style={[styles.dropdownLabel, { color: text.primary }]}>Edit run</Text>
           </TouchableOpacity>
-          <View style={[styles.dropdownDivider, { backgroundColor: colors.border.subtle }]} />
+          <View style={[styles.dropdownDivider, { backgroundColor: rule.subtle }]} />
           <TouchableOpacity
             style={styles.dropdownRow}
             onPress={() => {
@@ -210,8 +210,8 @@ export function RunDetailScreen() {
               handleDeleteConfirm()
             }}
           >
-            <Ionicons name="trash" size={16} color={colors.semantic.errorFg} />
-            <Text style={[styles.dropdownLabel, { color: colors.semantic.errorFg }]}>
+            <Ionicons name="trash" size={16} color={semantic.error} />
+            <Text style={[styles.dropdownLabel, { color: semantic.error }]}>
               Delete run
             </Text>
           </TouchableOpacity>
@@ -223,13 +223,13 @@ export function RunDetailScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
       >
         {/* Mood card */}
-        {mood && (
+        {runMood && (
           <View
             style={[
               styles.moodCard,
               {
-                backgroundColor: DIM_FILL[mood.quadrant],
-                borderColor: MOOD_BORDER[mood.quadrant],
+                backgroundColor: DIM_FILL[runMood.quadrant],
+                borderColor: MOOD_BORDER[runMood.quadrant],
               },
             ]}
           >
@@ -237,14 +237,14 @@ export function RunDetailScreen() {
             <View style={styles.moodRow}>
               <View style={[styles.moodDot, { backgroundColor: quadrantColor }]} />
               <View style={styles.moodTextCol}>
-                <Text style={[styles.moodFeeling, { color: colors.text.primary }]}>
-                  {mood.label}
+                <Text style={[styles.moodFeeling, { color: text.primary }]}>
+                  {runMood.label}
                 </Text>
-                <Text style={[styles.moodDescription, { color: colors.text.secondary }]}>
-                  {mood.description}
+                <Text style={[styles.moodDescription, { color: text.secondary }]}>
+                  {runMood.description}
                 </Text>
-                <Text style={[styles.moodQuadrant, { color: colors.text.tertiary }]}>
-                  {QUADRANT_LABELS[mood.quadrant]}
+                <Text style={[styles.moodQuadrant, { color: text.tertiary }]}>
+                  {QUADRANT_LABELS[runMood.quadrant]}
                 </Text>
               </View>
             </View>
@@ -255,63 +255,63 @@ export function RunDetailScreen() {
         <View
           style={[
             styles.statsCard,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+            { backgroundColor: bg.surface, borderColor: rule.subtle },
           ]}
         >
           <View style={styles.heroRow}>
             <View style={styles.statCol}>
               <Text
-                style={[styles.heroValue, { color: colors.text.primary }]}
+                style={[styles.heroValue, { color: text.primary }]}
                 adjustsFontSizeToFit
                 numberOfLines={1}
               >
                 {distValue}
               </Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
+              <Text style={[styles.statLabel, { color: text.tertiary }]}>
                 {distUnit.toUpperCase()}
               </Text>
             </View>
-            <View style={[styles.statDivider, { backgroundColor: colors.border.subtle }]} />
+            <View style={[styles.statDivider, { backgroundColor: rule.subtle }]} />
             <View style={styles.statCol}>
               <Text
-                style={[styles.heroValue, { color: colors.text.primary }]}
+                style={[styles.heroValue, { color: text.primary }]}
                 adjustsFontSizeToFit
                 numberOfLines={1}
               >
                 {durationStr}
               </Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>DURATION</Text>
+              <Text style={[styles.statLabel, { color: text.tertiary }]}>DURATION</Text>
             </View>
-            <View style={[styles.statDivider, { backgroundColor: colors.border.subtle }]} />
+            <View style={[styles.statDivider, { backgroundColor: rule.subtle }]} />
             <View style={styles.statCol}>
               <Text
-                style={[styles.heroValue, { color: colors.text.primary }]}
+                style={[styles.heroValue, { color: text.primary }]}
                 adjustsFontSizeToFit
                 numberOfLines={1}
               >
                 {paceStr}
               </Text>
-              <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
+              <Text style={[styles.statLabel, { color: text.tertiary }]}>
                 /{unit.toUpperCase()}
               </Text>
             </View>
           </View>
 
-          <View style={[styles.secondaryRow, { borderTopColor: colors.border.subtle }]}>
+          <View style={[styles.secondaryRow, { borderTopColor: rule.subtle }]}>
             <View style={styles.secondaryLeft}>
               <RunTypeBadge runType={runType} />
-              <Text style={[styles.runTypeLabel, { color: colors.text.tertiary }]}>run type</Text>
+              <Text style={[styles.runTypeLabel, { color: text.tertiary }]}>run type</Text>
             </View>
             <View style={styles.rpeGroup}>
-              <Text style={[styles.rpeHeaderLabel, { color: colors.text.tertiary }]}>RPE</Text>
-              <View style={[styles.rpeChip, { backgroundColor: colors.background.input }]}>
-                <Text style={[styles.rpeValue, { color: colors.text.primary }]}>
+              <Text style={[styles.rpeHeaderLabel, { color: text.tertiary }]}>RPE</Text>
+              <View style={[styles.rpeChip, { backgroundColor: bg.input }]}>
+                <Text style={[styles.rpeValue, { color: text.primary }]}>
                   {run.exertionRating}
                 </Text>
-                <Text style={[styles.rpeDenom, { color: colors.text.tertiary }]}>/10</Text>
+                <Text style={[styles.rpeDenom, { color: text.tertiary }]}>/10</Text>
               </View>
               <Text
-                style={[styles.rpeZone, { color: rpeZoneColor(run.exertionRating, colors) }]}
+                style={[styles.rpeZone, { color: rpeZoneColor(run.exertionRating, semantic, mood) }]}
               >
                 {rpeZoneLabel(run.exertionRating)}
               </Text>
@@ -324,7 +324,7 @@ export function RunDetailScreen() {
           <TouchableOpacity
             style={[
               styles.blockRow,
-              { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+              { backgroundColor: bg.surface, borderColor: rule.subtle },
             ]}
             onPress={() => router.push(`/blocks/${run.blockId}`)}
             accessibilityRole="button"
@@ -337,10 +337,10 @@ export function RunDetailScreen() {
                 ]}
               />
               <View>
-                <Text style={[styles.cardSectionLabel, { color: colors.text.tertiary }]}>
+                <Text style={[styles.cardSectionLabel, { color: text.tertiary }]}>
                   TRAINING BLOCK
                 </Text>
-                <Text style={[styles.blockContext, { color: colors.text.primary }]}>
+                <Text style={[styles.blockContext, { color: text.primary }]}>
                   {block.status === 'active'
                     ? `${BLOCK_TYPE_CONFIG[block.blockType].label} · Day ${Math.max(
                         1,
@@ -350,7 +350,7 @@ export function RunDetailScreen() {
                 </Text>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
+            <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
           </TouchableOpacity>
         )}
 
@@ -359,11 +359,11 @@ export function RunDetailScreen() {
           <View
             style={[
               styles.notesCard,
-              { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+              { backgroundColor: bg.surface, borderColor: rule.subtle },
             ]}
           >
-            <Text style={[styles.cardSectionLabel, { color: colors.text.tertiary }]}>NOTES</Text>
-            <Text style={[styles.notesText, { color: colors.text.secondary }]}>{run.notes}</Text>
+            <Text style={[styles.cardSectionLabel, { color: text.tertiary }]}>NOTES</Text>
+            <Text style={[styles.notesText, { color: text.secondary }]}>{run.notes}</Text>
           </View>
         )}
       </ScrollView>

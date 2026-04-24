@@ -9,18 +9,18 @@ import { useTheme } from '@/theme/useTheme'
 export function VerifyEmailScreen() {
   const router = useRouter()
   const params = useLocalSearchParams<{ email?: string }>()
-  const { colors, space } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space } = useTheme()
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background.base }]}
+      style={[styles.container, { backgroundColor: bg.base }]}
     >
       <View style={[styles.content, { padding: space[6] }]}>
         <ThemedText
           style={{
             fontSize: 36,
             fontFamily: 'Fraunces_400Regular',
-            color: colors.text.primary,
+            color: text.primary,
             marginBottom: space[4],
             textAlign: 'center',
           }}
@@ -30,14 +30,14 @@ export function VerifyEmailScreen() {
         <ThemedText
           style={{
             fontSize: 16,
-            color: colors.text.secondary,
+            color: text.secondary,
             marginBottom: space[10],
             textAlign: 'center',
             lineHeight: 24,
           }}
         >
           We've sent a verification link to{'\n'}
-          <ThemedText style={{ color: colors.text.primary, fontWeight: '600' }}>
+          <ThemedText style={{ color: text.primary, fontWeight: '600' }}>
             {params.email ?? 'your email'}
           </ThemedText>
         </ThemedText>

@@ -12,7 +12,7 @@ type Props = {
 }
 
 export function ActiveBlockCard({ block, config }: Props) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   const today = new Date()
   const currentDay = differenceInCalendarDays(today, parseISO(block.startDate)) + 1
@@ -26,8 +26,8 @@ export function ActiveBlockCard({ block, config }: Props) {
       style={[
         styles.identityCard,
         {
-          backgroundColor: colors.background.surface,
-          borderColor: colors.border.subtle,
+          backgroundColor: bg.surface,
+          borderColor: rule.subtle,
           borderLeftColor: config.accentColor,
         },
       ]}
@@ -49,11 +49,11 @@ export function ActiveBlockCard({ block, config }: Props) {
             },
           ]}
         >
-          <Text style={[styles.dayLabel, { color: colors.text.tertiary }]}>Day</Text>
-          <Text style={[styles.dayNumber, { color: colors.text.primary }]}>
+          <Text style={[styles.dayLabel, { color: text.tertiary }]}>Day</Text>
+          <Text style={[styles.dayNumber, { color: text.primary }]}>
             {currentDay}
           </Text>
-          <Text style={[styles.dayLabel, { color: colors.text.tertiary }]}>
+          <Text style={[styles.dayLabel, { color: text.tertiary }]}>
             of {totalDays}
           </Text>
         </View>
@@ -62,13 +62,13 @@ export function ActiveBlockCard({ block, config }: Props) {
       <Text
         style={[
           styles.tagline,
-          { color: colors.text.primary, fontFamily: 'Fraunces_400Regular' },
+          { color: text.primary, fontFamily: 'Fraunces_400Regular' },
         ]}
       >
         {config.tagline}
       </Text>
 
-      <View style={[styles.progressTrack, { backgroundColor: colors.background.base }]}>
+      <View style={[styles.progressTrack, { backgroundColor: bg.base }]}>
         <View
           style={[
             styles.progressFill,
@@ -78,10 +78,10 @@ export function ActiveBlockCard({ block, config }: Props) {
       </View>
 
       <View style={styles.progressMeta}>
-        <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+        <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
           Started {format(parseISO(block.startDate), 'MMM d')}
         </Text>
-        <Text style={[styles.progressMetaText, { color: colors.text.tertiary }]}>
+        <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
           Ends {format(parseISO(block.endDate), 'MMM d')} · {daysLeft} days left
         </Text>
       </View>

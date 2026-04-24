@@ -4,7 +4,7 @@ import { CustomTabBar } from '@/components/CustomTabBar'
 import { useTheme } from '@/theme/useTheme'
 
 export default function TabLayout() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   return (
     <Tabs

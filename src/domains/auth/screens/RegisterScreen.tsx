@@ -31,7 +31,7 @@ interface RegisterFormData {
 export function RegisterScreen() {
   const router = useRouter()
   const { alert } = useAlert()
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
 
   const {
     control,
@@ -108,7 +108,7 @@ export function RegisterScreen() {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background.base }]}
+      style={[styles.container, { backgroundColor: bg.base }]}
       edges={['top']}
     >
       <KeyboardAvoidingView
@@ -130,7 +130,7 @@ export function RegisterScreen() {
               style={{
                 fontSize: 36,
                 fontFamily: 'Fraunces_400Regular',
-                color: colors.text.primary,
+                color: text.primary,
                 marginBottom: space[2],
                 textAlign: 'center',
               }}
@@ -140,7 +140,7 @@ export function RegisterScreen() {
             <ThemedText
               style={{
                 fontSize: 16,
-                color: colors.text.secondary,
+                color: text.secondary,
                 textAlign: 'center',
               }}
             >
@@ -323,11 +323,11 @@ export function RegisterScreen() {
           />
 
           <View style={styles.footer}>
-            <ThemedText style={{ color: colors.text.secondary }}>
+            <ThemedText style={{ color: text.secondary }}>
               Already have an account?{' '}
             </ThemedText>
             <Pressable onPress={() => router.push('/(auth)/login')}>
-              <ThemedText style={{ color: colors.copper.default, fontWeight: '600' }}>
+              <ThemedText style={{ color: accent.default, fontWeight: '600' }}>
                 Log in
               </ThemedText>
             </Pressable>

@@ -30,7 +30,7 @@ export function LoginScreen() {
   const [showPassword, toggleShowPassword] = useState<boolean>(false)
   const { login } = useAuthContext()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
 
   const {
     control,
@@ -59,7 +59,7 @@ export function LoginScreen() {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background.base }]}
+      style={[styles.container, { backgroundColor: bg.base }]}
       edges={['top']}
     >
       <KeyboardAvoidingView
@@ -77,7 +77,7 @@ export function LoginScreen() {
                 style={{
                   fontSize: 36,
                   fontFamily: 'Fraunces_400Regular',
-                  color: colors.text.primary,
+                  color: text.primary,
                   marginBottom: space[2],
                   textAlign: 'center',
                 }}
@@ -87,7 +87,7 @@ export function LoginScreen() {
               <ThemedText
                 style={{
                   fontSize: 16,
-                  color: colors.text.secondary,
+                  color: text.secondary,
                   textAlign: 'center',
                 }}
               >
@@ -146,7 +146,7 @@ export function LoginScreen() {
                           <ThemedText
                             style={{
                               fontSize: 12,
-                              color: colors.copper.default,
+                              color: accent.default,
                               fontWeight: '600',
                             }}
                           >
@@ -163,7 +163,7 @@ export function LoginScreen() {
                   }}
                   style={styles.forgotBtn}
                 >
-                  <ThemedText style={[styles.forgotText, { color: colors.copper.default }]}>
+                  <ThemedText style={[styles.forgotText, { color: accent.default }]}>
                     Forgot password?
                   </ThemedText>
                 </Pressable>
@@ -186,11 +186,11 @@ export function LoginScreen() {
             />
 
             <View style={styles.footer}>
-              <ThemedText style={{ color: colors.text.secondary }}>
+              <ThemedText style={{ color: text.secondary }}>
                 Don't have an account?{' '}
               </ThemedText>
               <Pressable onPress={() => router.push('/(auth)/register')}>
-                <ThemedText style={{ color: colors.copper.default, fontWeight: '600' }}>
+                <ThemedText style={{ color: accent.default, fontWeight: '600' }}>
                   Create one
                 </ThemedText>
               </Pressable>

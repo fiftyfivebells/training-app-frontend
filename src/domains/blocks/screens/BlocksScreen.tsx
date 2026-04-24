@@ -19,7 +19,7 @@ import { useBlocks } from '../hooks/useBlocks'
 import { PastBlockCard } from '../components/PastBlockCard'
 
 export function BlocksScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
 
   const { data: blocks = [], isLoading: blocksLoading } = useBlocks()
@@ -58,31 +58,31 @@ export function BlocksScreen() {
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View
         style={[
           styles.header,
           {
             paddingTop: insets.top + 8,
-            backgroundColor: colors.background.base,
+            backgroundColor: bg.base,
           },
         ]}
       >
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Blocks</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Blocks</Text>
         <Pressable
           onPress={openBlockCreate}
           style={[
             styles.newBlockBtn,
             {
-              backgroundColor: colors.copper.subtle,
-              borderColor: colors.copper.muted,
+              backgroundColor: bg.surface,
+              borderColor: bg.elevated,
             },
           ]}
           accessibilityRole="button"
           accessibilityLabel="New block"
         >
-          <Text style={[styles.newBlockBtnText, { color: colors.copper.default }]}>
+          <Text style={[styles.newBlockBtnText, { color: accent.default }]}>
             + New block
           </Text>
         </Pressable>
@@ -102,7 +102,7 @@ export function BlocksScreen() {
             <Text
               style={[
                 styles.fullEmptyText,
-                { color: colors.text.secondary, fontFamily: 'Fraunces_400Italic' },
+                { color: text.secondary, fontFamily: 'Fraunces_400Italic' },
               ]}
             >
               Your training history will appear here.
@@ -113,7 +113,7 @@ export function BlocksScreen() {
         {/* Current / Active Section */}
         {activeBlock && (
           <View style={styles.section}>
-            <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>
+            <Text style={[styles.sectionHeader, { color: text.tertiary }]}>
               ACTIVE
             </Text>
             <PastBlockCard
@@ -127,7 +127,7 @@ export function BlocksScreen() {
         {/* Pending Section */}
         {pendingBlocks.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>
+            <Text style={[styles.sectionHeader, { color: text.tertiary }]}>
               PENDING
             </Text>
             {pendingBlocks.map((block) => (
@@ -144,7 +144,7 @@ export function BlocksScreen() {
         {/* Past blocks section */}
         {completedBlocks.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionHeader, { color: colors.text.tertiary }]}>
+            <Text style={[styles.sectionHeader, { color: text.tertiary }]}>
               PAST BLOCKS
             </Text>
             {completedBlocks.map((block) => (

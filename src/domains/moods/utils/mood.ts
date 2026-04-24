@@ -2,7 +2,7 @@ import type { MoodCategoryKey } from '@domains/moods/moods.types'
 
 import type { ThemeTokens } from '@/theme/tokens'
 
-const quadrantToToken: Record<MoodCategoryKey, keyof ThemeTokens['colors']['mood']> = {
+const quadrantToToken: Record<MoodCategoryKey, keyof ThemeTokens['mood']> = {
   'high-pleasant': 'highGood',
   'high-challenging': 'highTough',
   'low-pleasant': 'lowGood',
@@ -10,10 +10,10 @@ const quadrantToToken: Record<MoodCategoryKey, keyof ThemeTokens['colors']['mood
 }
 
 export function getMoodCategoryColor(theme: ThemeTokens, quadrant: MoodCategoryKey): string {
-  return theme.colors.mood[quadrantToToken[quadrant]] || theme.colors.border.default
+  return theme.mood[quadrantToToken[quadrant]] || theme.rule.default
 }
 
 export function getMoodToken(theme: ThemeTokens, quadrant: MoodCategoryKey) {
   const tokenKey = quadrantToToken[quadrant]
-  return theme.colors.mood[tokenKey]
+  return theme.mood[tokenKey]
 }

@@ -17,7 +17,7 @@ type MobileSheetProps = {
 }
 
 export function MobileSheet({ visible, onClose, children }: MobileSheetProps) {
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
   const translateY = useSharedValue(SCREEN_HEIGHT)
 
   useEffect(() => {
@@ -42,10 +42,10 @@ export function MobileSheet({ visible, onClose, children }: MobileSheetProps) {
           styles.sheet,
           animStyle,
           {
-            backgroundColor: colors.background.surface,
+            backgroundColor: bg.surface,
             padding: space[8],
-            borderTopLeftRadius: radius.xl,
-            borderTopRightRadius: radius.xl,
+            borderTopLeftRadius: radius.lg,
+            borderTopRightRadius: radius.lg,
           },
         ]}
       >

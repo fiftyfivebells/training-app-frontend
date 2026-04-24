@@ -26,18 +26,18 @@ type RunRowProps = {
 }
 
 export function RunRow({ run, compact = false }: RunRowProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const { unit } = useDistanceUnit()
   const { data: moods } = useGetAllMoods()
 
-  const mood = moods?.find((m) => m.id === run.moodId)
-  const moodColor = mood ? colors.mood[QUADRANT_COLOR_KEY[mood.quadrant]] : null
+  const runMood = moods?.find((m) => m.id === run.moodId)
+  const moodColor = runMood ? mood[QUADRANT_COLOR_KEY[runMood.quadrant]] : null
 
   const runType = run.runType
     ? run.runType.charAt(0).toUpperCase() + run.runType.slice(1).toLowerCase()
     : undefined
 
-  const title = generateRunTitle(runType, mood?.label)
+  const title = generateRunTitle(runType, runMood?.label)
   const dateLabel = compact ? formatRelativeDays(run.date) : formatRunDate(run.date)
   const { value: distValue, unit: distUnit } = formatDistanceParts(run.distanceMeters, unit)
   const duration = formatDurationDisplay(run.durationSeconds)
@@ -50,24 +50,24 @@ export function RunRow({ run, compact = false }: RunRowProps) {
       activeOpacity={0.7}
     >
       <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text.primary }]} numberOfLines={1}>
+        <Text style={[styles.title, { color: text.primary }]} numberOfLines={1}>
           {title}
         </Text>
 
         {compact ? (
           <>
-            <Text style={[styles.timestamp, { color: colors.text.tertiary }]}>{dateLabel}</Text>
-            <Text style={[styles.compactStats, { color: colors.text.secondary }]}>
+            <Text style={[styles.timestamp, { color: text.tertiary }]}>{dateLabel}</Text>
+            <Text style={[styles.compactStats, { color: text.secondary }]}>
               {formatDistanceDisplay(run.distanceMeters, unit)} · {duration}
             </Text>
           </>
         ) : (
           <>
             <View style={styles.subLine}>
-              <Text style={[styles.timestamp, { color: colors.text.tertiary }]}>{dateLabel}</Text>
+              <Text style={[styles.timestamp, { color: text.tertiary }]}>{dateLabel}</Text>
               {runType && (
                 <>
-                  <View style={[styles.separatorDot, { backgroundColor: colors.border.default }]} />
+                  <View style={[styles.separatorDot, { backgroundColor: rule.default }]} />
                   <RunTypeBadge runType={runType} />
                 </>
               )}
@@ -75,31 +75,31 @@ export function RunRow({ run, compact = false }: RunRowProps) {
 
             <View style={styles.statsLine}>
               <Text>
-                <Text style={[styles.statValue, { color: colors.text.primary }]}>{distValue}</Text>
-                <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> {distUnit}</Text>
+                <Text style={[styles.statValue, { color: text.primary }]}>{distValue}</Text>
+                <Text style={[styles.statUnit, { color: text.tertiary }]}> {distUnit}</Text>
               </Text>
               <Text>
-                <Text style={[styles.statValue, { color: colors.text.primary }]}>{duration}</Text>
-                <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> dur</Text>
+                <Text style={[styles.statValue, { color: text.primary }]}>{duration}</Text>
+                <Text style={[styles.statUnit, { color: text.tertiary }]}> dur</Text>
               </Text>
               <Text>
-                <Text style={[styles.statValue, { color: colors.text.primary }]}>{pace}</Text>
-                <Text style={[styles.statUnit, { color: colors.text.tertiary }]}> /{unit}</Text>
+                <Text style={[styles.statValue, { color: text.primary }]}>{pace}</Text>
+                <Text style={[styles.statUnit, { color: text.tertiary }]}> /{unit}</Text>
               </Text>
             </View>
           </>
         )}
       </View>
 
-      {mood && moodColor && (
+      {runMood && moodColor && (
         <View style={[styles.moodContainer, compact && styles.moodContainerCompact]}>
           <View style={[styles.moodDot, { backgroundColor: moodColor }]} />
-          <Text style={[styles.moodLabel, { color: colors.text.tertiary }]}>{mood.label}</Text>
+          <Text style={[styles.moodLabel, { color: text.tertiary }]}>{runMood.label}</Text>
         </View>
       )}
 
       {!compact && (
-        <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} style={styles.chevron} />
+        <Ionicons name="chevron-forward" size={16} color={text.tertiary} style={styles.chevron} />
       )}
     </TouchableOpacity>
   )

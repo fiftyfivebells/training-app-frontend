@@ -16,13 +16,13 @@ const SEGMENT_ORDER: MoodCategoryKey[] = [
 ]
 
 export function HorizontalStackedBars({ byType, compact }: HorizontalStackedBarsProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   const SEGMENT_COLORS: Record<MoodCategoryKey, string> = {
-    'high-pleasant': colors.mood.highGood,
-    'low-pleasant': colors.mood.lowGood,
-    'high-challenging': colors.mood.highTough,
-    'low-challenging': colors.mood.lowTough,
+    'high-pleasant': mood.highGood,
+    'low-pleasant': mood.lowGood,
+    'high-challenging': mood.highTough,
+    'low-challenging': mood.lowTough,
   }
 
   if (compact) {
@@ -53,7 +53,7 @@ export function HorizontalStackedBars({ byType, compact }: HorizontalStackedBars
     <View style={styles.container}>
       {byType.map((row, i) => (
         <View key={i} style={styles.expandedRow}>
-          <Text style={[styles.expandedLabel, { color: colors.text.tertiary }]}>
+          <Text style={[styles.expandedLabel, { color: text.tertiary }]}>
             {row.runType}
           </Text>
           <View style={styles.expandedBar}>

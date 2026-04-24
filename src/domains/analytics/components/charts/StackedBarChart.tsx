@@ -22,16 +22,16 @@ const SEGMENT_ORDER: MoodCategoryKey[] = [
 ]
 
 export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const [containerWidth, setContainerWidth] = useState(0)
 
   const CHART_HEIGHT = compact ? 72 : 100
 
   const SEGMENT_COLORS: Record<MoodCategoryKey, string> = {
-    'high-pleasant': colors.mood.highGood,
-    'low-pleasant': colors.mood.lowGood,
-    'high-challenging': colors.mood.highTough,
-    'low-challenging': colors.mood.lowTough,
+    'high-pleasant': mood.highGood,
+    'low-pleasant': mood.lowGood,
+    'high-challenging': mood.highTough,
+    'low-challenging': mood.lowTough,
   }
 
   const bars = useMemo(() => {
@@ -56,7 +56,7 @@ export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
             {
               y: CHART_HEIGHT - 2,
               height: 2,
-              color: colors.border.subtle,
+              color: rule.subtle,
             },
           ],
         }
@@ -78,7 +78,7 @@ export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
 
       return { x, width: barWidth, segments }
     })
-  }, [containerWidth, weeklyData, CHART_HEIGHT, SEGMENT_COLORS, colors.border.subtle])
+  }, [containerWidth, weeklyData, CHART_HEIGHT, SEGMENT_COLORS, rule.subtle])
 
   return (
     <View style={styles.wrapper}>
@@ -118,7 +118,7 @@ export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
                     styles.label,
                     {
                       width: containerWidth / weeklyData.length,
-                      color: isNow ? colors.text.primary : colors.text.tertiary,
+                      color: isNow ? text.primary : text.tertiary,
                       fontWeight: isNow ? '600' : '400',
                     },
                   ]}
@@ -130,7 +130,7 @@ export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
             })}
           </View>
 
-          <View style={[styles.legend, { borderTopColor: colors.border.subtle }]}>
+          <View style={[styles.legend, { borderTopColor: rule.subtle }]}>
             {[
               { label: 'High energy · good', key: 'high-pleasant' as const },
               { label: 'Low energy · good', key: 'low-pleasant' as const },
@@ -144,7 +144,7 @@ export function StackedBarChart({ weeklyData, compact }: StackedBarChartProps) {
                     { backgroundColor: SEGMENT_COLORS[item.key] },
                   ]}
                 />
-                <Text style={[styles.legendText, { color: colors.text.tertiary }]}>
+                <Text style={[styles.legendText, { color: text.tertiary }]}>
                   {item.label}
                 </Text>
               </View>

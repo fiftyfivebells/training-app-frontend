@@ -12,7 +12,7 @@ import { ThemedText } from './ThemedText'
 interface ButtonProps {
   children: React.ReactNode
   onPress: () => void
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
   disabled?: boolean
@@ -29,42 +29,41 @@ export function Button({
   style,
 }: ButtonProps) {
   const isDisabled = disabled || loading
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, semantic, space, radius } = useTheme()
 
   const getVariantStyles = () => {
+    if (isDisabled) {
+      return {
+        container: { backgroundColor: rule.subtle, borderWidth: 0 },
+        textColor: text.disabled,
+        spinner: text.disabled,
+      }
+    }
     switch (variant) {
       case 'secondary':
         return {
-          container: {
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            borderColor: colors.copper.default,
-          },
-          text: { color: colors.copper.default },
-          spinner: colors.copper.default,
-        }
-      case 'outline':
-        return {
-          container: {
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            borderColor: colors.copper.default,
-          },
-          text: { color: colors.copper.default },
-          spinner: colors.copper.default,
+          container: { backgroundColor: 'transparent', borderWidth: 1, borderColor: rule.default },
+          textColor: text.primary,
+          spinner: text.primary,
         }
       case 'ghost':
         return {
           container: { backgroundColor: 'transparent' },
-          text: { color: colors.copper.default },
-          spinner: colors.copper.default,
+          textColor: text.primary,
+          spinner: text.primary,
+        }
+      case 'danger':
+        return {
+          container: { backgroundColor: semantic.error, borderWidth: 1, borderColor: semantic.error },
+          textColor: bg.base,
+          spinner: bg.base,
         }
       case 'primary':
       default:
         return {
-          container: { backgroundColor: colors.copper.default },
-          text: { color: colors.background.base },
-          spinner: colors.background.base,
+          container: { backgroundColor: accent.default, borderWidth: 1, borderColor: accent.default },
+          textColor: accent.onAccent,
+          spinner: accent.onAccent,
         }
     }
   }
@@ -72,27 +71,12 @@ export function Button({
   const getSizeStyles = () => {
     switch (size) {
       case 'sm':
-        return {
-          paddingVertical: space[1],
-          paddingHorizontal: space[4],
-          minHeight: 36,
-          fontSize: 13,
-        }
+        return { paddingVertical: space[1], paddingHorizontal: space[3], minHeight: 32, fontSize: 13 }
       case 'lg':
-        return {
-          paddingVertical: space[4],
-          paddingHorizontal: space[8],
-          minHeight: 56,
-          fontSize: 17,
-        }
+        return { paddingVertical: space[5], paddingHorizontal: space[5], minHeight: 52, fontSize: 17 }
       case 'md':
       default:
-        return {
-          paddingVertical: space[2],
-          paddingHorizontal: space[6],
-          minHeight: 48,
-          fontSize: 15,
-        }
+        return { paddingVertical: space[2], paddingHorizontal: space[4], minHeight: 44, fontSize: 15 }
     }
   }
 
@@ -103,19 +87,16 @@ export function Button({
     <Pressable
       style={({ pressed }) => [
         {
-          borderRadius: radius.full,
+          borderRadius: radius.sm,
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'row',
-        },
-        variantStyles.container,
-        {
           paddingVertical: sizeStyles.paddingVertical,
           paddingHorizontal: sizeStyles.paddingHorizontal,
           minHeight: sizeStyles.minHeight,
         },
-        pressed && !isDisabled && { opacity: 0.8, transform: [{ scale: 0.98 }] },
-        isDisabled && { opacity: 0.5 },
+        variantStyles.container,
+        pressed && !isDisabled && { opacity: 0.8 },
         style,
       ]}
       onPress={onPress}
@@ -125,13 +106,7 @@ export function Button({
         <ActivityIndicator color={variantStyles.spinner} />
       ) : (
         <ThemedText
-          style={[
-            {
-              fontWeight: '600',
-              fontSize: sizeStyles.fontSize,
-            },
-            variantStyles.text,
-          ]}
+          style={{ fontWeight: '600', fontSize: sizeStyles.fontSize, color: variantStyles.textColor }}
         >
           {children}
         </ThemedText>
@@ -139,4 +114,3 @@ export function Button({
     </Pressable>
   )
 }
-

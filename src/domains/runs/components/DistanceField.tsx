@@ -30,19 +30,19 @@ export function DistanceField({
   onUnitToggle,
   onLayout,
 }: DistanceFieldProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>DISTANCE</Text>
+      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>DISTANCE</Text>
       <View style={styles.distanceRow}>
         <TextInput
           style={[
             styles.distanceInput,
             {
-              backgroundColor: colors.background.input,
-              borderColor: hasError ? colors.semantic.errorFg : colors.border.subtle,
-              color: colors.text.primary,
+              backgroundColor: bg.input,
+              borderColor: hasError ? semantic.error : rule.subtle,
+              color: text.primary,
             },
           ]}
           value={value}
@@ -50,13 +50,13 @@ export function DistanceField({
           onBlur={onBlur}
           keyboardType="decimal-pad"
           placeholder="0.00"
-          placeholderTextColor={colors.text.tertiary}
+          placeholderTextColor={text.tertiary}
           accessibilityLabel="Distance"
         />
         <View
           style={[
             styles.unitSelector,
-            { backgroundColor: colors.background.base, borderColor: colors.border.subtle },
+            { backgroundColor: bg.base, borderColor: rule.subtle },
           ]}
         >
           {(['km', 'mi'] as const).map((unit) => (
@@ -65,14 +65,14 @@ export function DistanceField({
               onPress={() => onUnitToggle(unit)}
               style={[
                 styles.unitBtn,
-                displayUnit === unit && { backgroundColor: colors.copper.default, borderRadius: 7 },
+                displayUnit === unit && { backgroundColor: accent.default, borderRadius: 7 },
               ]}
               accessibilityLabel={`${unit} unit`}
             >
               <Text
                 style={[
                   styles.unitBtnText,
-                  { color: displayUnit === unit ? colors.background.base : colors.text.tertiary },
+                  { color: displayUnit === unit ? bg.base : text.tertiary },
                 ]}
               >
                 {unit}
@@ -82,7 +82,7 @@ export function DistanceField({
         </View>
       </View>
       {hasError && (
-        <Text style={[styles.errorText, { color: colors.semantic.errorFg }]}>
+        <Text style={[styles.errorText, { color: semantic.error }]}>
           {errorMessage}
         </Text>
       )}

@@ -4,7 +4,7 @@ import { useTheme } from '@/theme/useTheme'
 import { AppearancePreference, useTokenContext } from '@/theme/ThemeContext'
 
 export function AppearanceControl() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const { appearance, setAppearance } = useTokenContext()
   const options: { label: string; value: AppearancePreference }[] = [
     { label: 'Dark', value: 'dark' },
@@ -16,7 +16,7 @@ export function AppearanceControl() {
     <View
       style={[
         styles.container,
-        { backgroundColor: colors.background.base, borderColor: colors.border.subtle },
+        { backgroundColor: bg.base, borderColor: rule.subtle },
       ]}
     >
       {options.map((opt) => {
@@ -27,13 +27,13 @@ export function AppearanceControl() {
             onPress={() => setAppearance(opt.value)}
             style={[
               styles.segment,
-              active && { backgroundColor: colors.copper.default },
+              active && { backgroundColor: accent.default },
             ]}
           >
             <Text
               style={[
                 styles.label,
-                active ? { color: colors.background.base, fontWeight: '600' } : { color: colors.text.tertiary },
+                active ? { color: bg.base, fontWeight: '600' } : { color: text.tertiary },
               ]}
             >
               {opt.label}

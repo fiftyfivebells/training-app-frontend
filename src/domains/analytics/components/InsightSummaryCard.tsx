@@ -9,26 +9,26 @@ export type InsightSummaryCardProps = {
 }
 
 export function InsightSummaryCard({ headline, body, sentiment }: InsightSummaryCardProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
-  let backgroundColor = colors.background.surface
-  let borderColor = colors.border.subtle
-  let headlineColor = colors.text.primary
+  let backgroundColor = bg.surface
+  let borderColor = rule.subtle
+  let headlineColor = text.primary
 
   if (sentiment === 'positive') {
     backgroundColor = '#141A0A'
     borderColor = 'rgba(184, 212, 74, 0.2)'
-    headlineColor = colors.mood.highGood
+    headlineColor = mood.highGood
   } else if (sentiment === 'warning') {
     backgroundColor = '#16101E'
     borderColor = 'rgba(155, 96, 184, 0.2)'
-    headlineColor = colors.mood.lowTough
+    headlineColor = mood.lowTough
   }
 
   return (
     <View style={[styles.card, { backgroundColor, borderColor }]}>
       <Text style={[styles.headline, { color: headlineColor }]}>{headline}</Text>
-      <Text style={[styles.body, { color: colors.text.secondary }]}>{body}</Text>
+      <Text style={[styles.body, { color: text.secondary }]}>{body}</Text>
     </View>
   )
 }

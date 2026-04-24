@@ -21,7 +21,7 @@ import { PeriodSection } from '../components/PeriodSection'
 import { groupRunsByPeriod, type Period } from '../utils/groupRunsByPeriod'
 
 export function LogbookScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { data: runs = [], isLoading, isFetching, refetch } = useRuns()
   const { unit } = useDistanceUnit()
@@ -45,31 +45,31 @@ export function LogbookScreen() {
   const isEmpty = !isLoading && runs.length === 0
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View
         style={[
           styles.header,
           {
             paddingTop: insets.top + 8,
-            backgroundColor: colors.background.base,
+            backgroundColor: bg.base,
           },
         ]}
       >
-        <Text style={[styles.title, { color: colors.text.primary }]}>Logbook</Text>
+        <Text style={[styles.title, { color: text.primary }]}>Logbook</Text>
         <TouchableOpacity
           style={[
             styles.filterBtn,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.default,
+              backgroundColor: bg.surface,
+              borderColor: rule.default,
             },
           ]}
           onPress={() => setFilterSheetVisible(true)}
           accessibilityLabel="Filter runs"
           accessibilityRole="button"
         >
-          <Ionicons name="options-outline" size={18} color={colors.text.secondary} />
+          <Ionicons name="options-outline" size={18} color={text.secondary} />
         </TouchableOpacity>
       </View>
 
@@ -79,18 +79,18 @@ export function LogbookScreen() {
           <Text
             style={[
               styles.emptyText,
-              { color: colors.text.primary, fontFamily: 'Fraunces_400Regular_Italic' },
+              { color: text.primary, fontFamily: 'Fraunces_400Regular_Italic' },
             ]}
           >
             Your running story starts with the first step.
           </Text>
           <TouchableOpacity
-            style={[styles.emptyBtn, { backgroundColor: colors.copper.default }]}
+            style={[styles.emptyBtn, { backgroundColor: accent.default }]}
             onPress={() => router.push('/log')}
             accessibilityLabel="Log your first run"
             accessibilityRole="button"
           >
-            <Text style={[styles.emptyBtnText, { color: colors.background.base }]}>
+            <Text style={[styles.emptyBtnText, { color: bg.base }]}>
               Log your first run
             </Text>
           </TouchableOpacity>
@@ -111,7 +111,7 @@ export function LogbookScreen() {
             <RefreshControl
               refreshing={isFetching}
               onRefresh={refetch}
-              tintColor={colors.copper.default}
+              tintColor={accent.default}
             />
           }
           contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 16 }]}
@@ -133,14 +133,14 @@ export function LogbookScreen() {
           style={[
             styles.sheet,
             {
-              backgroundColor: colors.background.surface,
+              backgroundColor: bg.surface,
               paddingBottom: insets.bottom + 16,
             },
           ]}
         >
-          <View style={[styles.sheetHandle, { backgroundColor: colors.border.default }]} />
-          <Text style={[styles.sheetTitle, { color: colors.text.primary }]}>Filters</Text>
-          <Text style={[styles.sheetSub, { color: colors.text.secondary }]}>
+          <View style={[styles.sheetHandle, { backgroundColor: rule.default }]} />
+          <Text style={[styles.sheetTitle, { color: text.primary }]}>Filters</Text>
+          <Text style={[styles.sheetSub, { color: text.secondary }]}>
             Filters coming soon
           </Text>
         </View>

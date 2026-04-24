@@ -20,40 +20,38 @@ export function Input({
   style,
   ...props
 }: InputProps) {
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, semantic, space, radius } = useTheme()
 
   return (
     <View style={{ marginBottom: space[4] }}>
       <ThemedText
         style={{
-          fontSize: 13,
-          fontWeight: '500',
-          color: colors.text.primary,
+          fontSize: 11,
+          fontFamily: 'ManropeSemiBold',
+          letterSpacing: 0.14 * 11,
+          textTransform: 'uppercase',
+          color: text.secondary,
           marginBottom: space[1],
         }}
       >
         {label}
       </ThemedText>
-      
+
       <View style={{ position: 'relative', justifyContent: 'center' }}>
         <ThemedTextInput
           style={[
             styles.inputBase,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.default,
-              borderRadius: radius.md,
-              paddingLeft: space[4],
-              paddingRight: rightElement ? space[12] : space[4],
-              paddingVertical: space[2],
-              color: colors.text.primary,
-            },
-            error && {
-              borderColor: colors.mood.highTough,
-              borderWidth: 2,
+              backgroundColor: bg.input,
+              borderColor: error ? semantic.error : rule.default,
+              borderRadius: radius.sm,
+              paddingLeft: space[3],
+              paddingRight: rightElement ? space[10] : space[3],
+              paddingVertical: space[3],
+              color: text.primary,
             },
             disabled && {
-              backgroundColor: colors.background.input,
+              color: text.disabled,
               opacity: 0.6,
             },
             style,
@@ -64,26 +62,14 @@ export function Input({
         />
 
         {rightElement && (
-          <View
-            style={{
-              position: 'absolute',
-              right: space[4],
-              justifyContent: 'center',
-            }}
-          >
+          <View style={{ position: 'absolute', right: space[3], justifyContent: 'center' }}>
             {rightElement}
           </View>
         )}
       </View>
 
       {error && (
-        <ThemedText
-          style={{
-            fontSize: 12,
-            color: colors.mood.highTough,
-            marginTop: space[1],
-          }}
-        >
+        <ThemedText style={{ fontSize: 12, color: semantic.error, marginTop: space[1] }}>
           {error}
         </ThemedText>
       )}
@@ -94,6 +80,6 @@ export function Input({
 const styles = StyleSheet.create({
   inputBase: {
     borderWidth: 1,
-    minHeight: 48,
+    minHeight: 44,
   },
 })

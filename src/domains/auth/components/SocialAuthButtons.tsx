@@ -16,14 +16,14 @@ export function SocialAuthButtons({
   onApplePress,
   label = 'Or continue with',
 }: SocialAuthButtonsProps) {
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
 
   return (
     <View style={styles.container}>
       <View style={styles.dividerRow}>
-        <View style={[styles.line, { backgroundColor: colors.border.subtle }]} />
-        <Text style={[styles.dividerText, { color: colors.text.tertiary }]}>{label}</Text>
-        <View style={[styles.line, { backgroundColor: colors.border.subtle }]} />
+        <View style={[styles.line, { backgroundColor: rule.subtle }]} />
+        <Text style={[styles.dividerText, { color: text.tertiary }]}>{label}</Text>
+        <View style={[styles.line, { backgroundColor: rule.subtle }]} />
       </View>
 
       <View style={styles.buttonRow}>
@@ -32,14 +32,14 @@ export function SocialAuthButtons({
           style={[
             styles.socialBtn,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.default,
+              backgroundColor: bg.surface,
+              borderColor: rule.default,
               borderRadius: radius.md,
             },
           ]}
         >
           <Ionicons name="flash-outline" size={20} color="#FC6100" />
-          <Text style={[styles.btnText, { color: colors.text.primary }]}>Strava</Text>
+          <Text style={[styles.btnText, { color: text.primary }]}>Strava</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -47,14 +47,14 @@ export function SocialAuthButtons({
           style={[
             styles.socialBtn,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.default,
+              backgroundColor: bg.surface,
+              borderColor: rule.default,
               borderRadius: radius.md,
             },
           ]}
         >
-          <Ionicons name="logo-google" size={20} color={colors.text.secondary} />
-          <Text style={[styles.btnText, { color: colors.text.primary }]}>Google</Text>
+          <Ionicons name="logo-google" size={20} color={text.secondary} />
+          <Text style={[styles.btnText, { color: text.primary }]}>Google</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -62,14 +62,14 @@ export function SocialAuthButtons({
           style={[
             styles.socialBtn,
             {
-              backgroundColor: colors.background.surface,
-              borderColor: colors.border.default,
+              backgroundColor: bg.surface,
+              borderColor: rule.default,
               borderRadius: radius.md,
             },
           ]}
         >
-          <Ionicons name="logo-apple" size={20} color={colors.text.primary} />
-          <Text style={[styles.btnText, { color: colors.text.primary }]}>Apple</Text>
+          <Ionicons name="logo-apple" size={20} color={text.primary} />
+          <Text style={[styles.btnText, { color: text.primary }]}>Apple</Text>
         </TouchableOpacity>
       </View>
     </View>

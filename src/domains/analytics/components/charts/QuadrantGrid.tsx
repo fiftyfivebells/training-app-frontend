@@ -16,13 +16,13 @@ const CELL_BG = {
 } as const
 
 export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   const CELL_COLOR = {
-    highRpeGood: colors.mood.highGood,
-    highRpeTough: colors.mood.highTough,
-    lowRpeGood: colors.mood.lowGood,
-    lowRpeTough: colors.mood.lowTough,
+    highRpeGood: mood.highGood,
+    highRpeTough: mood.highTough,
+    lowRpeGood: mood.lowGood,
+    lowRpeTough: mood.lowTough,
   }
 
   const renderCell = (
@@ -43,11 +43,11 @@ export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
             { backgroundColor: CELL_BG[key], opacity: 0.8 },
             isWarningActive && {
               borderWidth: 2,
-              borderColor: colors.mood.lowTough,
+              borderColor: mood.lowTough,
             },
           ]}
         >
-          <Text style={[styles.compactLabel, { color: colors.text.tertiary }]}>{rpeLabel}</Text>
+          <Text style={[styles.compactLabel, { color: text.tertiary }]}>{rpeLabel}</Text>
           <Text style={[styles.compactCount, { color: CELL_COLOR[key] }]}>{count}</Text>
         </View>
       )
@@ -61,17 +61,17 @@ export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
           { backgroundColor: CELL_BG[key] },
           isWarningActive && {
             borderWidth: 2,
-            borderColor: colors.mood.lowTough,
+            borderColor: mood.lowTough,
           },
         ]}
       >
         {isWarningActive && (
           <View
-            style={[styles.warningDot, { backgroundColor: colors.mood.lowTough }]}
+            style={[styles.warningDot, { backgroundColor: mood.lowTough }]}
           />
         )}
         <Text style={[styles.expandedCount, { color: CELL_COLOR[key] }]}>{count}</Text>
-        <Text style={[styles.expandedLabel, { color: colors.text.tertiary }]}>
+        <Text style={[styles.expandedLabel, { color: text.tertiary }]}>
           {label}
         </Text>
       </View>

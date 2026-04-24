@@ -5,7 +5,7 @@ import React from 'react'
 
 export const ThemedTextInput = React.forwardRef<TextInput, TextInputProps>(
   ({ style, ...props }, ref) => {
-    const { colors } = useTheme()
+    const { text } = useTheme()
 
     return (
       <TextInput
@@ -16,11 +16,11 @@ export const ThemedTextInput = React.forwardRef<TextInput, TextInputProps>(
             fontFamily: 'Manrope',
             fontWeight: '400',
             fontSize: 15,
-            color: colors.text.primary,
+            color: text.primary,
           },
           style,
         ]}
-        placeholderTextColor={colors.text.tertiary}
+        placeholderTextColor={text.tertiary}
       />
     )
   },

@@ -119,8 +119,8 @@ export function DatePicker({
   const inputBaseStyle = [
     styles.inputLayout,
     {
-      backgroundColor: theme.colors.background.surface,
-      borderColor: theme.colors.border.default,
+      backgroundColor: theme.bg.surface,
+      borderColor: theme.rule.default,
       borderRadius: theme.radius.md,
       paddingVertical: theme.space[2],
       paddingHorizontal: theme.space[4],
@@ -135,7 +135,7 @@ export function DatePicker({
           style={{
             fontSize: 13,
             fontWeight: '500',
-            color: theme.colors.text.primary,
+            color: theme.text.primary,
             marginBottom: theme.space[1],
           }}
         >
@@ -168,10 +168,10 @@ export function DatePicker({
               ...inputBaseStyle,
               disabled && {
                 opacity: 0.6,
-                backgroundColor: theme.colors.background.input,
+                backgroundColor: theme.bg.input,
               },
               error && {
-                borderColor: theme.colors.mood.highTough,
+                borderColor: theme.mood.highTough,
                 borderWidth: 2,
               },
             ] as any}
@@ -180,10 +180,10 @@ export function DatePicker({
               style={[
                 {
                   fontSize: 15,
-                  color: theme.colors.text.primary,
+                  color: theme.text.primary,
                 },
-                !hasValue && { color: theme.colors.text.tertiary },
-                disabled && { color: theme.colors.text.tertiary },
+                !hasValue && { color: theme.text.tertiary },
+                disabled && { color: theme.text.tertiary },
               ]}
             >
               {formattedValue}
@@ -196,8 +196,8 @@ export function DatePicker({
                 {
                   marginTop: theme.space[2],
                   borderRadius: theme.radius.lg,
-                  borderColor: theme.colors.border.default,
-                  backgroundColor: theme.colors.background.surface,
+                  borderColor: theme.rule.default,
+                  backgroundColor: theme.bg.surface,
                 },
               ]}
             >
@@ -227,7 +227,7 @@ export function DatePicker({
         <ThemedText
           style={{
             fontSize: 12,
-            color: theme.colors.text.secondary,
+            color: theme.text.secondary,
             marginTop: theme.space[1],
           }}
         >
@@ -238,7 +238,7 @@ export function DatePicker({
         <ThemedText
           style={{
             fontSize: 12,
-            color: theme.colors.mood.highTough,
+            color: theme.mood.highTough,
             marginTop: theme.space[1],
           }}
         >
@@ -265,23 +265,23 @@ function getWebInputStyles(theme: ThemeTokens) {
       width: '100%',
       borderWidth: 1,
       borderStyle: 'solid' as const,
-      borderColor: theme.colors.border.default,
+      borderColor: theme.rule.default,
       borderRadius: theme.radius.md,
       padding: theme.space[2],
       fontSize: 15,
       fontFamily: 'Manrope',
-      backgroundColor: theme.colors.background.surface,
-      color: theme.colors.text.primary,
+      backgroundColor: theme.bg.surface,
+      color: theme.text.primary,
       minHeight: 48,
       boxSizing: 'border-box' as const,
     },
     disabled: {
       opacity: 0.6,
       cursor: 'not-allowed',
-      backgroundColor: theme.colors.background.input,
+      backgroundColor: theme.bg.input,
     },
     error: {
-      borderColor: theme.colors.mood.highTough,
+      borderColor: theme.mood.highTough,
       borderWidth: 2,
     },
   }

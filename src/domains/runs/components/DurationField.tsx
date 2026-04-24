@@ -33,7 +33,7 @@ export function DurationField({
   paceString,
   onLayout,
 }: DurationFieldProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   const fields = [
     { handlers: hh,  label: 'HH', accessLabel: 'Hours'   },
@@ -43,7 +43,7 @@ export function DurationField({
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>DURATION</Text>
+      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>DURATION</Text>
       <View style={styles.durationRow}>
         {fields.map(({ handlers, label, accessLabel }) => (
           <View key={label} style={styles.durationCell}>
@@ -51,12 +51,12 @@ export function DurationField({
               style={[
                 styles.durationInput,
                 {
-                  backgroundColor: colors.background.input,
+                  backgroundColor: bg.input,
                   borderColor:
                     label === 'HH' && hhHasError
-                      ? colors.semantic.errorFg
-                      : colors.border.subtle,
-                  color: colors.text.primary,
+                      ? semantic.error
+                      : rule.subtle,
+                  color: text.primary,
                 },
               ]}
               value={handlers.value}
@@ -66,21 +66,21 @@ export function DurationField({
               maxLength={3}
               textAlign="center"
               placeholder="00"
-              placeholderTextColor={colors.text.tertiary}
+              placeholderTextColor={text.tertiary}
               accessibilityLabel={accessLabel}
             />
-            <Text style={[styles.durationLabel, { color: colors.text.tertiary }]}>
+            <Text style={[styles.durationLabel, { color: text.tertiary }]}>
               {label}
             </Text>
           </View>
         ))}
       </View>
       <View style={styles.paceRow}>
-        <Text style={[styles.paceLabel, { color: colors.text.tertiary }]}>PACE</Text>
-        <Text style={[styles.paceValue, { color: colors.copper.default }]}>{paceString}</Text>
+        <Text style={[styles.paceLabel, { color: text.tertiary }]}>PACE</Text>
+        <Text style={[styles.paceValue, { color: accent.default }]}>{paceString}</Text>
       </View>
       {hhHasError && (
-        <Text style={[styles.errorText, { color: colors.semantic.errorFg }]}>
+        <Text style={[styles.errorText, { color: semantic.error }]}>
           {hhErrorMessage}
         </Text>
       )}

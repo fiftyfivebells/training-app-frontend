@@ -44,13 +44,13 @@ function fromDate(d: Date): string {
 }
 
 function SectionLabel({ children }: { children: string }) {
-  const { colors, space } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space } = useTheme()
   return (
     <ThemedText
       style={{
         fontSize: 13,
         fontWeight: '600',
-        color: colors.text.secondary,
+        color: text.secondary,
         marginBottom: space[2],
       }}
     >
@@ -60,13 +60,13 @@ function SectionLabel({ children }: { children: string }) {
 }
 
 function FieldError({ message }: { message?: string }) {
-  const { colors, space } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space } = useTheme()
   if (!message) return null
   return (
     <ThemedText
       style={{
         fontSize: 13,
-        color: colors.text.tertiary,
+        color: text.tertiary,
         marginTop: space[1],
       }}
     >
@@ -77,7 +77,7 @@ function FieldError({ message }: { message?: string }) {
 
 export function CreateBlockScreen() {
   const router = useRouter()
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
   const { alert } = useAlert()
   const createBlock = useCreateBlock()
 
@@ -132,11 +132,11 @@ export function CreateBlockScreen() {
   }
 
   const inputStyle = {
-    backgroundColor: colors.background.surface,
-    borderColor: colors.border.default,
+    backgroundColor: bg.surface,
+    borderColor: rule.default,
     borderRadius: radius.md,
     borderWidth: 1 as const,
-    color: colors.text.primary,
+    color: text.primary,
     fontSize: 15,
     paddingHorizontal: space[4],
     paddingVertical: space[2],
@@ -148,7 +148,7 @@ export function CreateBlockScreen() {
         style={{
           fontSize: 24,
           fontWeight: '700',
-          color: colors.text.primary,
+          color: text.primary,
           marginBottom: space[1],
         }}
       >
@@ -157,7 +157,7 @@ export function CreateBlockScreen() {
       <ThemedText
         style={{
           fontSize: 15,
-          color: colors.text.secondary,
+          color: text.secondary,
           marginBottom: space[8],
         }}
       >
@@ -185,10 +185,10 @@ export function CreateBlockScreen() {
                     {
                       backgroundColor: isSelected
                         ? `${config.accentColor}20`
-                        : colors.background.surface,
+                        : bg.surface,
                       borderColor: isSelected
                         ? config.accentColor
-                        : colors.border.default,
+                        : rule.default,
                       borderLeftColor: config.accentColor,
                       borderRadius: radius.md,
                       padding: space[4],
@@ -211,7 +211,7 @@ export function CreateBlockScreen() {
                         style={{
                           fontSize: 15,
                           fontWeight: '600',
-                          color: colors.text.primary,
+                          color: text.primary,
                         }}
                       >
                         {config.label}
@@ -219,7 +219,7 @@ export function CreateBlockScreen() {
                       <ThemedText
                         style={{
                           fontSize: 13,
-                          color: colors.text.secondary,
+                          color: text.secondary,
                         }}
                       >
                         {config.description}
@@ -252,9 +252,9 @@ export function CreateBlockScreen() {
               onBlur={onBlur}
               style={[
                 inputStyle,
-                errors.name && { borderColor: colors.semantic.errorFg },
+                errors.name && { borderColor: semantic.error },
               ]}
-              placeholderTextColor={colors.text.tertiary}
+              placeholderTextColor={text.tertiary}
               placeholder="Name your block"
             />
           )}
@@ -327,7 +327,7 @@ export function CreateBlockScreen() {
                 inputStyle,
                 { minHeight: 96, textAlignVertical: 'top', paddingTop: space[2] },
               ]}
-              placeholderTextColor={colors.text.tertiary}
+              placeholderTextColor={text.tertiary}
               placeholder="What are you training for? Any goals for this block?"
             />
           )}

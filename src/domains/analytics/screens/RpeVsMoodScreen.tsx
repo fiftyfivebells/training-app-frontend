@@ -27,7 +27,7 @@ const RANGE_LABELS = {
 }
 
 export function RpeVsMoodScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -60,23 +60,23 @@ export function RpeVsMoodScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.container, { backgroundColor: bg.base }]}>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Pressable onPress={() => router.back()} style={styles.headerLeft}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={text.primary} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>RPE vs mood</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>RPE vs mood</Text>
         <Pressable
           onPress={handleRangePress}
           style={[
             styles.rangePicker,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.default },
+            { backgroundColor: bg.surface, borderColor: rule.default },
           ]}
         >
-          <Text style={[styles.rangeLabel, { color: colors.copper.default }]}>
+          <Text style={[styles.rangeLabel, { color: accent.default }]}>
             {RANGE_LABELS[timeRange]}
           </Text>
-          <Ionicons name="chevron-down" size={12} color={colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={12} color={text.tertiary} />
         </Pressable>
       </View>
 
@@ -90,23 +90,23 @@ export function RpeVsMoodScreen() {
         <View
           style={[
             styles.chartCard,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+            { backgroundColor: bg.surface, borderColor: rule.subtle },
           ]}
         >
           <QuadrantGrid grid={rpeVsMood.grid} isWarning={rpeVsMood.isWarning} compact={false} />
         </View>
 
-        <View style={[styles.explanationCard, { backgroundColor: colors.background.surface }]}>
-          <Text style={[styles.explanationText, { color: colors.text.secondary }]}>
+        <View style={[styles.explanationCard, { backgroundColor: bg.surface }]}>
+          <Text style={[styles.explanationText, { color: text.secondary }]}>
             High RPE · Good — working hard and thriving.
           </Text>
-          <Text style={[styles.explanationText, { color: colors.text.secondary }]}>
+          <Text style={[styles.explanationText, { color: text.secondary }]}>
             High RPE · Tough — pushing through difficulty. Normal occasionally.
           </Text>
-          <Text style={[styles.explanationText, { color: colors.text.secondary }]}>
+          <Text style={[styles.explanationText, { color: text.secondary }]}>
             Low RPE · Good — your aerobic base is in great shape.
           </Text>
-          <Text style={[styles.explanationText, { color: colors.text.secondary }]}>
+          <Text style={[styles.explanationText, { color: text.secondary }]}>
             Low RPE · Tough — easy runs feeling hard. Often signals fatigue accumulation.
           </Text>
         </View>

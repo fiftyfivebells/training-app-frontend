@@ -39,7 +39,7 @@ function formatStartDate(date: Date, today: Date): string {
 }
 
 export function BlockCreateScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
   const { data: activeBlock, isLoading: activeLoading } = useActiveBlock()
@@ -197,15 +197,15 @@ export function BlockCreateScreen() {
   }, [blocks, startDate, endDate, performSubmission])
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View
         style={[
           styles.header,
           {
             paddingTop: insets.top + 8,
-            borderBottomColor: colors.border.subtle,
-            backgroundColor: colors.background.base,
+            borderBottomColor: rule.subtle,
+            backgroundColor: bg.base,
           },
         ]}
       >
@@ -215,9 +215,9 @@ export function BlockCreateScreen() {
           accessibilityLabel="Dismiss"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>
           New block
         </Text>
         <View style={styles.headerSpacer} />
@@ -248,21 +248,21 @@ export function BlockCreateScreen() {
                   styles.card,
                   isSelected
                     ? {
-                        backgroundColor: colors.background.surface,
+                        backgroundColor: bg.surface,
                         borderTopWidth: 1,
                         borderRightWidth: 1,
                         borderBottomWidth: 1,
                         borderLeftWidth: 3,
-                        borderColor: colors.copper.default,
+                        borderColor: accent.default,
                         borderTopLeftRadius: 0,
                         borderBottomLeftRadius: 0,
                         borderTopRightRadius: 14,
                         borderBottomRightRadius: 14,
                       }
                     : {
-                        backgroundColor: colors.background.surface,
+                        backgroundColor: bg.surface,
                         borderWidth: 1,
-                        borderColor: colors.border.subtle,
+                        borderColor: rule.subtle,
                         borderRadius: 14,
                       },
                 ]}
@@ -273,10 +273,10 @@ export function BlockCreateScreen() {
                     style={[styles.typeDot, { backgroundColor: config.accentColor }]}
                   />
                   <View style={styles.cardTitleCol}>
-                    <Text style={[styles.cardName, { color: colors.text.primary }]}>
+                    <Text style={[styles.cardName, { color: text.primary }]}>
                       {config.label}
                     </Text>
-                    <Text style={[styles.cardTagline, { color: colors.text.tertiary }]}>
+                    <Text style={[styles.cardTagline, { color: text.tertiary }]}>
                       {config.tagline}
                     </Text>
                   </View>
@@ -285,12 +285,12 @@ export function BlockCreateScreen() {
                       styles.radio,
                       isSelected
                         ? {
-                            backgroundColor: colors.copper.default,
-                            borderColor: colors.copper.default,
+                            backgroundColor: accent.default,
+                            borderColor: accent.default,
                           }
                         : {
                             backgroundColor: 'transparent',
-                            borderColor: colors.border.default,
+                            borderColor: rule.default,
                           },
                     ]}
                   >
@@ -298,7 +298,7 @@ export function BlockCreateScreen() {
                       <Ionicons
                         name="checkmark"
                         size={11}
-                        color={colors.background.base}
+                        color={bg.base}
                       />
                     )}
                   </View>
@@ -307,29 +307,29 @@ export function BlockCreateScreen() {
                 {/* Detail panel — selected only */}
                 {isSelected && (
                   <View
-                    style={[styles.cardDetail, { borderTopColor: colors.border.subtle }]}
+                    style={[styles.cardDetail, { borderTopColor: rule.subtle }]}
                   >
                     <View style={styles.detailCols}>
                       <View style={styles.detailCol}>
                         <Text
-                          style={[styles.detailLabel, { color: colors.text.tertiary }]}
+                          style={[styles.detailLabel, { color: text.tertiary }]}
                         >
                           BEST FOR
                         </Text>
                         <Text
-                          style={[styles.detailValue, { color: colors.text.secondary }]}
+                          style={[styles.detailValue, { color: text.secondary }]}
                         >
                           {config.bestFor}
                         </Text>
                       </View>
                       <View style={[styles.detailCol, styles.detailColRight]}>
                         <Text
-                          style={[styles.detailLabel, { color: colors.text.tertiary }]}
+                          style={[styles.detailLabel, { color: text.tertiary }]}
                         >
                           FOCUS
                         </Text>
                         <Text
-                          style={[styles.detailValue, { color: colors.text.secondary }]}
+                          style={[styles.detailValue, { color: text.secondary }]}
                         >
                           {config.focus}
                         </Text>
@@ -338,13 +338,13 @@ export function BlockCreateScreen() {
                     <View
                       style={[
                         styles.typicalRow,
-                        { backgroundColor: colors.background.base },
+                        { backgroundColor: bg.base },
                       ]}
                     >
-                      <Text style={[styles.typicalText, { color: colors.text.tertiary }]}>
+                      <Text style={[styles.typicalText, { color: text.tertiary }]}>
                         {'Typical: '}
                         <Text
-                          style={[styles.typicalRange, { color: colors.copper.default }]}
+                          style={[styles.typicalRange, { color: accent.default }]}
                         >
                           {config.typicalRange}
                         </Text>
@@ -364,17 +364,17 @@ export function BlockCreateScreen() {
             style={[
               styles.dateField,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.subtle,
+                backgroundColor: bg.surface,
+                borderColor: rule.subtle,
               },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Start date"
           >
-            <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>
+            <Text style={[styles.fieldLabel, { color: text.tertiary }]}>
               Start date
             </Text>
-            <Text style={[styles.fieldValue, { color: colors.text.primary }]}>
+            <Text style={[styles.fieldValue, { color: text.primary }]}>
               {formatStartDate(startDate, today)}
             </Text>
           </TouchableOpacity>
@@ -401,10 +401,10 @@ export function BlockCreateScreen() {
         {/* Duration */}
         <View style={styles.section}>
           <View style={styles.durationHeader}>
-            <Text style={[styles.durationHeaderLabel, { color: colors.text.tertiary }]}>
+            <Text style={[styles.durationHeaderLabel, { color: text.tertiary }]}>
               Duration
             </Text>
-            <Text style={[styles.durationValue, { color: colors.copper.default }]}>
+            <Text style={[styles.durationValue, { color: accent.default }]}>
               {durationLabel}
             </Text>
           </View>
@@ -420,12 +420,12 @@ export function BlockCreateScreen() {
                     styles.pill,
                     isActive
                       ? {
-                          backgroundColor: colors.copper.default,
-                          borderColor: colors.copper.default,
+                          backgroundColor: accent.default,
+                          borderColor: accent.default,
                         }
                       : {
-                          backgroundColor: colors.background.surface,
-                          borderColor: colors.border.subtle,
+                          backgroundColor: bg.surface,
+                          borderColor: rule.subtle,
                         },
                   ]}
                   accessibilityRole="radio"
@@ -436,8 +436,8 @@ export function BlockCreateScreen() {
                     style={[
                       styles.pillText,
                       isActive
-                        ? { color: colors.background.base, fontWeight: '600' }
-                        : { color: colors.text.tertiary },
+                        ? { color: bg.base, fontWeight: '600' }
+                        : { color: text.tertiary },
                     ]}
                   >
                     {w}w
@@ -454,12 +454,12 @@ export function BlockCreateScreen() {
                 styles.customPill,
                 customEndDate
                   ? {
-                      backgroundColor: colors.copper.subtle,
-                      borderColor: colors.copper.default,
+                      backgroundColor: bg.surface,
+                      borderColor: accent.default,
                     }
                   : {
-                      backgroundColor: colors.copper.subtle,
-                      borderColor: colors.copper.muted,
+                      backgroundColor: bg.surface,
+                      borderColor: bg.elevated,
                     },
               ]}
               accessibilityRole="button"
@@ -468,14 +468,14 @@ export function BlockCreateScreen() {
               <Ionicons
                 name="calendar-outline"
                 size={12}
-                color={colors.copper.default}
+                color={accent.default}
                 style={styles.customPillIcon}
               />
               <Text
                 style={[
                   styles.pillText,
                   styles.customPillText,
-                  { color: colors.copper.default },
+                  { color: accent.default },
                 ]}
               >
                 Custom
@@ -485,9 +485,9 @@ export function BlockCreateScreen() {
 
           {/* Ends row */}
           <View style={styles.endsRow}>
-            <Text style={[styles.endsLabel, { color: colors.text.tertiary }]}>
+            <Text style={[styles.endsLabel, { color: text.tertiary }]}>
               {'Ends '}
-              <Text style={[styles.endsDate, { color: colors.text.primary }]}>
+              <Text style={[styles.endsDate, { color: text.primary }]}>
                 {format(endDate, 'MMM d, yyyy')}
               </Text>
             </Text>
@@ -497,7 +497,7 @@ export function BlockCreateScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Change end date"
               >
-                <Text style={[styles.changeEndDate, { color: colors.copper.default }]}>
+                <Text style={[styles.changeEndDate, { color: accent.default }]}>
                   Change end date
                 </Text>
               </TouchableOpacity>
@@ -530,8 +530,8 @@ export function BlockCreateScreen() {
             style={({ pressed }) => [
               styles.submitBtn,
               {
-                backgroundColor: pressed ? colors.copper.dim : colors.copper.default,
-                borderColor: colors.copper.muted,
+                backgroundColor: pressed ? accent.pressed : accent.default,
+                borderColor: bg.elevated,
                 opacity: isSubmitting ? 0.6 : 1,
               },
             ]}
@@ -539,11 +539,11 @@ export function BlockCreateScreen() {
             accessibilityLabel="Create block"
           >
             <View style={styles.plusIcon}>
-              <View style={[styles.plusH, { backgroundColor: colors.background.base }]} />
-              <View style={[styles.plusV, { backgroundColor: colors.background.base }]} />
+              <View style={[styles.plusH, { backgroundColor: bg.base }]} />
+              <View style={[styles.plusV, { backgroundColor: bg.base }]} />
             </View>
           </Pressable>
-          <Text style={[styles.submitLabel, { color: colors.copper.default }]}>
+          <Text style={[styles.submitLabel, { color: accent.default }]}>
             Create block
           </Text>
         </View>

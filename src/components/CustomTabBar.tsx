@@ -25,7 +25,7 @@ const TAB_CONFIGS: TabConfig[] = [
 ]
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   const leftRoutes = state.routes.slice(0, 2)
   const rightRoutes = state.routes.slice(2)
@@ -37,7 +37,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     if (!config) return null
 
     const iconName = isFocused ? config.activeIcon : config.inactiveIcon
-    const color = isFocused ? colors.copper.default : colors.text.tertiary
+    const color = isFocused ? accent.default : text.tertiary
     const fontWeight = isFocused ? '500' : '400'
 
     const onPress = () => {
@@ -71,20 +71,20 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
       style={[
         styles.container,
         {
-          backgroundColor: colors.background.surface,
-          borderTopColor: colors.border.subtle,
+          backgroundColor: bg.surface,
+          borderTopColor: rule.subtle,
         },
       ]}
       pointerEvents="box-none"
     >
       {/* FAB — rises above bar */}
       <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.copper.default }]}
+        style={[styles.fab, { backgroundColor: accent.default }]}
         onPress={() => router.push('/log')}
         accessibilityRole="button"
         accessibilityLabel="Log a run"
       >
-        <Ionicons name="add" size={28} color={colors.background.base} />
+        <Ionicons name="add" size={28} color={bg.base} />
       </TouchableOpacity>
 
       {/* Tab row */}

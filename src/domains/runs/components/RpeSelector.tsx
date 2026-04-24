@@ -24,18 +24,18 @@ export function RpeSelector({
   errorMessage,
   onLayout,
 }: RpeSelectorProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   function rpeZoneColors(n: number) {
-    if (n <= 3) return { bg: colors.semantic.successBg, border: '#2A4A2E', text: colors.semantic.successFg }
-    if (n <= 6) return { bg: colors.background.surface, border: colors.border.subtle, text: colors.text.tertiary }
-    if (n <= 8) return { bg: colors.background.surface, border: colors.border.subtle, text: colors.mood.highTough }
-    return { bg: colors.background.surface, border: colors.border.subtle, text: colors.semantic.errorFg }
+    if (n <= 3) return { bg: semantic.successBg, border: '#2A4A2E', text: semantic.success }
+    if (n <= 6) return { bg: bg.surface, border: rule.subtle, text: text.tertiary }
+    if (n <= 8) return { bg: bg.surface, border: rule.subtle, text: mood.highTough }
+    return { bg: bg.surface, border: rule.subtle, text: semantic.error }
   }
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>RPE</Text>
+      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>RPE</Text>
       <View style={styles.grid}>
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
           const selected = value === n
@@ -47,8 +47,8 @@ export function RpeSelector({
               style={[
                 styles.cell,
                 {
-                  backgroundColor: selected ? colors.copper.default : zone.bg,
-                  borderColor: selected ? colors.copper.default : zone.border,
+                  backgroundColor: selected ? accent.default : zone.bg,
+                  borderColor: selected ? accent.default : zone.border,
                 },
               ]}
               accessibilityLabel={`RPE ${n}`}
@@ -59,7 +59,7 @@ export function RpeSelector({
                 style={[
                   styles.cellText,
                   {
-                    color: selected ? colors.background.base : zone.text,
+                    color: selected ? bg.base : zone.text,
                     fontWeight: selected ? '600' : '400',
                   },
                 ]}
@@ -74,12 +74,12 @@ export function RpeSelector({
       <View style={styles.zoneLabels}>
         {RPE_ZONES.map((zone) => {
           const zoneColor = zone.range[0] <= 3
-            ? colors.semantic.successFg
+            ? semantic.success
             : zone.range[0] <= 6
               ? '#D4A843'
               : zone.range[0] <= 8
-                ? colors.mood.highTough
-                : colors.semantic.errorFg
+                ? mood.highTough
+                : semantic.error
           const cellCount = zone.range[1] - zone.range[0] + 1
           return (
             <Text
@@ -92,7 +92,7 @@ export function RpeSelector({
         })}
       </View>
       {hasError && (
-        <Text style={[styles.errorText, { color: colors.semantic.errorFg }]}>
+        <Text style={[styles.errorText, { color: semantic.error }]}>
           {errorMessage}
         </Text>
       )}

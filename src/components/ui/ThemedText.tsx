@@ -3,7 +3,7 @@ import { Text, TextProps } from 'react-native'
 import { useTheme } from '@/theme/useTheme'
 
 export function ThemedText({ style, ...props }: TextProps) {
-  const { colors } = useTheme()
+  const { text } = useTheme()
 
   return (
     <Text
@@ -13,7 +13,7 @@ export function ThemedText({ style, ...props }: TextProps) {
           fontFamily: 'Manrope',
           fontWeight: '400',
           fontSize: 15,
-          color: colors.text.primary,
+          color: text.primary,
         },
         style,
       ]}

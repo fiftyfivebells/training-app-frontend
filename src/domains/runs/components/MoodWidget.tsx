@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 
 import type { Mood, MoodCategoryKey } from '@/domains/moods/moods.types'
+import type { ThemeTokens } from '@/theme/tokens'
 import { DIM_FILL } from '@/domains/moods/moods.constants'
 import { useTheme } from '@/theme/useTheme'
 
@@ -21,12 +22,12 @@ interface MoodWidgetProps {
   onLayout?: (e: LayoutChangeEvent) => void
 }
 
-function quadrantColor(q: MoodCategoryKey, colors: ReturnType<typeof useTheme>['colors']): string {
+function quadrantColor(q: MoodCategoryKey, moodTokens: ThemeTokens['mood']): string {
   const map: Record<MoodCategoryKey, string> = {
-    'high-pleasant':    colors.mood.highGood,
-    'high-challenging': colors.mood.highTough,
-    'low-pleasant':     colors.mood.lowGood,
-    'low-challenging':  colors.mood.lowTough,
+    'high-pleasant':    moodTokens.highGood,
+    'high-challenging': moodTokens.highTough,
+    'low-pleasant':     moodTokens.lowGood,
+    'low-challenging':  moodTokens.lowTough,
   }
   return map[q]
 }
@@ -38,11 +39,11 @@ export function MoodWidget({
   errorMessage,
   onLayout,
 }: MoodWidgetProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>MOOD</Text>
+      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>MOOD</Text>
       <TouchableOpacity
         onPress={() => router.push('/mood-picker')}
         accessibilityLabel="Select mood"
@@ -55,7 +56,7 @@ export function MoodWidget({
               styles.selected,
               {
                 backgroundColor: DIM_FILL[selectedMood.quadrant],
-                borderColor: quadrantColor(selectedMood.quadrant, colors),
+                borderColor: quadrantColor(selectedMood.quadrant, mood),
               },
             ]}
           >
@@ -63,14 +64,14 @@ export function MoodWidget({
               <View
                 style={[
                   styles.dot,
-                  { backgroundColor: quadrantColor(selectedMood.quadrant, colors) },
+                  { backgroundColor: quadrantColor(selectedMood.quadrant, mood) },
                 ]}
               />
               <View style={styles.textBlock}>
-                <Text style={[styles.moodName, { color: colors.text.primary }]}>
+                <Text style={[styles.moodName, { color: text.primary }]}>
                   {selectedMood.label}
                 </Text>
-                <Text style={[styles.moodDesc, { color: colors.text.secondary }]}>
+                <Text style={[styles.moodDesc, { color: text.secondary }]}>
                   {selectedMood.description}
                 </Text>
               </View>
@@ -78,10 +79,10 @@ export function MoodWidget({
             <View
               style={[
                 styles.changeBtn,
-                { backgroundColor: colors.background.surface, borderColor: colors.border.default },
+                { backgroundColor: bg.surface, borderColor: rule.default },
               ]}
             >
-              <Text style={[styles.changeBtnText, { color: colors.text.secondary }]}>
+              <Text style={[styles.changeBtnText, { color: text.secondary }]}>
                 Change
               </Text>
             </View>
@@ -91,23 +92,23 @@ export function MoodWidget({
             style={[
               styles.empty,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: hasError ? colors.semantic.errorFg : colors.border.default,
+                backgroundColor: bg.surface,
+                borderColor: hasError ? semantic.error : rule.default,
                 borderStyle: hasError ? 'solid' : 'dashed',
                 borderWidth: 1.5,
               },
             ]}
           >
-            <View style={[styles.dotEmpty, { borderColor: colors.border.default }]} />
-            <Text style={[styles.emptyText, { color: colors.text.tertiary }]}>
+            <View style={[styles.dotEmpty, { borderColor: rule.default }]} />
+            <Text style={[styles.emptyText, { color: text.tertiary }]}>
               Tap to select your mood
             </Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
+            <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
           </View>
         )}
       </TouchableOpacity>
       {hasError && (
-        <Text style={[styles.errorText, { color: colors.semantic.errorFg }]}>
+        <Text style={[styles.errorText, { color: semantic.error }]}>
           {errorMessage}
         </Text>
       )}

@@ -13,14 +13,14 @@ type Props = {
 }
 
 function ProgressBar({ percent, accentColor }: { percent: number; accentColor: string }) {
-  const { colors, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, radius } = useTheme()
   return (
     <View
       style={[
         styles.progressTrack,
         {
-          backgroundColor: colors.border.default,
-          borderRadius: radius.full,
+          backgroundColor: rule.default,
+          borderRadius: radius.pill,
           height: 4,
         },
       ]}
@@ -31,7 +31,7 @@ function ProgressBar({ percent, accentColor }: { percent: number; accentColor: s
           {
             width: `${percent}%`,
             backgroundColor: accentColor,
-            borderRadius: radius.full,
+            borderRadius: radius.pill,
             height: 4,
           },
         ]}
@@ -41,7 +41,7 @@ function ProgressBar({ percent, accentColor }: { percent: number; accentColor: s
 }
 
 export function ActiveBlockBanner({ block, onStartBlock }: Props) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const router = useRouter()
 
   const progress = useMemo(() => {
@@ -64,8 +64,8 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
       style={[
         styles.container,
         {
-          backgroundColor: colors.background.surface,
-          borderColor: colors.border.subtle,
+          backgroundColor: bg.surface,
+          borderColor: rule.subtle,
         },
       ]}
       onPress={() => router.push(`/blocks`)}
@@ -73,7 +73,7 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
       <View style={styles.content}>
         <View style={styles.header}>
           <ThemedText style={styles.label}>ACTIVE BLOCK</ThemedText>
-          <ThemedText style={[styles.title, { color: colors.text.primary }]}>
+          <ThemedText style={[styles.title, { color: text.primary }]}>
             {block.name}
           </ThemedText>
         </View>

@@ -22,14 +22,14 @@ export function InsightCard({
   onPress,
   children,
 }: InsightCardProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   const subColor =
     sentiment === 'positive'
-      ? colors.mood.highGood
+      ? mood.highGood
       : sentiment === 'warning'
-        ? colors.mood.lowTough
-        : colors.text.secondary
+        ? mood.lowTough
+        : text.secondary
 
   return (
     <Pressable
@@ -37,23 +37,23 @@ export function InsightCard({
       style={({ pressed }) => [
         styles.card,
         {
-          backgroundColor: colors.background.surface,
-          borderColor: colors.border.subtle,
+          backgroundColor: bg.surface,
+          borderColor: rule.subtle,
           opacity: pressed ? 0.9 : 1,
         },
       ]}
     >
       <View style={styles.topRow}>
-        <Text style={[styles.label, { color: colors.text.tertiary }]}>{label}</Text>
-        <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
+        <Text style={[styles.label, { color: text.tertiary }]}>{label}</Text>
+        <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
       </View>
-      <Text style={[styles.headline, { color: colors.text.primary }]}>{headline}</Text>
+      <Text style={[styles.headline, { color: text.primary }]}>{headline}</Text>
       <Text style={[styles.sub, { color: subColor }]}>{sub}</Text>
 
       {hasEnoughData && children ? (
         <View style={styles.chartContainer}>{children}</View>
       ) : !hasEnoughData ? (
-        <Text style={[styles.noData, { color: colors.text.secondary }]}>
+        <Text style={[styles.noData, { color: text.secondary }]}>
           Not enough data yet — keep logging and this insight will appear.
         </Text>
       ) : null}

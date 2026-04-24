@@ -11,7 +11,7 @@ export type DualAxisChartProps = {
 }
 
 export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const [containerWidth, setContainerWidth] = useState(0)
 
   const CHART_HEIGHT = compact ? 72 : 100
@@ -70,13 +70,13 @@ export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
                 y={bar.y}
                 width={bar.width}
                 height={bar.height}
-                color={colors.border.subtle}
+                color={rule.subtle}
               />
             ))}
             {path && (
               <Path
                 path={path}
-                color={colors.mood.highGood}
+                color={mood.highGood}
                 style="stroke"
                 strokeWidth={1.5}
               />
@@ -86,7 +86,7 @@ export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
                 cx={lastPoint.x}
                 cy={lastPoint.y}
                 r={3}
-                color={colors.mood.highGood}
+                color={mood.highGood}
               />
             ) : null}
           </Canvas>
@@ -104,7 +104,7 @@ export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
                   styles.label,
                   {
                     width: containerWidth / weeklyData.length,
-                    color: isNow ? colors.text.primary : colors.text.tertiary,
+                    color: isNow ? text.primary : text.tertiary,
                     fontWeight: isNow ? '600' : '400',
                   },
                 ]}
@@ -123,10 +123,10 @@ export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
             <View
               style={[
                 styles.volumeLegendRect,
-                { backgroundColor: colors.border.subtle },
+                { backgroundColor: rule.subtle },
               ]}
             />
-            <Text style={[styles.legendText, { color: colors.text.tertiary }]}>
+            <Text style={[styles.legendText, { color: text.tertiary }]}>
               Volume
             </Text>
           </View>
@@ -135,11 +135,11 @@ export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
               <View
                 style={[
                   styles.moodLegendLine,
-                  { backgroundColor: colors.mood.highGood },
+                  { backgroundColor: mood.highGood },
                 ]}
               />
             </View>
-            <Text style={[styles.legendText, { color: colors.text.tertiary }]}>
+            <Text style={[styles.legendText, { color: text.tertiary }]}>
               % good mood
             </Text>
           </View>

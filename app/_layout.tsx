@@ -52,16 +52,16 @@ export default function RootLayout() {
 }
 
 function ThemedAppShell() {
-  const { colors } = useTheme()
+  const { bg } = useTheme()
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background.base }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: bg.base }}>
       <SessionChecker />
-      <StatusBar style="light" />
+      <StatusBar style="auto" />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: colors.background.base },
+          contentStyle: { backgroundColor: bg.base },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

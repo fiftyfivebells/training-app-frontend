@@ -22,7 +22,7 @@ import { useBlock } from '../hooks/useBlock'
 
 export function BlockRunsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { unit } = useDistanceUnit()
 
@@ -53,14 +53,14 @@ export function BlockRunsScreen() {
   const headerTitle = block && config ? `${config.label} · ${blockRuns.length} runs` : 'Runs'
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View
         style={[
           styles.header,
           {
             paddingTop: insets.top + 8,
-            backgroundColor: colors.background.base,
+            backgroundColor: bg.base,
           },
         ]}
       >
@@ -70,9 +70,9 @@ export function BlockRunsScreen() {
           accessibilityLabel="Go back"
           style={styles.backBtn}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>
           {headerTitle}
         </Text>
         <View style={styles.headerRight} />
@@ -93,14 +93,14 @@ export function BlockRunsScreen() {
           <RefreshControl
             refreshing={isFetching}
             onRefresh={refetch}
-            tintColor={colors.copper.default}
+            tintColor={accent.default}
           />
         }
         contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 16 }]}
         ListEmptyComponent={
           !isLoading ? (
             <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyText, { color: colors.text.tertiary }]}>
+              <Text style={[styles.emptyText, { color: text.tertiary }]}>
                 No runs found for this block.
               </Text>
             </View>

@@ -24,14 +24,14 @@ export function RunTypePicker({
   errorMessage,
   onLayout,
 }: RunTypePickerProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>RUN TYPE</Text>
+      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>RUN TYPE</Text>
       {RUN_TYPE_GROUPS.map((group) => (
         <View key={group.label} style={styles.group}>
-          <Text style={[styles.groupLabel, { color: colors.text.tertiary }]}>
+          <Text style={[styles.groupLabel, { color: text.tertiary }]}>
             {group.label}
           </Text>
           <View style={styles.pills}>
@@ -44,8 +44,8 @@ export function RunTypePicker({
                   style={[
                     styles.pill,
                     {
-                      backgroundColor: active ? colors.copper.default : colors.background.surface,
-                      borderColor: active ? colors.copper.default : colors.border.subtle,
+                      backgroundColor: active ? accent.default : bg.surface,
+                      borderColor: active ? accent.default : rule.subtle,
                     },
                   ]}
                   accessibilityLabel={type}
@@ -56,7 +56,7 @@ export function RunTypePicker({
                     style={[
                       styles.pillText,
                       {
-                        color: active ? colors.background.base : colors.text.tertiary,
+                        color: active ? bg.base : text.tertiary,
                         fontWeight: active ? '600' : '400',
                       },
                     ]}
@@ -70,7 +70,7 @@ export function RunTypePicker({
         </View>
       ))}
       {hasError && (
-        <Text style={[styles.errorText, { color: colors.semantic.errorFg }]}>
+        <Text style={[styles.errorText, { color: semantic.error }]}>
           {errorMessage}
         </Text>
       )}

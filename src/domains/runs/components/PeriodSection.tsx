@@ -15,7 +15,7 @@ interface PeriodSectionProps {
 }
 
 export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectionProps) {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const distParts = formatDistanceParts(period.totalMeters, unit)
 
   const visibleRuns =
@@ -42,12 +42,12 @@ export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectio
     <View style={styles.section}>
       {/* Period header */}
       <View style={styles.header}>
-        <Text style={[styles.label, { color: colors.text.primary }]}>{period.label}</Text>
+        <Text style={[styles.label, { color: text.primary }]}>{period.label}</Text>
         <View style={styles.headerRight}>
-          <Text style={[styles.runCount, { color: colors.text.tertiary }]}>
+          <Text style={[styles.runCount, { color: text.tertiary }]}>
             {period.runs.length} {period.runs.length === 1 ? 'run' : 'runs'}
           </Text>
-          <Text style={[styles.totalDist, { color: colors.copper.default }]}>
+          <Text style={[styles.totalDist, { color: accent.default }]}>
             {distParts.value} {distParts.unit}
           </Text>
         </View>
@@ -57,13 +57,13 @@ export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectio
       <View
         style={[
           styles.card,
-          { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+          { backgroundColor: bg.surface, borderColor: rule.subtle },
         ]}
       >
         {visibleRuns.map((run, index) => (
           <View key={run.id}>
             {index > 0 && (
-              <View style={[styles.divider, { backgroundColor: colors.border.subtle }]} />
+              <View style={[styles.divider, { backgroundColor: rule.subtle }]} />
             )}
             <RunRow run={run} />
           </View>
@@ -72,7 +72,7 @@ export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectio
         {showFooter && (
           <>
             {visibleRuns.length > 0 && (
-              <View style={[styles.divider, { backgroundColor: colors.border.subtle }]} />
+              <View style={[styles.divider, { backgroundColor: rule.subtle }]} />
             )}
             <TouchableOpacity
               style={styles.footerRow}
@@ -81,7 +81,7 @@ export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectio
               accessibilityRole="button"
               accessibilityLabel={footerLabel}
             >
-              <Text style={[styles.footerText, { color: colors.text.tertiary }]}>
+              <Text style={[styles.footerText, { color: text.tertiary }]}>
                 {footerLabel}
               </Text>
               <Ionicons
@@ -93,7 +93,7 @@ export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectio
                     : 'chevron-forward'
                 }
                 size={14}
-                color={colors.text.tertiary}
+                color={text.tertiary}
               />
             </TouchableOpacity>
           </>

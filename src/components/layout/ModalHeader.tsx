@@ -11,7 +11,7 @@ type Props = {
 }
 
 export function ModalHeader({ title, onClose }: Props) {
-  const { colors, space } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space } = useTheme()
 
   return (
     <View style={[styles.header, { marginBottom: space[6] }]}>
@@ -20,7 +20,7 @@ export function ModalHeader({ title, onClose }: Props) {
       </ThemedText>
 
       <TouchableOpacity onPress={onClose} style={{ padding: space[1] }}>
-        <Feather name="x" size={28} color={colors.text.primary} />
+        <Feather name="x" size={28} color={text.primary} />
       </TouchableOpacity>
     </View>
   )

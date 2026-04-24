@@ -27,7 +27,7 @@ const RANGE_LABELS = {
 }
 
 export function MoodByRunTypeScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -60,30 +60,30 @@ export function MoodByRunTypeScreen() {
   }
 
   const moodColors = {
-    'high-pleasant': colors.mood.highGood,
-    'low-pleasant': colors.mood.lowGood,
-    'high-challenging': colors.mood.highTough,
-    'low-challenging': colors.mood.lowTough,
+    'high-pleasant': mood.highGood,
+    'low-pleasant': mood.lowGood,
+    'high-challenging': mood.highTough,
+    'low-challenging': mood.lowTough,
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.container, { backgroundColor: bg.base }]}>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Pressable onPress={() => router.back()} style={styles.headerLeft}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={text.primary} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Mood by run type</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Mood by run type</Text>
         <Pressable
           onPress={handleRangePress}
           style={[
             styles.rangePicker,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.default },
+            { backgroundColor: bg.surface, borderColor: rule.default },
           ]}
         >
-          <Text style={[styles.rangeLabel, { color: colors.copper.default }]}>
+          <Text style={[styles.rangeLabel, { color: accent.default }]}>
             {RANGE_LABELS[timeRange]}
           </Text>
-          <Ionicons name="chevron-down" size={12} color={colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={12} color={text.tertiary} />
         </Pressable>
       </View>
 
@@ -97,12 +97,12 @@ export function MoodByRunTypeScreen() {
         <View
           style={[
             styles.chartCard,
-            { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+            { backgroundColor: bg.surface, borderColor: rule.subtle },
           ]}
         >
           <HorizontalStackedBars byType={moodByType.byType} compact={false} />
           
-          <View style={[styles.legend, { borderTopColor: colors.border.subtle }]}>
+          <View style={[styles.legend, { borderTopColor: rule.subtle }]}>
             {[
               { label: 'High energy · good', key: 'high-pleasant' as const },
               { label: 'Low energy · good', key: 'low-pleasant' as const },
@@ -116,7 +116,7 @@ export function MoodByRunTypeScreen() {
                     { backgroundColor: moodColors[item.key] },
                   ]}
                 />
-                <Text style={[styles.legendText, { color: colors.text.tertiary }]}>
+                <Text style={[styles.legendText, { color: text.tertiary }]}>
                   {item.label}
                 </Text>
               </View>
@@ -124,20 +124,20 @@ export function MoodByRunTypeScreen() {
           </View>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text.tertiary }]}>BREAKDOWN</Text>
+        <Text style={[styles.sectionTitle, { color: text.tertiary }]}>BREAKDOWN</Text>
         {moodByType.byType.map((type) => (
           <View
             key={type.runType}
             style={[
               styles.breakdownCard,
-              { backgroundColor: colors.background.surface, borderColor: colors.border.subtle },
+              { backgroundColor: bg.surface, borderColor: rule.subtle },
             ]}
           >
             <View style={styles.breakdownHeader}>
-              <Text style={[styles.typeLabel, { color: colors.text.primary }]}>
+              <Text style={[styles.typeLabel, { color: text.primary }]}>
                 {type.runType}
               </Text>
-              <Text style={[styles.runCount, { color: colors.text.tertiary }]}>
+              <Text style={[styles.runCount, { color: text.tertiary }]}>
                 {type.total} runs
               </Text>
             </View>
@@ -146,7 +146,7 @@ export function MoodByRunTypeScreen() {
                 (key) => (
                   <View key={key} style={styles.dotGroup}>
                     <View style={[styles.dot, { backgroundColor: moodColors[key] }]} />
-                    <Text style={[styles.dotCount, { color: colors.text.primary }]}>
+                    <Text style={[styles.dotCount, { color: text.primary }]}>
                       {type.counts[key]}
                     </Text>
                   </View>

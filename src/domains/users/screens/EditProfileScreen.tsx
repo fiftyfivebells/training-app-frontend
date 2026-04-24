@@ -20,7 +20,7 @@ interface EditProfileForm {
 }
 
 export function EditProfileScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { data: user } = useGetCurrentUser()
   const { mutate: updateProfile, isPending } = useUpdateProfile()
@@ -79,93 +79,93 @@ export function EditProfileScreen() {
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 4, backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 4, backgroundColor: bg.base }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.secondary} />
+          <Ionicons name="arrow-back" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Edit profile</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Edit profile</Text>
         <TouchableOpacity style={styles.headerRight} onPress={handleSubmit(onSubmit)} disabled={isPending}>
-          <Text style={[styles.saveBtnText, { color: colors.copper.default }]}>Save</Text>
+          <Text style={[styles.saveBtnText, { color: accent.default }]}>Save</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <View style={styles.fieldContainer}>
-          <Text style={[styles.label, { color: colors.text.tertiary }]}>First name</Text>
+          <Text style={[styles.label, { color: text.tertiary }]}>First name</Text>
           <Controller
             control={control}
             name="firstName"
             rules={{ required: 'First name is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, color: colors.text.primary }]}
+                style={[styles.input, { backgroundColor: bg.input, borderColor: rule.subtle, color: text.primary }]}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
                 placeholder="First name"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={text.tertiary}
               />
             )}
           />
-          {errors.firstName && <Text style={[styles.error, { color: colors.semantic.errorFg }]}>{errors.firstName.message}</Text>}
+          {errors.firstName && <Text style={[styles.error, { color: semantic.error }]}>{errors.firstName.message}</Text>}
         </View>
 
         <View style={styles.fieldContainer}>
-          <Text style={[styles.label, { color: colors.text.tertiary }]}>Last name</Text>
+          <Text style={[styles.label, { color: text.tertiary }]}>Last name</Text>
           <Controller
             control={control}
             name="lastName"
             rules={{ required: 'Last name is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, color: colors.text.primary }]}
+                style={[styles.input, { backgroundColor: bg.input, borderColor: rule.subtle, color: text.primary }]}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
                 placeholder="Last name"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={text.tertiary}
               />
             )}
           />
-          {errors.lastName && <Text style={[styles.error, { color: colors.semantic.errorFg }]}>{errors.lastName.message}</Text>}
+          {errors.lastName && <Text style={[styles.error, { color: semantic.error }]}>{errors.lastName.message}</Text>}
         </View>
 
         <View style={styles.fieldContainer}>
-          <Text style={[styles.label, { color: colors.text.tertiary }]}>Email</Text>
+          <Text style={[styles.label, { color: text.tertiary }]}>Email</Text>
           <Controller
             control={control}
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, color: colors.text.tertiary }]}
+                style={[styles.input, { backgroundColor: bg.input, borderColor: rule.subtle, color: text.tertiary }]}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 placeholder="Email"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={text.tertiary}
                 editable={false}
               />
             )}
           />
-          {errors.email && <Text style={[styles.error, { color: colors.semantic.errorFg }]}>{errors.email.message}</Text>}
+          {errors.email && <Text style={[styles.error, { color: semantic.error }]}>{errors.email.message}</Text>}
         </View>
 
         <View style={styles.fieldContainer}>
-          <Text style={[styles.label, { color: colors.text.tertiary }]}>Timezone</Text>
+          <Text style={[styles.label, { color: text.tertiary }]}>Timezone</Text>
           <Controller
             control={control}
             name="timezone"
             rules={{ required: 'Timezone is required' }}
             render={({ field: { value, onChange } }) => (
-              <View style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, justifyContent: 'center', paddingHorizontal: 0, overflow: 'hidden' }]}>
+              <View style={[styles.input, { backgroundColor: bg.input, borderColor: rule.subtle, justifyContent: 'center', paddingHorizontal: 0, overflow: 'hidden' }]}>
                 <Picker
                   selectedValue={value}
                   onValueChange={onChange}
-                  style={{ color: colors.text.primary, height: 50, width: '100%' }}
-                  dropdownIconColor={colors.text.tertiary}
+                  style={{ color: text.primary, height: 50, width: '100%' }}
+                  dropdownIconColor={text.tertiary}
                 >
                   <Picker.Item label="America/New York" value="America/New_York" />
                   <Picker.Item label="America/Chicago" value="America/Chicago" />
@@ -182,12 +182,12 @@ export function EditProfileScreen() {
         </View>
         
         <View style={styles.fieldContainer}>
-          <Text style={[styles.label, { color: colors.text.tertiary }]}>Affirmation time</Text>
+          <Text style={[styles.label, { color: text.tertiary }]}>Affirmation time</Text>
           <TouchableOpacity
-            style={[styles.input, { backgroundColor: colors.background.input, borderColor: colors.border.subtle, justifyContent: 'center' }]}
+            style={[styles.input, { backgroundColor: bg.input, borderColor: rule.subtle, justifyContent: 'center' }]}
             onPress={() => setShowTimePicker(true)}
           >
-            <Text style={{ color: colors.text.primary }}>
+            <Text style={{ color: text.primary }}>
               {affirmationTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
           </TouchableOpacity>

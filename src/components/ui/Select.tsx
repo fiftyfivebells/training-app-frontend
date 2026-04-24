@@ -27,7 +27,7 @@ export function Select({
   disabled,
   error,
 }: SelectProps) {
-  const { colors, space, radius } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
 
   return (
     <View style={{ marginBottom: space[4] }}>
@@ -35,7 +35,7 @@ export function Select({
         style={{
           fontSize: 13,
           fontWeight: '500',
-          color: colors.text.primary,
+          color: text.primary,
           marginBottom: space[1],
         }}
       >
@@ -45,16 +45,16 @@ export function Select({
         style={[
           styles.selectContainer,
           {
-            backgroundColor: colors.background.surface,
-            borderColor: colors.border.default,
+            backgroundColor: bg.surface,
+            borderColor: rule.default,
             borderRadius: radius.md,
           },
           disabled && {
-            backgroundColor: colors.background.input,
+            backgroundColor: bg.input,
             opacity: 0.6,
           },
           error && {
-            borderColor: colors.mood.highTough,
+            borderColor: mood.highTough,
             borderWidth: 2,
           },
         ]}
@@ -66,7 +66,7 @@ export function Select({
           style={[
             styles.picker,
             Platform.OS === 'ios' ? styles.pickerIOS : styles.pickerAndroid,
-            { color: colors.text.primary },
+            { color: text.primary },
           ]}
         >
           {options.map((option) => (
@@ -78,7 +78,7 @@ export function Select({
         <ThemedText
           style={{
             fontSize: 12,
-            color: colors.mood.highTough,
+            color: mood.highTough,
             marginTop: space[1],
           }}
         >

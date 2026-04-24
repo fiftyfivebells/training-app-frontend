@@ -36,7 +36,7 @@ function formatStartDate(date: Date, today: Date): string {
 
 export function BlockEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
 
   const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
@@ -172,20 +172,20 @@ export function BlockEditScreen() {
   }, [blocks, id, startDate, endDate, performSubmission])
 
   if (blockLoading || !block) {
-    return <View style={[styles.screen, { backgroundColor: colors.background.base }]} />
+    return <View style={[styles.screen, { backgroundColor: bg.base }]} />
   }
 
   const config = BLOCK_TYPE_CONFIG[block.blockType]
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View
         style={[
           styles.header,
           {
             paddingTop: insets.top + 8,
-            backgroundColor: colors.background.base,
+            backgroundColor: bg.base,
           },
         ]}
       >
@@ -195,9 +195,9 @@ export function BlockEditScreen() {
           accessibilityLabel="Cancel"
           style={styles.backBtn}
         >
-          <Ionicons name="close" size={24} color={colors.text.secondary} />
+          <Ionicons name="close" size={24} color={text.secondary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>Edit Block</Text>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Edit Block</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -211,8 +211,8 @@ export function BlockEditScreen() {
             style={[
               styles.card,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.subtle,
+                backgroundColor: bg.surface,
+                borderColor: rule.subtle,
                 borderLeftColor: config.accentColor,
                 opacity: 0.8,
               },
@@ -221,10 +221,10 @@ export function BlockEditScreen() {
             <View style={styles.cardHeader}>
               <View style={[styles.typeDot, { backgroundColor: config.accentColor }]} />
               <View style={styles.cardTitleCol}>
-                <Text style={[styles.cardName, { color: colors.text.primary }]}>
+                <Text style={[styles.cardName, { color: text.primary }]}>
                   {block.name}
                 </Text>
-                <Text style={[styles.cardTagline, { color: colors.text.tertiary }]}>
+                <Text style={[styles.cardTagline, { color: text.tertiary }]}>
                   {config.label}
                 </Text>
               </View>
@@ -239,20 +239,20 @@ export function BlockEditScreen() {
             style={[
               styles.fieldBtn,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.subtle,
+                backgroundColor: bg.surface,
+                borderColor: rule.subtle,
                 opacity: isPendingBlock ? 1 : 0.6,
               },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Start date"
           >
-            <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>START DATE</Text>
-            <Text style={[styles.fieldValue, { color: colors.text.primary }]}>
+            <Text style={[styles.fieldLabel, { color: text.tertiary }]}>START DATE</Text>
+            <Text style={[styles.fieldValue, { color: text.primary }]}>
               {formatStartDate(startDate, today)}
             </Text>
             {!isPendingBlock && (
-              <Text style={[styles.lockedNote, { color: colors.text.tertiary }]}>
+              <Text style={[styles.lockedNote, { color: text.tertiary }]}>
                 Cannot change start date of active block
               </Text>
             )}
@@ -281,15 +281,15 @@ export function BlockEditScreen() {
             style={[
               styles.fieldBtn,
               {
-                backgroundColor: colors.background.surface,
-                borderColor: colors.border.subtle,
+                backgroundColor: bg.surface,
+                borderColor: rule.subtle,
               },
             ]}
             accessibilityRole="button"
             accessibilityLabel="End date"
           >
-            <Text style={[styles.fieldLabel, { color: colors.text.tertiary }]}>END DATE</Text>
-            <Text style={[styles.fieldValue, { color: colors.text.primary }]}>
+            <Text style={[styles.fieldLabel, { color: text.tertiary }]}>END DATE</Text>
+            <Text style={[styles.fieldValue, { color: text.primary }]}>
               {format(endDate, 'MMM d, yyyy')}
             </Text>
             {Platform.OS === 'ios' && showEndPicker && (
@@ -317,17 +317,17 @@ export function BlockEditScreen() {
             style={({ pressed }) => [
               styles.submitBtn,
               {
-                backgroundColor: pressed ? colors.copper.dim : colors.copper.default,
-                borderColor: colors.copper.muted,
+                backgroundColor: pressed ? accent.pressed : accent.default,
+                borderColor: bg.elevated,
                 opacity: isSubmitting ? 0.6 : 1,
               },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Save changes"
           >
-            <Ionicons name="checkmark" size={28} color={colors.background.base} />
+            <Ionicons name="checkmark" size={28} color={bg.base} />
           </Pressable>
-          <Text style={[styles.submitLabel, { color: colors.copper.default }]}>Save changes</Text>
+          <Text style={[styles.submitLabel, { color: accent.default }]}>Save changes</Text>
         </View>
       </ScrollView>
     </View>

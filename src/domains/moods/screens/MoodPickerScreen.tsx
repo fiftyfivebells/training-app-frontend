@@ -52,7 +52,7 @@ import { MoodSelectionBar } from '../components/MoodSelectionBar'
 import { type Cell, layoutMoods, makeHexPath, makeLinePath } from '../utils/canvas'
 
 export function MoodPickerScreen() {
-  const { colors } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
   const insets = useSafeAreaInsets()
 
   const { data: moods = [] } = useGetAllMoods()
@@ -165,14 +165,14 @@ export function MoodPickerScreen() {
   const quadColor = useCallback(
     (q: MoodCategoryKey) => {
       const map: Record<MoodCategoryKey, string> = {
-        'high-pleasant':    colors.mood.highGood,
-        'high-challenging': colors.mood.highTough,
-        'low-pleasant':     colors.mood.lowGood,
-        'low-challenging':  colors.mood.lowTough,
+        'high-pleasant':    mood.highGood,
+        'high-challenging': mood.highTough,
+        'low-pleasant':     mood.lowGood,
+        'low-challenging':  mood.lowTough,
       }
       return map[q]
     },
-    [colors],
+    [mood],
   )
 
   const textWidth = useCallback(
@@ -181,15 +181,15 @@ export function MoodPickerScreen() {
   )
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background.base }]}>
+    <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
       <View
         style={[
           styles.header,
           {
             paddingTop: insets.top + 8,
-            borderBottomColor: colors.border.subtle,
-            backgroundColor: colors.background.base,
+            borderBottomColor: rule.subtle,
+            backgroundColor: bg.base,
           },
         ]}
       >
@@ -199,9 +199,9 @@ export function MoodPickerScreen() {
           accessibilityLabel="Back"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={text.primary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>
           How did it feel?
         </Text>
         <View style={styles.headerSpacer} />
@@ -293,7 +293,7 @@ export function MoodPickerScreen() {
                           y={cell.y + 3}
                           text={cell.mood.label}
                           font={hexFont}
-                          color={sel ? colors.background.base : qColor}
+                          color={sel ? bg.base : qColor}
                         />
                       )}
                     </Group>
