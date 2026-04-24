@@ -5,14 +5,14 @@ import { Controller, useForm } from 'react-hook-form'
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
+  Text,
   View,
-  Pressable,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { ThemedText } from '@/components/ui/ThemedText'
 import { useTheme } from '@/theme/useTheme'
 
 import type { CreateUserRequest } from '../api/authClient'
@@ -31,7 +31,7 @@ interface RegisterFormData {
 export function RegisterScreen() {
   const router = useRouter()
   const { alert } = useAlert()
-  const { bg, text, rule, accent, mood, moodBg, semantic, space, radius } = useTheme()
+  const { bg, text, accent, space } = useTheme()
 
   const {
     control,
@@ -64,30 +64,23 @@ export function RegisterScreen() {
       ])
     },
     onError: (error) => {
-      alert(
-        'Registration Failed',
-        error.message || 'Something went wrong. Please try again.',
-      )
+      alert('Registration Failed', error.message || 'Something went wrong. Please try again.')
     },
   })
 
   const password = watch('password')
+  const isLoading = registerMutation.isPending
 
   const onSubmit = (data: RegisterFormData) => {
     const { confirmPassword, dateOfBirth, ...rest } = data
-
     const timeZone = Localization.getCalendars()[0]?.timeZone || 'America/New_York'
-
     const completeUserData: CreateUserRequest = {
       ...rest,
       dateOfBirth: formatDateForApi(dateOfBirth),
       timeZone,
     }
-
     registerMutation.mutate(completeUserData)
   }
-
-  const isLoading = registerMutation.isPending
 
   const calculateAge = (birthDate: Date): number => {
     const today = new Date()
@@ -107,61 +100,36 @@ export function RegisterScreen() {
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: bg.base }]}
-      edges={['top']}
-    >
+    <SafeAreaView style={[styles.container, { backgroundColor: bg.base }]} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={{
-            paddingHorizontal: space[6],
-            paddingTop: space[8],
-            paddingBottom: space[10],
-          }}
+          contentContainerStyle={{ paddingHorizontal: 28, paddingTop: space[10], paddingBottom: space[6] }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* Header */}
           <View style={styles.header}>
-            <ThemedText
-              style={{
-                fontSize: 36,
-                fontFamily: 'Fraunces_400Regular',
-                color: text.primary,
-                marginBottom: space[2],
-                textAlign: 'center',
-              }}
-            >
+            <Text style={[styles.heading, { color: text.primary }]}>
               Create Account
-            </ThemedText>
-            <ThemedText
-              style={{
-                fontSize: 16,
-                color: text.secondary,
-                textAlign: 'center',
-              }}
-            >
-              Start your mindful running journey
-            </ThemedText>
+            </Text>
+            <Text style={[styles.tagline, { color: text.secondary }]}>
+              Start running by feel.
+            </Text>
           </View>
 
+          {/* Form */}
           <View style={styles.form}>
             <Controller
               control={control}
               name="firstName"
               rules={{
                 required: 'First name is required',
-                minLength: {
-                  value: 2,
-                  message: 'Name must be at least 2 characters',
-                },
-                maxLength: {
-                  value: 100,
-                  message: 'Name must be less than 100 characters',
-                },
+                minLength: { value: 2, message: 'Name must be at least 2 characters' },
+                maxLength: { value: 100, message: 'Name must be less than 100 characters' },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
@@ -182,14 +150,8 @@ export function RegisterScreen() {
               name="lastName"
               rules={{
                 required: 'Last name is required',
-                minLength: {
-                  value: 2,
-                  message: 'Name must be at least 2 characters',
-                },
-                maxLength: {
-                  value: 100,
-                  message: 'Name must be less than 100 characters',
-                },
+                minLength: { value: 2, message: 'Name must be at least 2 characters' },
+                maxLength: { value: 100, message: 'Name must be less than 100 characters' },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
@@ -236,12 +198,9 @@ export function RegisterScreen() {
               rules={{
                 required: 'Date of birth is required',
                 validate: {
-                  notFuture: (value) =>
-                    value <= new Date() || 'Date of birth cannot be in the future',
-                  minimumAge: (value) =>
-                    calculateAge(value) >= 13 || 'You must be at least 13 years old',
-                  maximumAge: (value) =>
-                    calculateAge(value) <= 120 || 'Please enter a valid date of birth',
+                  notFuture: (value) => value <= new Date() || 'Date of birth cannot be in the future',
+                  minimumAge: (value) => calculateAge(value) >= 13 || 'You must be at least 13 years old',
+                  maximumAge: (value) => calculateAge(value) <= 120 || 'Please enter a valid date of birth',
                 },
               }}
               render={({ field: { value, onChange } }) => (
@@ -262,10 +221,7 @@ export function RegisterScreen() {
               name="password"
               rules={{
                 required: 'Password is required',
-                minLength: {
-                  value: 8,
-                  message: 'Password must be at least 8 characters',
-                },
+                minLength: { value: 8, message: 'Password must be at least 8 characters' },
                 pattern: {
                   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
                   message: 'Password must contain uppercase, lowercase, and number',
@@ -308,28 +264,30 @@ export function RegisterScreen() {
 
             <Button
               onPress={handleSubmit(onSubmit)}
+              size="lg"
               loading={isLoading}
               disabled={isLoading}
-              style={{ marginTop: space[4] }}
+              style={{ marginTop: 2 }}
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? 'Creating Account…' : 'Create Account'}
             </Button>
           </View>
 
-          <SocialAuthButtons 
+          <SocialAuthButtons
+            label="Or sign up with"
             onStravaPress={() => alert('Strava Registration', 'Integration coming soon.')}
             onGooglePress={() => alert('Google Registration', 'Integration coming soon.')}
             onApplePress={() => alert('Apple Registration', 'Integration coming soon.')}
           />
 
           <View style={styles.footer}>
-            <ThemedText style={{ color: text.secondary }}>
-              Already have an account?{' '}
-            </ThemedText>
+            <Text style={[styles.footerText, { color: text.secondary }]}>
+              Already have an account?{'  '}
+            </Text>
             <Pressable onPress={() => router.push('/(auth)/login')}>
-              <ThemedText style={{ color: accent.default, fontWeight: '600' }}>
+              <Text style={[styles.loginLink, { color: accent.default }]}>
                 Log in
-              </ThemedText>
+              </Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -339,25 +297,40 @@ export function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  keyboardView: { flex: 1 },
+  scrollView: { flex: 1 },
   header: {
+    alignItems: 'center',
     marginBottom: 32,
   },
+  heading: {
+    fontFamily: 'Fraunces_400Regular',
+    fontSize: 32,
+    letterSpacing: -0.02 * 32,
+    lineHeight: 32 * 1.05,
+  },
+  tagline: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 15,
+    marginTop: 8,
+  },
   form: {
-    gap: 4,
+    gap: 14,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 40,
     paddingBottom: 20,
+  },
+  footerText: {
+    fontFamily: 'Manrope',
+    fontSize: 14,
+  },
+  loginLink: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 13,
   },
 })
