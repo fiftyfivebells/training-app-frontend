@@ -1,6 +1,7 @@
 import { differenceInCalendarDays, format, parseISO } from 'date-fns'
 import { StyleSheet, Text, View } from 'react-native'
 
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import type { Block } from '../blocks.types'
@@ -12,7 +13,7 @@ type Props = {
 }
 
 export function ActiveBlockCard({ block, config }: Props) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, radius } = useTheme()
 
   const today = new Date()
   const currentDay = differenceInCalendarDays(today, parseISO(block.startDate)) + 1
@@ -29,16 +30,13 @@ export function ActiveBlockCard({ block, config }: Props) {
           backgroundColor: bg.surface,
           borderColor: rule.subtle,
           borderLeftColor: config.accentColor,
+          borderTopRightRadius: radius.sm,
+          borderBottomRightRadius: radius.sm,
         },
       ]}
     >
       <View style={styles.identityTop}>
-        <View style={styles.identityTypeRow}>
-          <View style={[styles.dot8, { backgroundColor: config.accentColor }]} />
-          <Text style={[styles.typeLabel, { color: config.accentColor }]}>
-            {config.label.toUpperCase()}
-          </Text>
-        </View>
+        <Dateline style={{ color: config.accentColor }}>{config.label}</Dateline>
 
         <View
           style={[
@@ -46,6 +44,7 @@ export function ActiveBlockCard({ block, config }: Props) {
             {
               backgroundColor: config.accentColor + '14',
               borderColor: config.accentColor + '26',
+              borderRadius: radius.sm,
             },
           ]}
         >
@@ -96,50 +95,32 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderLeftWidth: 3,
-    borderTopRightRadius: 14,
-    borderBottomRightRadius: 14,
     padding: 16,
   },
   identityTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-  },
-  identityTypeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  dot8: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    flexShrink: 0,
-  },
-  typeLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.06,
+    marginBottom: 8,
   },
   dayCounter: {
     borderWidth: 1,
-    borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,
     alignItems: 'flex-end',
   },
   dayLabel: {
+    fontFamily: 'Manrope',
     fontSize: 10,
   },
   dayNumber: {
+    fontFamily: 'Fraunces_400Regular',
     fontSize: 22,
-    fontWeight: '600',
     lineHeight: 26,
   },
   tagline: {
     fontSize: 22,
     lineHeight: 28,
-    marginTop: 8,
   },
   progressTrack: {
     height: 5,
@@ -157,6 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   progressMetaText: {
+    fontFamily: 'Manrope',
     fontSize: 11,
   },
 })

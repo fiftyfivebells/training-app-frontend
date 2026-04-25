@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router'
 import React, { useMemo } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import { ThemedText } from '@/components/ui/ThemedText'
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import { BLOCK_TYPE_CONFIG, Block } from '../blocks.types'
@@ -13,7 +13,7 @@ type Props = {
 }
 
 function ProgressBar({ percent, accentColor }: { percent: number; accentColor: string }) {
-  const { bg, text, rule, accent, mood, moodBg, semantic, radius } = useTheme()
+  const { rule, radius } = useTheme()
   return (
     <View
       style={[
@@ -41,7 +41,7 @@ function ProgressBar({ percent, accentColor }: { percent: number; accentColor: s
 }
 
 export function ActiveBlockBanner({ block, onStartBlock }: Props) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, radius } = useTheme()
   const router = useRouter()
 
   const progress = useMemo(() => {
@@ -66,24 +66,25 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
         {
           backgroundColor: bg.surface,
           borderColor: rule.subtle,
+          borderRadius: radius.sm,
         },
       ]}
       onPress={() => router.push(`/blocks`)}
     >
       <View style={styles.content}>
         <View style={styles.header}>
-          <ThemedText style={styles.label}>ACTIVE BLOCK</ThemedText>
-          <ThemedText style={[styles.title, { color: text.primary }]}>
+          <Dateline style={styles.labelSpacing}>Active Block</Dateline>
+          <Text style={[styles.title, { color: text.primary }]}>
             {block.name}
-          </ThemedText>
+          </Text>
         </View>
 
         <ProgressBar percent={progress} accentColor={config.accentColor} />
 
         <View style={styles.footer}>
-          <ThemedText style={styles.meta}>
+          <Text style={[styles.meta, { color: text.tertiary }]}>
             Day {Math.round(progress / (100 / 30))} of 30
-          </ThemedText>
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -93,7 +94,6 @@ export function ActiveBlockBanner({ block, onStartBlock }: Props) {
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 16,
-    borderRadius: 12,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -103,15 +103,12 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 8,
   },
-  label: {
-    fontSize: 10,
-    fontWeight: '600',
-    opacity: 0.6,
+  labelSpacing: {
     marginBottom: 2,
   },
   title: {
+    fontFamily: 'ManropeSemiBold',
     fontSize: 14,
-    fontWeight: '700',
   },
   progressTrack: {
     width: '100%',
@@ -122,7 +119,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   meta: {
+    fontFamily: 'Manrope',
     fontSize: 11,
-    opacity: 0.6,
   },
 })

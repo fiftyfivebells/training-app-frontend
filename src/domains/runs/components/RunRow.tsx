@@ -26,7 +26,7 @@ type RunRowProps = {
 }
 
 export function RunRow({ run, compact = false }: RunRowProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { text, rule, mood } = useTheme()
   const { unit } = useDistanceUnit()
   const { data: moods } = useGetAllMoods()
 
@@ -45,7 +45,11 @@ export function RunRow({ run, compact = false }: RunRowProps) {
 
   return (
     <TouchableOpacity
-      style={[styles.row, compact && styles.rowCompact]}
+      style={[
+        styles.row,
+        compact && styles.rowCompact,
+        { borderLeftColor: moodColor ?? 'transparent' },
+      ]}
       onPress={() => router.push(`/runs/${run.id}`)}
       activeOpacity={0.7}
     >
@@ -91,13 +95,6 @@ export function RunRow({ run, compact = false }: RunRowProps) {
         )}
       </View>
 
-      {runMood && moodColor && (
-        <View style={[styles.moodContainer, compact && styles.moodContainerCompact]}>
-          <View style={[styles.moodDot, { backgroundColor: moodColor }]} />
-          <Text style={[styles.moodLabel, { color: text.tertiary }]}>{runMood.label}</Text>
-        </View>
-      )}
-
       {!compact && (
         <Ionicons name="chevron-forward" size={16} color={text.tertiary} style={styles.chevron} />
       )}
@@ -111,6 +108,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: 13,
     paddingHorizontal: 14,
+    borderLeftWidth: 3,
   },
   rowCompact: {
     paddingVertical: 10,
@@ -121,8 +119,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   title: {
+    fontFamily: 'ManropeSemiBold',
     fontSize: 14,
-    fontWeight: '500',
     lineHeight: 20,
   },
   subLine: {
@@ -131,6 +129,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   timestamp: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     lineHeight: 16,
   },
@@ -146,40 +145,20 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   statValue: {
+    fontFamily: 'ManropeSemiBold',
     fontSize: 18,
-    fontWeight: '600',
     letterSpacing: -0.5,
     lineHeight: 22,
   },
   statUnit: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     fontWeight: '400',
     lineHeight: 16,
   },
   compactStats: {
+    fontFamily: 'Manrope',
     fontSize: 12,
-  },
-  moodContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    marginLeft: 'auto',
-  },
-  moodContainerCompact: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 4,
-    marginLeft: 0,
-    paddingTop: 2,
-  },
-  moodDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  moodLabel: {
-    fontSize: 11,
-    lineHeight: 16,
   },
   chevron: {
     marginTop: 2,

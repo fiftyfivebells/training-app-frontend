@@ -3,6 +3,7 @@ import { router } from 'expo-router'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { Dateline } from '@/components/ui'
 import { useActiveBlock } from '@/domains/blocks/hooks/useActiveBlock'
 import { useTodayAffirmation } from '@/domains/blocks/hooks/useTodayAffirmation'
 import type { Block } from '@/domains/blocks/blocks.types'
@@ -34,24 +35,28 @@ type StatCellProps = {
 }
 
 function StatCell({ label, value, unit, dimmed = false }: StatCellProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, radius } = useTheme()
   return (
     <View
       style={[
         styles.statCell,
-        { backgroundColor: bg.surface, borderColor: rule.subtle },
+        { backgroundColor: bg.surface, borderColor: rule.subtle, borderRadius: radius.sm },
       ]}
     >
-      <Text style={[styles.statLabel, { color: text.tertiary }]}>{label}</Text>
-      <Text
-        style={[
-          styles.statValue,
-          { color: dimmed ? text.tertiary : text.primary },
-        ]}
-      >
-        {value}
-      </Text>
-      <Text style={[styles.statUnit, { color: text.tertiary }]}>{unit}</Text>
+      <Dateline style={styles.statLabelSpacing}>{label}</Dateline>
+      <View style={styles.statValueRow}>
+        <Text
+          style={[
+            styles.statValue,
+            { color: dimmed ? text.tertiary : text.primary },
+          ]}
+        >
+          {value}
+        </Text>
+        <Text style={[styles.statUnit, { color: dimmed ? text.disabled : text.tertiary }]}>
+          {unit}
+        </Text>
+      </View>
     </View>
   )
 }
@@ -64,33 +69,28 @@ type BlockCardProps = {
 }
 
 function BlockCard({ block, currentDay, totalDays, progressPercent }: BlockCardProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, radius } = useTheme()
   return (
     <TouchableOpacity
       onPress={() => router.push(`/blocks/${block.id}`)}
       activeOpacity={0.8}
       style={[
         styles.blockCard,
-        { backgroundColor: bg.surface, borderColor: rule.subtle },
+        { backgroundColor: bg.surface, borderColor: rule.subtle, borderRadius: radius.sm },
       ]}
     >
       <View style={[styles.blockAccent, { backgroundColor: accent.default }]} />
       <View style={styles.blockContent}>
-        <Text style={[styles.sectionLabel, { color: accent.default }]}>ACTIVE BLOCK</Text>
+        <Dateline style={[styles.blockLabelSpacing, { color: accent.default }]}>
+          Active Block
+        </Dateline>
         <View style={styles.blockNameRow}>
           <Text style={[styles.blockName, { color: text.primary }]} numberOfLines={1}>
             {block.name}
           </Text>
-          <View
-            style={[
-              styles.dayPill,
-              { backgroundColor: bg.surface, borderColor: bg.elevated },
-            ]}
-          >
-            <Text style={[styles.dayPillText, { color: accent.default }]}>
-              Day {currentDay}
-            </Text>
-          </View>
+          <Text style={[styles.blockDayCounter, { color: text.tertiary }]}>
+            Day {currentDay} / {totalDays}
+          </Text>
         </View>
         <View style={[styles.progressTrack, { backgroundColor: bg.base }]}>
           <View
@@ -119,16 +119,16 @@ function BlockCard({ block, currentDay, totalDays, progressPercent }: BlockCardP
 type AffirmationCardProps = { affirmation: string | undefined }
 
 function AffirmationCard({ affirmation }: AffirmationCardProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, accent, radius } = useTheme()
   if (!affirmation) return null
   return (
     <View
       style={[
         styles.affirmationCard,
-        { backgroundColor: bg.surface, borderColor: bg.elevated },
+        { backgroundColor: bg.surface, borderColor: bg.elevated, borderRadius: radius.sm },
       ]}
     >
-      <Text style={[styles.sectionLabel, { color: accent.default }]}>TODAY</Text>
+      <Dateline style={[styles.blockLabelSpacing, { color: accent.default }]}>Today</Dateline>
       <Text style={[styles.affirmationText, { color: text.primary }]}>
         {affirmation}
       </Text>
@@ -141,18 +141,18 @@ type RecentRunsCardProps = {
 }
 
 function RecentRunsCard({ runs }: RecentRunsCardProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, radius } = useTheme()
   return (
     <View
       style={[
         styles.recentRunsCard,
-        { backgroundColor: bg.surface, borderColor: rule.subtle },
+        { backgroundColor: bg.surface, borderColor: rule.subtle, borderRadius: radius.sm },
       ]}
     >
       <View style={styles.recentRunsHeader}>
         <Text style={[styles.recentRunsTitle, { color: text.primary }]}>Recent runs</Text>
         <TouchableOpacity onPress={() => router.navigate('/logbook')}>
-          <Text style={[styles.seeAll, { color: accent.default }]}>See all</Text>
+          <Text style={[styles.seeAll, { color: text.tertiary }]}>See all</Text>
         </TouchableOpacity>
       </View>
       {runs.length === 0 ? (
@@ -181,7 +181,7 @@ function RecentRunsCard({ runs }: RecentRunsCardProps) {
 // ---------- main screen ----------
 
 export function HomeScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule } = useTheme()
   const insets = useSafeAreaInsets()
   const { unit } = useDistanceUnit()
 
@@ -298,12 +298,13 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
   },
   greetingSub: {
+    fontFamily: 'Manrope',
     fontSize: 13,
     lineHeight: 18,
   },
   greetingName: {
-    fontSize: 26,
     fontFamily: 'Fraunces_400Regular',
+    fontSize: 26,
     lineHeight: 29,
     letterSpacing: -0.3,
   },
@@ -316,8 +317,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarText: {
+    fontFamily: 'ManropeSemiBold',
     fontSize: 14,
-    fontWeight: '600',
   },
   scrollContent: {
     paddingHorizontal: 16,
@@ -327,7 +328,6 @@ const styles = StyleSheet.create({
   // Block card
   blockCard: {
     flexDirection: 'row',
-    borderRadius: 14,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -338,11 +338,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 14,
   },
-  sectionLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+  blockLabelSpacing: {
     marginBottom: 6,
   },
   blockNameRow: {
@@ -354,18 +350,12 @@ const styles = StyleSheet.create({
   },
   blockName: {
     flex: 1,
+    fontFamily: 'ManropeSemiBold',
     fontSize: 16,
-    fontWeight: '600',
   },
-  dayPill: {
-    borderRadius: 20,
-    borderWidth: 1,
-    paddingVertical: 2,
-    paddingHorizontal: 10,
-  },
-  dayPillText: {
+  blockDayCounter: {
+    fontFamily: 'Manrope',
     fontSize: 11,
-    fontWeight: '500',
   },
   progressTrack: {
     height: 4,
@@ -382,17 +372,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   progressMetaText: {
+    fontFamily: 'Manrope',
     fontSize: 11,
   },
   // Affirmation card
   affirmationCard: {
-    borderRadius: 16,
     borderWidth: 1,
     padding: 16,
   },
   affirmationText: {
-    fontSize: 15,
     fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 15,
     lineHeight: 24,
   },
   // Stats row
@@ -402,31 +392,29 @@ const styles = StyleSheet.create({
   },
   statCell: {
     flex: 1,
-    borderRadius: 12,
     borderWidth: 1,
     paddingVertical: 12,
     paddingHorizontal: 10,
   },
-  statLabel: {
-    fontSize: 9,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+  statLabelSpacing: {
     marginBottom: 4,
   },
+  statValueRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 3,
+  },
   statValue: {
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.5,
-    lineHeight: 24,
+    fontFamily: 'Fraunces_400Regular',
+    fontSize: 28,
+    lineHeight: 32,
   },
   statUnit: {
-    fontSize: 10,
-    marginTop: 1,
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 11,
   },
   // Recent runs card
   recentRunsCard: {
-    borderRadius: 16,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -439,12 +427,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   recentRunsTitle: {
+    fontFamily: 'ManropeSemiBold',
     fontSize: 13,
-    fontWeight: '600',
   },
   seeAll: {
+    fontFamily: 'Manrope',
     fontSize: 11,
-    fontWeight: '500',
   },
   divider: {
     height: 1,
@@ -457,11 +445,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   emptyStateText: {
+    fontFamily: 'Manrope',
     fontSize: 13,
     textAlign: 'center',
   },
   emptyStateCta: {
+    fontFamily: 'ManropeSemiBold',
     fontSize: 13,
-    fontWeight: '500',
   },
 })
