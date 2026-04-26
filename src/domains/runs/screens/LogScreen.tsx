@@ -7,7 +7,6 @@ import { Controller, useController, useForm } from 'react-hook-form'
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,24 +16,23 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { Ionicons } from '@expo/vector-icons'
-
 import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
-import { QUADRANT_DESCRIPTOR } from '@/domains/moods/moods.constants'
+import type { Mood, MoodCategoryKey } from '@/domains/moods/moods.types'
+import { MoodGridModal } from '@/domains/moods/components/MoodGridModal'
 import { useLogRun } from '@/domains/runs/hooks/useLogRun'
+import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { calculateMeters } from '@/domains/runs/utils/distance'
 import { redistributeTime } from '@/domains/runs/utils/duration'
-import { formatDateForApi, formatDateLabel, timeOfDay } from '@/domains/runs/utils/datetime'
+import { formatDateForApi, formatDateLabel } from '@/domains/runs/utils/datetime'
 import { formatPace } from '@/domains/runs/utils/formatters'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
 import { useDistanceUnitPreference } from '@/domains/users/hooks/useDistanceUnitPreference'
-import { useMoodSelectionStore } from '@/store/moodSelectionStore'
 import { useTheme } from '@/theme/useTheme'
 
+import { Dateline, DoubleRule } from '@/components/ui'
 import {
   DistanceField,
   DurationField,
-  MoodWidget,
   RpeSelector,
   RunTypePicker,
 } from '../components'
@@ -50,25 +48,87 @@ interface FormValues {
   notes: string
 }
 
+const QUADRANT_COLOR_KEY: Record<MoodCategoryKey, 'highGood' | 'highTough' | 'lowGood' | 'lowTough'> = {
+  'high-pleasant': 'highGood',
+  'high-challenging': 'highTough',
+  'low-pleasant': 'lowGood',
+  'low-challenging': 'lowTough',
+}
+
+const QUADRANT_CELLS: Array<{
+  key: 'highGood' | 'highTough' | 'lowGood' | 'lowTough'
+  quadrant: MoodCategoryKey
+  label: string
+  sublabel: string
+}> = [
+  { key: 'highTough', quadrant: 'high-challenging', label: 'HIGH · TOUGH', sublabel: 'Hard work & grit' },
+  { key: 'highGood',  quadrant: 'high-pleasant',    label: 'HIGH · GOOD',  sublabel: 'Energized & thriving' },
+  { key: 'lowTough',  quadrant: 'low-challenging',  label: 'LOW · TOUGH',  sublabel: 'Drained & heavy' },
+  { key: 'lowGood',   quadrant: 'low-pleasant',     label: 'LOW · GOOD',   sublabel: 'Calm & restorative' },
+]
+
+type MoodSelectedBoxProps = {
+  mood: Mood | null
+  moodColor: string | null
+  moodBgColor: string | null
+  onPress: () => void
+}
+
+function MoodSelectedBox({ mood, moodColor, moodBgColor, onPress }: MoodSelectedBoxProps) {
+  const { text, rule, radius } = useTheme()
+  if (!mood || !moodColor || !moodBgColor) {
+    return (
+      <TouchableOpacity
+        style={[styles.moodBox, styles.moodBoxEmpty, { borderColor: rule.strong, borderRadius: radius.sm }]}
+        onPress={onPress}
+        activeOpacity={0.7}
+      >
+        <Text style={[styles.moodBoxEmptyText, { color: text.tertiary }]}>
+          Nothing yet — tap a type below
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+  return (
+    <TouchableOpacity
+      style={[
+        styles.moodBox,
+        styles.moodBoxSelected,
+        { borderColor: moodColor, backgroundColor: moodBgColor, borderRadius: radius.sm },
+      ]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.moodIcon, { borderColor: moodColor, borderRadius: radius.sm }]}>
+        <View style={[styles.moodIconInner, { backgroundColor: moodColor, borderRadius: radius.xs }]} />
+      </View>
+      <View style={styles.moodBoxText}>
+        <Text style={[styles.moodBoxWord, { color: moodColor }]}>{mood.label}</Text>
+        <Text style={[styles.moodBoxDef, { color: moodColor }]}>{mood.description}</Text>
+      </View>
+    </TouchableOpacity>
+  )
+}
+
 export function LogScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, radius } = useTheme()
   const insets = useSafeAreaInsets()
 
   const { unit: savedUnit, loaded: unitLoaded } = useDistanceUnit()
   const { setUnit: persistUnit } = useDistanceUnitPreference()
   const [displayUnit, setDisplayUnit] = useState<'km' | 'mi'>(savedUnit)
 
-  // Sync savedUnit once loaded (handles async preference load)
   useEffect(() => {
     if (unitLoaded) setDisplayUnit(savedUnit)
   }, [unitLoaded, savedUnit])
 
   const { data: moods = [] } = useGetAllMoods()
-  const storeMoodId = useMoodSelectionStore((s) => s.moodId)
-  const storeClear = useMoodSelectionStore((s) => s.clear)
+  const { data: rawRuns = [] } = useRuns()
 
   const [date, setDate] = useState<Date>(new Date())
   const [showDatePicker, setShowDatePicker] = useState(false)
+  const [showMoodGrid, setShowMoodGrid] = useState(false)
+  const [openQuadrant, setOpenQuadrant] = useState<MoodCategoryKey | null>(null)
 
   const scrollRef = useRef<ScrollView>(null)
   const fieldPositions = useRef<Partial<Record<string, number>>>({})
@@ -87,15 +147,10 @@ export function LogScreen() {
       ss: '',
       runType: '',
       exertionRating: null,
-      moodId: storeMoodId,
+      moodId: null,
       notes: '',
     },
   })
-
-  // Sync store → RHF whenever mood picker returns a selection
-  useEffect(() => {
-    setValue('moodId', storeMoodId)
-  }, [storeMoodId, setValue])
 
   const watchedDistance = watch('distance')
   const watchedMoodId = watch('moodId')
@@ -109,7 +164,6 @@ export function LogScreen() {
       + (Number(watchedSS) || 0)
   }, [watchedHH, watchedMM, watchedSS])
 
-  // useController hooks for hh/mm/ss to avoid nested Controller render props
   const { field: hhField } = useController({
     control,
     name: 'hh',
@@ -124,18 +178,13 @@ export function LogScreen() {
     return `${formatPace(meters, totalSeconds, displayUnit)} /${displayUnit}`
   }, [watchedDistance, totalSeconds, displayUnit])
 
-  const titleString = useMemo(() => {
-    const tod = timeOfDay()
-    if (!watchedMoodId) return `${tod} Run`
-    const mood = moods.find((m) => m.id === watchedMoodId)
-    if (!mood) return `${tod} Run`
-    return `${QUADRANT_DESCRIPTOR[mood.quadrant]} ${tod} Run`
-  }, [watchedMoodId, moods])
-
   const selectedMood = useMemo(
     () => moods.find((m) => m.id === watchedMoodId) ?? null,
     [watchedMoodId, moods],
   )
+
+  const moodColor = selectedMood ? mood[QUADRANT_COLOR_KEY[selectedMood.quadrant]] : null
+  const moodBgColor = selectedMood ? moodBg[QUADRANT_COLOR_KEY[selectedMood.quadrant]] : null
 
   const handleDurationBlur = useCallback(() => {
     const { hh, mm, ss } = redistributeTime(watchedHH, watchedMM, watchedSS)
@@ -145,13 +194,11 @@ export function LogScreen() {
   }, [watchedHH, watchedMM, watchedSS, setValue])
 
   const handleBack = useCallback(() => {
-    storeClear()
     router.back()
-  }, [storeClear])
+  }, [])
 
   const { mutate: logRun, isPending } = useLogRun({
     onSuccess: () => {
-      storeClear()
       router.back()
     },
   })
@@ -215,6 +262,13 @@ export function LogScreen() {
     }
   }, [date])
 
+  const openMoodGrid = useCallback((quadrant: MoodCategoryKey | null) => {
+    setOpenQuadrant(quadrant)
+    setShowMoodGrid(true)
+  }, [])
+
+  const entryNumber = rawRuns.length + 1
+
   return (
     <KeyboardAvoidingView
       style={[styles.screen, { backgroundColor: bg.base }]}
@@ -226,21 +280,49 @@ export function LogScreen() {
           styles.header,
           {
             paddingTop: insets.top + 8,
-            borderBottomColor: rule.subtle,
+            paddingHorizontal: 16,
             backgroundColor: bg.base,
           },
         ]}
       >
-        <TouchableOpacity
-          onPress={handleBack}
-          style={styles.backBtn}
-          accessibilityLabel="Dismiss"
-          accessibilityRole="button"
-        >
-          <Ionicons name="arrow-back" size={24} color={text.secondary} />
+        {/* Row 1: Cancel / ENTRY № N / Save */}
+        <View style={styles.headerRow}>
+          <TouchableOpacity
+            onPress={handleBack}
+            hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+            accessibilityLabel="Cancel"
+            accessibilityRole="button"
+          >
+            <Text style={[styles.headerCancel, { color: text.secondary }]}>Cancel</Text>
+          </TouchableOpacity>
+
+          <Dateline style={styles.entryLabel}>ENTRY № {entryNumber}</Dateline>
+
+          <TouchableOpacity
+            onPress={handleSubmitPress}
+            disabled={isPending}
+            hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+            accessibilityLabel="Save run"
+            accessibilityRole="button"
+          >
+            <Text style={[styles.headerSave, { color: isPending ? text.tertiary : accent.default }]}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Row 2: title */}
+        <Text style={[styles.screenTitle, { color: text.primary }]}>Log a run</Text>
+
+        {/* Row 3: tappable date */}
+        <TouchableOpacity onPress={openDatePicker} accessibilityLabel="Select date">
+          <Text style={[styles.dateLabel, { color: text.secondary }]}>
+            {formatDateLabel(date)}
+          </Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: text.primary }]}>Log run</Text>
-        <View style={styles.headerSpacer} />
+
+        {/* Row 4: double rule */}
+        <DoubleRule style={styles.headerRule} />
       </View>
 
       <ScrollView
@@ -250,50 +332,19 @@ export function LogScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Title preview banner */}
-        <View
-          style={[
-            styles.titleBanner,
-            { backgroundColor: bg.surface, borderColor: rule.subtle },
-          ]}
-        >
-          <Text style={[styles.titleBannerLabel, { color: text.tertiary }]}>
-            Saving as{' '}
-            <Text style={[styles.titleBannerValue, { color: accent.default }]}>
-              {titleString}
-            </Text>
-          </Text>
-        </View>
-
-        {/* Date */}
-        <View
-          style={styles.section}
-          onLayout={(e) => { fieldPositions.current.date = e.nativeEvent.layout.y }}
-        >
-          <Text style={[styles.fieldLabel, { color: text.tertiary }]}>DATE</Text>
-          <TouchableOpacity
-            onPress={openDatePicker}
-            style={[styles.dateInput, { backgroundColor: bg.input, borderColor: rule.subtle }]}
-            accessibilityLabel="Select date"
-          >
-            <Text style={[styles.dateInputText, { color: text.primary }]}>
-              {formatDateLabel(date)}
-            </Text>
-            <Ionicons name="calendar-outline" size={18} color={text.tertiary} />
-          </TouchableOpacity>
-          {showDatePicker && Platform.OS === 'ios' && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="spinner"
-              maximumDate={new Date()}
-              onChange={(_e, selected) => {
-                setShowDatePicker(false)
-                if (selected) setDate(selected)
-              }}
-            />
-          )}
-        </View>
+        {/* iOS date picker — in scroll area to avoid expanding fixed header */}
+        {showDatePicker && Platform.OS === 'ios' && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="spinner"
+            maximumDate={new Date()}
+            onChange={(_e, selected) => {
+              setShowDatePicker(false)
+              if (selected) setDate(selected)
+            }}
+          />
+        )}
 
         {/* Distance + unit */}
         <Controller
@@ -357,25 +408,9 @@ export function LogScreen() {
           )}
         />
 
-        {/* Mood */}
-        <Controller
-          control={control}
-          name="moodId"
-          rules={{ validate: (v) => v !== null || 'Select a mood to log your run' }}
-          render={({ field: { value } }) => (
-            <MoodWidget
-              value={value}
-              selectedMood={selectedMood}
-              hasError={!!errors.moodId}
-              errorMessage={errors.moodId?.message}
-              onLayout={(e) => { fieldPositions.current.moodId = e.nativeEvent.layout.y }}
-            />
-          )}
-        />
-
         {/* Notes */}
         <View style={styles.section}>
-          <Text style={[styles.fieldLabel, { color: text.tertiary }]}>NOTES</Text>
+          <Dateline>Notes</Dateline>
           <Controller
             control={control}
             name="notes"
@@ -386,6 +421,7 @@ export function LogScreen() {
                   {
                     backgroundColor: bg.input,
                     borderColor: rule.subtle,
+                    borderRadius: radius.sm,
                     color: text.primary,
                   },
                 ]}
@@ -393,7 +429,7 @@ export function LogScreen() {
                 onChangeText={onChange}
                 onBlur={onBlur}
                 multiline
-                placeholder="How did your run feel today?"
+                placeholder="How was it?"
                 placeholderTextColor={text.tertiary}
                 accessibilityLabel="Notes"
               />
@@ -401,62 +437,120 @@ export function LogScreen() {
           />
         </View>
 
-        {/* Submit */}
-        <View style={styles.submitArea}>
-          <Pressable
-            onPress={handleSubmitPress}
-            disabled={isPending}
-            style={({ pressed }) => [
-              styles.submitBtn,
-              {
-                backgroundColor: pressed ? accent.pressed : accent.default,
-                borderColor: bg.elevated,
-                opacity: isPending ? 0.6 : 1,
-              },
-            ]}
-            accessibilityLabel="Log this run"
-            accessibilityRole="button"
-          >
-            {/* Plus icon — two rectangles */}
-            <View style={styles.plusContainer}>
-              <View style={[styles.plusH, { backgroundColor: bg.base }]} />
-              <View style={[styles.plusV, { backgroundColor: bg.base }]} />
+        {/* Mood — selected box + 2×2 quadrant trigger grid */}
+        <Controller
+          control={control}
+          name="moodId"
+          rules={{ validate: (v) => v !== null || 'Select a mood to log your run' }}
+          render={() => (
+            <View
+              style={styles.moodSection}
+              onLayout={(e) => { fieldPositions.current.moodId = e.nativeEvent.layout.y }}
+            >
+              <Dateline>HOW DID IT FEEL?</Dateline>
+
+              <MoodSelectedBox
+                mood={selectedMood}
+                moodColor={moodColor}
+                moodBgColor={moodBgColor}
+                onPress={() => openMoodGrid(selectedMood?.quadrant ?? null)}
+              />
+
+              <View style={styles.moodGrid}>
+                {QUADRANT_CELLS.map((cell) => {
+                  const isActive = selectedMood?.quadrant === cell.quadrant
+                  return (
+                    <TouchableOpacity
+                      key={cell.key}
+                      style={[
+                        styles.moodCell,
+                        {
+                          backgroundColor: isActive ? moodBg[cell.key] : 'transparent',
+                          borderColor: isActive ? mood[cell.key] : rule.default,
+                          borderWidth: isActive ? 2 : 1,
+                          borderRadius: radius.sm,
+                        },
+                      ]}
+                      onPress={() => openMoodGrid(cell.quadrant)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.moodCellLabel, { color: isActive ? mood[cell.key] : text.tertiary }]}>
+                        {cell.label}
+                      </Text>
+                      <Text style={[styles.moodCellSublabel, { color: isActive ? mood[cell.key] : text.secondary }]}>
+                        {cell.sublabel}
+                      </Text>
+                    </TouchableOpacity>
+                  )
+                })}
+              </View>
+
+              <View style={styles.moodAxisRow}>
+                <Text style={[styles.moodAxisLabel, { color: text.tertiary }]}>← TOUGH</Text>
+                <Text style={[styles.moodAxisLabel, { color: text.tertiary }]}>GOOD →</Text>
+              </View>
+
+              {!!errors.moodId && (
+                <Text style={[styles.errorText, { color: semantic.error }]}>
+                  {errors.moodId.message}
+                </Text>
+              )}
             </View>
-          </Pressable>
-          <Text style={[styles.submitLabel, { color: accent.default }]}>Log this run</Text>
-        </View>
+          )}
+        />
       </ScrollView>
+
+      <MoodGridModal
+        visible={showMoodGrid}
+        initialQuadrant={openQuadrant}
+        initialMoodId={watchedMoodId}
+        moods={moods}
+        onSelect={(m) => { setValue('moodId', m.id); setShowMoodGrid(false) }}
+        onDismiss={() => setShowMoodGrid(false)}
+      />
     </KeyboardAvoidingView>
   )
 }
-
-// ---------- styles ----------
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
   header: {
+    gap: 4,
+  },
+  headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: 14,
-    borderBottomWidth: 1,
+    justifyContent: 'space-between',
   },
-  backBtn: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+  headerCancel: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 14,
+    lineHeight: 20,
   },
-  headerTitle: {
+  entryLabel: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '600',
   },
-  headerSpacer: {
-    width: 40,
+  headerSave: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  screenTitle: {
+    fontFamily: 'Fraunces_400Regular',
+    fontSize: 24,
+    letterSpacing: -0.02 * 24,
+    lineHeight: 28,
+  },
+  dateLabel: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  headerRule: {
+    marginTop: 4,
   },
   scroll: {
     flex: 1,
@@ -464,83 +558,108 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 16,
-    gap: 24,
-  },
-  titleBanner: {
-    borderRadius: 12,
-    borderWidth: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-  },
-  titleBannerLabel: {
-    fontSize: 11,
-    fontFamily: 'System',
-  },
-  titleBannerValue: {
-    fontSize: 11,
-    fontFamily: 'Fraunces_400Regular_Italic',
+    gap: 10,
   },
   section: {
     gap: 8,
   },
-  fieldLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
-  },
-  dateInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-  },
-  dateInputText: {
-    fontSize: 15,
-  },
   notesInput: {
     minHeight: 72,
-    borderRadius: 12,
     borderWidth: 1,
     padding: 14,
     fontSize: 15,
+    fontFamily: 'Fraunces_400Regular_Italic',
     textAlignVertical: 'top',
   },
-  submitArea: {
-    alignItems: 'center',
-    gap: 10,
-    paddingTop: 8,
+  // Mood section
+  moodSection: {
+    gap: 8,
   },
-  submitBtn: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    borderWidth: 4,
-    alignItems: 'center',
+  moodBox: {
+    minHeight: 44,
     justifyContent: 'center',
   },
-  plusContainer: {
-    width: 38,
-    height: 38,
+  moodBoxEmpty: {
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  plusH: {
-    position: 'absolute',
-    width: 38,
-    height: 3.5,
-    borderRadius: 2,
-  },
-  plusV: {
-    position: 'absolute',
-    width: 3.5,
-    height: 38,
-    borderRadius: 2,
-  },
-  submitLabel: {
+  moodBoxEmptyText: {
+    fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 14,
+  },
+  moodBoxSelected: {
+    borderWidth: 1.5,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  moodIcon: {
+    width: 36,
+    height: 36,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  moodIconInner: {
+    width: 10,
+    height: 10,
+  },
+  moodBoxText: {
+    flex: 1,
+    gap: 2,
+  },
+  moodBoxWord: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 22,
+    lineHeight: 26,
+  },
+  moodBoxDef: {
+    fontFamily: 'Manrope',
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.04 * 10,
+    opacity: 0.85,
+  },
+  moodGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  moodCell: {
+    width: '47%',
+    padding: 12,
+    gap: 4,
+  },
+  moodCellLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
+    fontSize: 9,
+    letterSpacing: 0.14 * 9,
+  },
+  moodCellSublabel: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 13,
+    lineHeight: 16,
+  },
+  moodAxisRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  moodAxisLabel: {
+    fontFamily: 'Manrope',
+    fontWeight: '600',
+    fontSize: 9,
+    letterSpacing: 0.12 * 9,
+  },
+  errorText: {
+    fontFamily: 'Manrope',
+    fontSize: 12,
   },
 })

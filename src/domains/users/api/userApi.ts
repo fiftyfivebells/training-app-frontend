@@ -8,7 +8,7 @@ export type UpdateProfileRequest = components['schemas']['UpdateProfileRequest']
 export type UpdatePreferencesRequest = components['schemas']['UpdatePreferencesRequest']
 
 export class UserClient extends BaseApiClient {
-  private baseUsersRoute = '/users'
+  private baseUsersRoute = 'users'
 
   async getCurrentUser(): Promise<UserResponse> {
     return this.get<UserResponse>(`${this.baseUsersRoute}/me`)
