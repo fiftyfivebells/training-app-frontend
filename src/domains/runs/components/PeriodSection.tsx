@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import { formatDistanceParts } from '../utils/distance'
@@ -15,7 +16,7 @@ interface PeriodSectionProps {
 }
 
 export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectionProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, radius } = useTheme()
   const distParts = formatDistanceParts(period.totalMeters, unit)
 
   const visibleRuns =
@@ -42,7 +43,7 @@ export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectio
     <View style={styles.section}>
       {/* Period header */}
       <View style={styles.header}>
-        <Text style={[styles.label, { color: text.primary }]}>{period.label}</Text>
+        <Dateline>{period.label}</Dateline>
         <View style={styles.headerRight}>
           <Text style={[styles.runCount, { color: text.tertiary }]}>
             {period.runs.length} {period.runs.length === 1 ? 'run' : 'runs'}
@@ -57,7 +58,7 @@ export function PeriodSection({ period, expanded, onToggle, unit }: PeriodSectio
       <View
         style={[
           styles.card,
-          { backgroundColor: bg.surface, borderColor: rule.subtle },
+          { backgroundColor: bg.surface, borderColor: rule.subtle, borderRadius: radius.sm },
         ]}
       >
         {visibleRuns.map((run, index) => (
@@ -114,27 +115,22 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 10,
   },
-  label: {
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-  },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
   runCount: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     lineHeight: 16,
   },
   totalDist: {
+    fontFamily: 'ManropeSemiBold',
     fontSize: 11,
-    fontWeight: '500',
     lineHeight: 16,
   },
   card: {
-    borderRadius: 14,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -149,6 +145,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   footerText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     lineHeight: 16,
   },

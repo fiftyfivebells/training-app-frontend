@@ -1,5 +1,6 @@
 export { DistanceField } from './DistanceField'
 export { DurationField } from './DurationField'
+export { LogbookRunRow } from './LogbookRunRow'
 export { MoodWidget } from './MoodWidget'
 export { PeriodSection } from './PeriodSection'
 export { RunRow } from './RunRow'
