@@ -1,4 +1,3 @@
-import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useState } from 'react'
 import {
@@ -17,41 +16,20 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Ionicons } from '@expo/vector-icons'
 
-import { BLOCK_TYPE_CONFIG } from '@/domains/blocks/blocks.types'
 import { useBlock } from '@/domains/blocks/hooks/useBlock'
 import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
-import { DIM_FILL, QUADRANT_LABELS } from '@/domains/moods/moods.constants'
+import { QUADRANT_LABELS } from '@/domains/moods/moods.constants'
 import type { MoodCategoryKey } from '@/domains/moods/moods.types'
-import { RunTypeBadge } from '@/domains/runs/components/RunTypeBadge'
 import { useDeleteRun } from '@/domains/runs/hooks/useDeleteRun'
 import { useRun } from '@/domains/runs/hooks/useRun'
+import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { formatDistanceParts } from '@/domains/runs/utils/distance'
 import { formatDurationDisplay } from '@/domains/runs/utils/duration'
-import { formatPace, formatRunDate, generateRunTitle } from '@/domains/runs/utils/formatters'
+import { formatPace, formatRunDate } from '@/domains/runs/utils/formatters'
+import { computeWeeklyStats } from '@/domains/runs/utils/weeklyStats'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
-import type { ThemeTokens } from '@/theme/tokens'
+import { Dateline, Readout, Rule } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
-
-const MOOD_BORDER: Record<MoodCategoryKey, string> = {
-  'high-pleasant':    'rgba(184,212,74,0.2)',
-  'high-challenging': 'rgba(224,120,64,0.2)',
-  'low-pleasant':     'rgba(74,196,212,0.2)',
-  'low-challenging':  'rgba(155,96,184,0.2)',
-}
-
-function rpeZoneLabel(rating: number): string {
-  if (rating <= 3) return 'Easy'
-  if (rating <= 6) return 'Moderate'
-  if (rating <= 8) return 'Hard'
-  return 'All-out'
-}
-
-function rpeZoneColor(rating: number, semantic: ThemeTokens['semantic'], moodColors: ThemeTokens['mood']): string {
-  if (rating <= 3) return semantic.success
-  if (rating <= 6) return semantic.warning
-  if (rating <= 8) return moodColors.highTough
-  return semantic.error
-}
 
 export function RunDetailScreen() {
   const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
@@ -59,6 +37,7 @@ export function RunDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
 
   const { data: run, isLoading } = useRun(id)
+  const { data: rawRuns = [] } = useRuns()
   const { data: block } = useBlock(run?.blockId ?? '', { enabled: !!run?.blockId })
   const { data: moods } = useGetAllMoods()
   const { unit } = useDistanceUnit()
@@ -74,8 +53,21 @@ export function RunDetailScreen() {
     'low-challenging':  mood.lowTough,
   }
 
+  const QUAD_BG_COLOR: Record<MoodCategoryKey, string> = {
+    'high-pleasant':    moodBg.highGood,
+    'high-challenging': moodBg.highTough,
+    'low-pleasant':     moodBg.lowGood,
+    'low-challenging':  moodBg.lowTough,
+  }
+
   const runMood = moods?.find((m) => m.id === run?.moodId) ?? null
   const quadrantColor = runMood ? QUAD_COLOR[runMood.quadrant] : text.tertiary
+  const moodBgColor = runMood ? QUAD_BG_COLOR[runMood.quadrant] : null
+
+  const entryIdx = run ? rawRuns.findIndex((r) => r.id === run.id) : -1
+  const entryNumber = entryIdx !== -1 ? rawRuns.length - entryIdx : null
+
+  const { weeklyDistanceMeters } = computeWeeklyStats(rawRuns, undefined)
 
   const dismissDropdown = () => {
     setDropdownVisible(false)
@@ -124,42 +116,29 @@ export function RunDetailScreen() {
     )
   }
 
-  const runType = run.runType
-    ? run.runType.charAt(0).toUpperCase() + run.runType.slice(1).toLowerCase()
-    : undefined
-  const title = generateRunTitle(runType, runMood?.label)
-  const dateLabel = formatRunDate(run.date)
   const { value: distValue, unit: distUnit } = formatDistanceParts(run.distanceMeters, unit)
   const durationStr = formatDurationDisplay(run.durationSeconds)
   const paceStr = formatPace(run.distanceMeters, run.durationSeconds, unit)
+  const { value: weeklyValue, unit: weeklyUnit } = formatDistanceParts(weeklyDistanceMeters, unit)
 
   return (
     <View style={[styles.screen, { backgroundColor: bg.base }]}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <TouchableOpacity
-          style={styles.headerBtn}
+          style={styles.backBtn}
           onPress={() => router.back()}
           accessibilityLabel="Back"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={text.secondary} />
+          <Text style={[styles.backBtnText, { color: text.secondary }]}>← Back</Text>
         </TouchableOpacity>
-
-        <View style={styles.headerCenter}>
-          <Text style={[styles.headerTitle, { color: text.primary }]} numberOfLines={1}>
-            {title}
-          </Text>
-          <Text style={[styles.headerDate, { color: text.tertiary }]}>{dateLabel}</Text>
-        </View>
 
         <TouchableOpacity
           style={[
             styles.overflowBtn,
             {
-              backgroundColor: overflowActive
-                ? bg.input
-                : bg.surface,
+              backgroundColor: overflowActive ? bg.input : bg.surface,
               borderColor: overflowActive ? accent.default : rule.default,
             },
           ]}
@@ -175,12 +154,14 @@ export function RunDetailScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Android dim overlay */}
       {Platform.OS === 'android' && dropdownVisible && (
         <TouchableWithoutFeedback onPress={dismissDropdown}>
           <View style={styles.dimOverlay} />
         </TouchableWithoutFeedback>
       )}
 
+      {/* Android dropdown */}
       {Platform.OS === 'android' && dropdownVisible && (
         <View
           style={[
@@ -211,167 +192,127 @@ export function RunDetailScreen() {
             }}
           >
             <Ionicons name="trash" size={16} color={semantic.error} />
-            <Text style={[styles.dropdownLabel, { color: semantic.error }]}>
-              Delete run
-            </Text>
+            <Text style={[styles.dropdownLabel, { color: semantic.error }]}>Delete run</Text>
           </TouchableOpacity>
         </View>
       )}
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 32 }]}
       >
-        {/* Mood card */}
-        {runMood && (
-          <View
-            style={[
-              styles.moodCard,
-              {
-                backgroundColor: DIM_FILL[runMood.quadrant],
-                borderColor: MOOD_BORDER[runMood.quadrant],
-              },
-            ]}
-          >
-            <Text style={[styles.cardSectionLabel, { color: quadrantColor }]}>HOW IT FELT</Text>
-            <View style={styles.moodRow}>
-              <View style={[styles.moodDot, { backgroundColor: quadrantColor }]} />
-              <View style={styles.moodTextCol}>
-                <Text style={[styles.moodFeeling, { color: text.primary }]}>
-                  {runMood.label}
-                </Text>
-                <Text style={[styles.moodDescription, { color: text.secondary }]}>
-                  {runMood.description}
-                </Text>
-                <Text style={[styles.moodQuadrant, { color: text.tertiary }]}>
-                  {QUADRANT_LABELS[runMood.quadrant]}
-                </Text>
-              </View>
+        {/* Entry + date */}
+        <Dateline style={{ marginBottom: 4 }}>ENTRY № {entryNumber ?? '—'}</Dateline>
+        <Text style={[styles.dateLabel, { color: text.tertiary }]}>{formatRunDate(run.date)}</Text>
+
+        {/* Mood hero */}
+        {runMood ? (
+          <>
+            <Text style={[styles.heroMoodWord, { color: quadrantColor }]}>
+              {runMood.label}.
+            </Text>
+            <Text style={[styles.heroSubtitle, { color: text.secondary }]}>
+              {runMood.description}
+            </Text>
+            <Rule style={styles.rule} />
+            <View
+              style={[
+                styles.signalStrip,
+                { borderColor: quadrantColor, backgroundColor: moodBgColor ?? 'transparent' },
+              ]}
+            >
+              <Dateline style={{ color: quadrantColor }}>
+                {QUADRANT_LABELS[runMood.quadrant]}
+              </Dateline>
+              <Text style={[styles.signalLabel, { color: quadrantColor }]}>
+                {runMood.description}
+              </Text>
             </View>
-          </View>
+            <Rule style={styles.rule} />
+          </>
+        ) : (
+          <>
+            <Text style={[styles.noMoodText, { color: text.disabled }]}>No mood logged.</Text>
+            <Rule style={styles.rule} />
+          </>
         )}
 
-        {/* Primary stats card */}
-        <View
-          style={[
-            styles.statsCard,
-            { backgroundColor: bg.surface, borderColor: rule.subtle },
-          ]}
-        >
-          <View style={styles.heroRow}>
-            <View style={styles.statCol}>
-              <Text
-                style={[styles.heroValue, { color: text.primary }]}
-                adjustsFontSizeToFit
-                numberOfLines={1}
-              >
-                {distValue}
-              </Text>
-              <Text style={[styles.statLabel, { color: text.tertiary }]}>
-                {distUnit.toUpperCase()}
-              </Text>
-            </View>
-            <View style={[styles.statDivider, { backgroundColor: rule.subtle }]} />
-            <View style={styles.statCol}>
-              <Text
-                style={[styles.heroValue, { color: text.primary }]}
-                adjustsFontSizeToFit
-                numberOfLines={1}
-              >
-                {durationStr}
-              </Text>
-              <Text style={[styles.statLabel, { color: text.tertiary }]}>DURATION</Text>
-            </View>
-            <View style={[styles.statDivider, { backgroundColor: rule.subtle }]} />
-            <View style={styles.statCol}>
-              <Text
-                style={[styles.heroValue, { color: text.primary }]}
-                adjustsFontSizeToFit
-                numberOfLines={1}
-              >
-                {paceStr}
-              </Text>
-              <Text style={[styles.statLabel, { color: text.tertiary }]}>
-                /{unit.toUpperCase()}
-              </Text>
-            </View>
-          </View>
-
-          <View style={[styles.secondaryRow, { borderTopColor: rule.subtle }]}>
-            <View style={styles.secondaryLeft}>
-              <RunTypeBadge runType={runType} />
-              <Text style={[styles.runTypeLabel, { color: text.tertiary }]}>run type</Text>
-            </View>
-            <View style={styles.rpeGroup}>
-              <Text style={[styles.rpeHeaderLabel, { color: text.tertiary }]}>RPE</Text>
-              <View style={[styles.rpeChip, { backgroundColor: bg.input }]}>
-                <Text style={[styles.rpeValue, { color: text.primary }]}>
-                  {run.exertionRating}
-                </Text>
-                <Text style={[styles.rpeDenom, { color: text.tertiary }]}>/10</Text>
-              </View>
-              <Text
-                style={[styles.rpeZone, { color: rpeZoneColor(run.exertionRating, semantic, mood) }]}
-              >
-                {rpeZoneLabel(run.exertionRating)}
-              </Text>
-            </View>
-          </View>
+        {/* Primary readouts — Distance + Time */}
+        <View style={styles.primaryReadouts}>
+          <Readout
+            size="lg"
+            value={distValue}
+            unit={distUnit}
+            label="DISTANCE"
+            style={styles.readoutCell}
+          />
+          <Readout
+            size="lg"
+            value={durationStr}
+            label="TIME"
+            style={styles.readoutCell}
+          />
         </View>
 
-        {/* Block context row */}
+        <Rule style={styles.rule} />
+
+        {/* Secondary readouts — Pace + RPE + Weekly */}
+        <View style={styles.secondaryReadouts}>
+          <Readout
+            size="md"
+            value={paceStr}
+            unit={`/${unit}`}
+            label="PACE"
+            style={styles.readoutCell}
+          />
+          <Readout
+            size="md"
+            value={String(run.exertionRating)}
+            unit="/10"
+            label="RPE"
+            style={styles.readoutCell}
+          />
+          <Readout
+            size="md"
+            value={weeklyValue}
+            unit={weeklyUnit}
+            label="WEEKLY"
+            style={styles.readoutCell}
+          />
+        </View>
+
+        {/* Block row */}
         {run.blockId && block && (
-          <TouchableOpacity
-            style={[
-              styles.blockRow,
-              { backgroundColor: bg.surface, borderColor: rule.subtle },
-            ]}
-            onPress={() => router.push(`/blocks/${run.blockId}`)}
-            accessibilityRole="button"
-          >
-            <View style={styles.blockLeft}>
-              <View
-                style={[
-                  styles.blockDot,
-                  { backgroundColor: BLOCK_TYPE_CONFIG[block.blockType].accentColor },
-                ]}
-              />
-              <View>
-                <Text style={[styles.cardSectionLabel, { color: text.tertiary }]}>
-                  TRAINING BLOCK
-                </Text>
-                <Text style={[styles.blockContext, { color: text.primary }]}>
-                  {block.status === 'active'
-                    ? `${BLOCK_TYPE_CONFIG[block.blockType].label} · Day ${Math.max(
-                        1,
-                        differenceInCalendarDays(new Date(), parseISO(block.startDate)) + 1,
-                      )}`
-                    : `${BLOCK_TYPE_CONFIG[block.blockType].label} · Completed`}
-                </Text>
+          <>
+            <Rule style={styles.rule} />
+            <TouchableOpacity
+              style={styles.blockTouchable}
+              onPress={() => router.push(`/blocks/${run.blockId}`)}
+              accessibilityRole="button"
+            >
+              <View style={styles.blockMeta}>
+                <Dateline>TRAINING BLOCK</Dateline>
+                <Text style={[styles.blockName, { color: text.primary }]}>{block.name}</Text>
               </View>
-            </View>
-            <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
-          </TouchableOpacity>
+              <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
+            </TouchableOpacity>
+          </>
         )}
 
-        {/* Notes card */}
+        {/* Notes */}
         {run.notes && (
-          <View
-            style={[
-              styles.notesCard,
-              { backgroundColor: bg.surface, borderColor: rule.subtle },
-            ]}
-          >
-            <Text style={[styles.cardSectionLabel, { color: text.tertiary }]}>NOTES</Text>
-            <Text style={[styles.notesText, { color: text.secondary }]}>{run.notes}</Text>
-          </View>
+          <>
+            <Rule style={styles.rule} />
+            <View style={styles.notesSection}>
+              <Dateline style={{ marginBottom: 6 }}>NOTES</Dateline>
+              <Text style={[styles.notesText, { color: text.secondary }]}>{run.notes}</Text>
+            </View>
+          </>
         )}
       </ScrollView>
     </View>
   )
 }
-
-// ---------- styles ----------
 
 const styles = StyleSheet.create({
   screen: {
@@ -385,28 +326,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
-  headerBtn: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+  backBtn: {
+    paddingVertical: 4,
   },
-  headerCenter: {
-    flex: 1,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-  headerDate: {
-    fontSize: 12,
-    marginTop: 1,
+  backBtnText: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 14,
   },
   overflowBtn: {
     width: 32,
@@ -448,162 +377,73 @@ const styles = StyleSheet.create({
   dropdownDivider: {
     height: 1,
   },
-  scrollContent: {
+  content: {
+    paddingHorizontal: 20,
     paddingTop: 8,
-    gap: 10,
   },
-  // Stats card
-  statsCard: {
-    borderRadius: 14,
-    borderWidth: 1,
-    marginHorizontal: 16,
-    overflow: 'hidden',
-  },
-  heroRow: {
-    flexDirection: 'row',
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-  },
-  statCol: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  heroValue: {
-    fontSize: 42,
-    fontWeight: '600',
-    letterSpacing: -1.5,
-    lineHeight: 42,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginTop: 4,
-  },
-  statDivider: {
-    width: 1,
-    height: 48,
-    alignSelf: 'center',
-  },
-  secondaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 14,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
-    borderTopWidth: 1,
-  },
-  secondaryLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  runTypeLabel: {
-    fontSize: 12,
-  },
-  rpeGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  rpeHeaderLabel: {
-    fontSize: 12,
-  },
-  rpeChip: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    borderRadius: 6,
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-  },
-  rpeValue: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  rpeDenom: {
-    fontSize: 11,
-  },
-  rpeZone: {
-    fontSize: 12,
-  },
-  // Mood card
-  moodCard: {
-    borderRadius: 14,
-    borderWidth: 1,
-    marginHorizontal: 16,
-    padding: 16,
-  },
-  cardSectionLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: 10,
-  },
-  moodRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  moodDot: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  moodTextCol: {
-    flex: 1,
-  },
-  moodFeeling: {
-    fontSize: 24,
-    fontFamily: 'Fraunces_400Regular',
-    letterSpacing: -0.3,
-    lineHeight: 27,
-  },
-  moodDescription: {
+  dateLabel: {
+    fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 13,
+  },
+  heroMoodWord: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 64,
+    lineHeight: 68,
+    letterSpacing: -1,
+    marginTop: 16,
+  },
+  heroSubtitle: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 15,
+    lineHeight: 22,
     marginTop: 4,
   },
-  moodQuadrant: {
-    fontSize: 11,
-    marginTop: 4,
+  noMoodText: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 28,
+    marginTop: 16,
   },
-  // Block row
-  blockRow: {
+  rule: {
+    marginVertical: 20,
+  },
+  signalStrip: {
+    borderWidth: 1,
+    borderRadius: 3,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    gap: 2,
+  },
+  signalLabel: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 12,
+  },
+  primaryReadouts: {
+    flexDirection: 'row',
+    gap: 32,
+  },
+  secondaryReadouts: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  readoutCell: {
+    flex: 1,
+  },
+  blockTouchable: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderRadius: 14,
-    borderWidth: 1,
-    marginHorizontal: 16,
-    padding: 16,
   },
-  blockLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
+  blockMeta: {
+    gap: 2,
   },
-  blockDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+  blockName: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 17,
   },
-  blockContext: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginTop: 4,
-  },
-  // Notes card
-  notesCard: {
-    borderRadius: 14,
-    borderWidth: 1,
-    marginHorizontal: 16,
-    padding: 16,
-  },
+  notesSection: {},
   notesText: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 15,
+    lineHeight: 24,
   },
 })
