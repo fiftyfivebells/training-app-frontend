@@ -33,55 +33,6 @@ export const moodCategories: MoodCategory[] = [
   },
 ]
 
-// Log run form — quadrant descriptors
-export const QUADRANT_DESCRIPTOR: Record<MoodCategoryKey, string> = {
-  'high-pleasant':    'Energized',
-  'high-challenging': 'Challenging',
-  'low-pleasant':     'Relaxed',
-  'low-challenging':  'Heavy',
-}
-
-// Hex picker canvas geometry
-export const R = 48
-export const R_SELECTED = R + 4
-export const CANVAS_W = 1200
-export const CANVAS_H = 1000
-export const CANVAS_MID_X = CANVAS_W / 2
-export const CANVAS_MID_Y = CANVAS_H / 2
-export const SCALE_X = (CANVAS_W / 2 - R - 20) / 6
-export const SCALE_Y = (CANVAS_H / 2 - R - 20) / 6
-
-// Cluster layout - 3-4-3 per quadrant
-export const COL = 120
-export const ROW = 100
-
-export const CLUSTER_CENTERS: Record<MoodCategoryKey, { x: number; y: number }> = {
-  'high-challenging': { x: 300, y: 250 },
-  'high-pleasant':    { x: 900, y: 250 },
-  'low-challenging':  { x: 300, y: 750 },
-  'low-pleasant':     { x: 900, y: 750 },
-}
-
-export const CLUSTER_OFFSETS: { dx: number; dy: number }[] = [
-  { dx: -COL,     dy: -ROW }, // 0
-  { dx: 0,        dy: -ROW }, // 1
-  { dx: COL,      dy: -ROW }, // 2
-  { dx: -1.5*COL, dy: 0 },    // 3
-  { dx: -0.5*COL, dy: 0 },    // 4
-  { dx: 0.5*COL,  dy: 0 },    // 5
-  { dx: 1.5*COL,  dy: 0 },    // 6
-  { dx: -COL,     dy: ROW },  // 7
-  { dx: 0,        dy: ROW },  // 8
-  { dx: COL,      dy: ROW },  // 9
-]
-
-export const SEVERITY_ORDER: Record<MoodCategoryKey, number[]> = {
-  'high-pleasant':    [2, 6, 1, 9, 5, 0, 8, 4, 3, 7],
-  'high-challenging': [0, 3, 1, 7, 4, 2, 8, 5, 6, 9],
-  'low-pleasant':     [9, 6, 8, 2, 5, 7, 1, 4, 0, 3],
-  'low-challenging':  [7, 3, 8, 0, 4, 1, 5, 9, 2, 6],
-}
-
 export const DIM_FILL: Record<MoodCategoryKey, string> = {
   'high-pleasant':    '#1C1E10',
   'high-challenging': '#1E1510',
@@ -95,3 +46,22 @@ export const QUADRANT_LABELS: Record<MoodCategoryKey, string> = {
   'low-pleasant':     'LOW · GOOD',
   'low-challenging':  'LOW · TOUGH',
 }
+
+export const QUADRANT_COLOR_KEY: Record<MoodCategoryKey, 'highGood' | 'highTough' | 'lowGood' | 'lowTough'> = {
+  'high-pleasant':    'highGood',
+  'high-challenging': 'highTough',
+  'low-pleasant':     'lowGood',
+  'low-challenging':  'lowTough',
+}
+
+export const QUADRANT_CELLS: Array<{
+  key: 'highGood' | 'highTough' | 'lowGood' | 'lowTough'
+  quadrant: MoodCategoryKey
+  label: string
+  sublabel: string
+}> = [
+  { key: 'highTough', quadrant: 'high-challenging', label: 'HIGH · TOUGH', sublabel: 'Hard work & grit' },
+  { key: 'highGood',  quadrant: 'high-pleasant',    label: 'HIGH · GOOD',  sublabel: 'Energized & thriving' },
+  { key: 'lowTough',  quadrant: 'low-challenging',  label: 'LOW · TOUGH',  sublabel: 'Drained & heavy' },
+  { key: 'lowGood',   quadrant: 'low-pleasant',     label: 'LOW · GOOD',   sublabel: 'Calm & restorative' },
+]

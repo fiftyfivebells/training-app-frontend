@@ -17,8 +17,10 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
-import type { Mood, MoodCategoryKey } from '@/domains/moods/moods.types'
+import type { MoodCategoryKey } from '@/domains/moods/moods.types'
+import { QUADRANT_COLOR_KEY, QUADRANT_CELLS } from '@/domains/moods/moods.constants'
 import { MoodGridModal } from '@/domains/moods/components/MoodGridModal'
+import { MoodSelectedBox } from '@/domains/moods/components/MoodSelectedBox'
 import { useLogRun } from '@/domains/runs/hooks/useLogRun'
 import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { calculateMeters } from '@/domains/runs/utils/distance'
@@ -48,67 +50,6 @@ interface FormValues {
   notes: string
 }
 
-const QUADRANT_COLOR_KEY: Record<MoodCategoryKey, 'highGood' | 'highTough' | 'lowGood' | 'lowTough'> = {
-  'high-pleasant': 'highGood',
-  'high-challenging': 'highTough',
-  'low-pleasant': 'lowGood',
-  'low-challenging': 'lowTough',
-}
-
-const QUADRANT_CELLS: Array<{
-  key: 'highGood' | 'highTough' | 'lowGood' | 'lowTough'
-  quadrant: MoodCategoryKey
-  label: string
-  sublabel: string
-}> = [
-  { key: 'highTough', quadrant: 'high-challenging', label: 'HIGH · TOUGH', sublabel: 'Hard work & grit' },
-  { key: 'highGood',  quadrant: 'high-pleasant',    label: 'HIGH · GOOD',  sublabel: 'Energized & thriving' },
-  { key: 'lowTough',  quadrant: 'low-challenging',  label: 'LOW · TOUGH',  sublabel: 'Drained & heavy' },
-  { key: 'lowGood',   quadrant: 'low-pleasant',     label: 'LOW · GOOD',   sublabel: 'Calm & restorative' },
-]
-
-type MoodSelectedBoxProps = {
-  mood: Mood | null
-  moodColor: string | null
-  moodBgColor: string | null
-  onPress: () => void
-}
-
-function MoodSelectedBox({ mood, moodColor, moodBgColor, onPress }: MoodSelectedBoxProps) {
-  const { text, rule, radius } = useTheme()
-  if (!mood || !moodColor || !moodBgColor) {
-    return (
-      <TouchableOpacity
-        style={[styles.moodBox, styles.moodBoxEmpty, { borderColor: rule.strong, borderRadius: radius.sm }]}
-        onPress={onPress}
-        activeOpacity={0.7}
-      >
-        <Text style={[styles.moodBoxEmptyText, { color: text.tertiary }]}>
-          Nothing yet — tap a type below
-        </Text>
-      </TouchableOpacity>
-    )
-  }
-  return (
-    <TouchableOpacity
-      style={[
-        styles.moodBox,
-        styles.moodBoxSelected,
-        { borderColor: moodColor, backgroundColor: moodBgColor, borderRadius: radius.sm },
-      ]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <View style={[styles.moodIcon, { borderColor: moodColor, borderRadius: radius.sm }]}>
-        <View style={[styles.moodIconInner, { backgroundColor: moodColor, borderRadius: radius.xs }]} />
-      </View>
-      <View style={styles.moodBoxText}>
-        <Text style={[styles.moodBoxWord, { color: moodColor }]}>{mood.label}</Text>
-        <Text style={[styles.moodBoxDef, { color: moodColor }]}>{mood.description}</Text>
-      </View>
-    </TouchableOpacity>
-  )
-}
 
 export function LogScreen() {
   const { bg, text, rule, accent, mood, moodBg, semantic, radius } = useTheme()
@@ -574,57 +515,6 @@ const styles = StyleSheet.create({
   // Mood section
   moodSection: {
     gap: 8,
-  },
-  moodBox: {
-    minHeight: 44,
-    justifyContent: 'center',
-  },
-  moodBoxEmpty: {
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  moodBoxEmptyText: {
-    fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 14,
-  },
-  moodBoxSelected: {
-    borderWidth: 1.5,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  moodIcon: {
-    width: 36,
-    height: 36,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  moodIconInner: {
-    width: 10,
-    height: 10,
-  },
-  moodBoxText: {
-    flex: 1,
-    gap: 2,
-  },
-  moodBoxWord: {
-    fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 22,
-    lineHeight: 26,
-  },
-  moodBoxDef: {
-    fontFamily: 'Manrope',
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.04 * 10,
-    opacity: 0.85,
   },
   moodGrid: {
     flexDirection: 'row',
