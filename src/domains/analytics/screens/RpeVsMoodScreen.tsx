@@ -27,7 +27,7 @@ const RANGE_LABELS = {
 }
 
 export function RpeVsMoodScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 17,
   },
@@ -139,13 +140,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
     gap: 4,
     minWidth: 50,
     justifyContent: 'center',
   },
   rangeLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
     fontSize: 12,
   },
@@ -154,16 +156,17 @@ const styles = StyleSheet.create({
   },
   chartCard: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 16,
   },
   explanationCard: {
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 16,
     gap: 8,
   },
   explanationText: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 11,
     lineHeight: 16.5,

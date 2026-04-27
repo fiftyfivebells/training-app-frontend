@@ -18,6 +18,7 @@ import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
 import { InsightSummaryCard } from '@/domains/analytics/components/InsightSummaryCard'
 import { StackedBarChart } from '@/domains/analytics/components/charts/StackedBarChart'
 import { computeMoodTrends } from '@/domains/analytics/utils'
+import { Dateline } from '@/components/ui'
 
 const RANGE_LABELS = {
   '4w': '4w',
@@ -27,7 +28,7 @@ const RANGE_LABELS = {
 }
 
 export function MoodTrendsScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, mood } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -114,7 +115,7 @@ export function MoodTrendsScreen() {
 
         <View style={styles.statsGrid}>
           <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
-            <Text style={[styles.statLabel, { color: text.tertiary }]}>BEST WEEK</Text>
+            <Dateline>BEST WEEK</Dateline>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {bestWeek?.week.weekLabel ?? '—'}
             </Text>
@@ -123,7 +124,7 @@ export function MoodTrendsScreen() {
             </Text>
           </View>
           <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
-            <Text style={[styles.statLabel, { color: text.tertiary }]}>TOUGHEST WEEK</Text>
+            <Dateline>TOUGHEST WEEK</Dateline>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {toughestWeek?.week.weekLabel ?? '—'}
             </Text>
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 17,
   },
@@ -161,13 +163,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
     gap: 4,
     minWidth: 50,
     justifyContent: 'center',
   },
   rangeLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
     fontSize: 12,
   },
@@ -176,7 +179,7 @@ const styles = StyleSheet.create({
   },
   chartCard: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 16,
     marginBottom: 16,
   },
@@ -187,20 +190,16 @@ const styles = StyleSheet.create({
   statCell: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
   },
-  statLabel: {
-    fontWeight: '500',
-    fontSize: 8,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
   statValue: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 16,
   },
   statSub: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 10,
     marginTop: 2,

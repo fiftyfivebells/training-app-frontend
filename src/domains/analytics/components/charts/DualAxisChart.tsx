@@ -11,7 +11,7 @@ export type DualAxisChartProps = {
 }
 
 export function DualAxisChart({ weeklyData, compact }: DualAxisChartProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { text, rule, mood } = useTheme()
   const [containerWidth, setContainerWidth] = useState(0)
 
   const CHART_HEIGHT = compact ? 72 : 100
@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   label: {
+    fontFamily: 'Manrope',
     textAlign: 'center',
     fontSize: 8,
   },
@@ -187,6 +188,7 @@ const styles = StyleSheet.create({
     height: 1.5,
   },
   legendText: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 9,
   },

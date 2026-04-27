@@ -18,6 +18,7 @@ import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
 import { InsightSummaryCard } from '@/domains/analytics/components/InsightSummaryCard'
 import { DualAxisChart } from '@/domains/analytics/components/charts/DualAxisChart'
 import { computeVolumeVsMood } from '@/domains/analytics/utils'
+import { Dateline } from '@/components/ui'
 
 const RANGE_LABELS = {
   '4w': '4w',
@@ -27,7 +28,7 @@ const RANGE_LABELS = {
 }
 
 export function VolumeVsMoodScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -110,13 +111,13 @@ export function VolumeVsMoodScreen() {
 
         <View style={styles.statsGrid}>
           <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
-            <Text style={[styles.statLabel, { color: text.tertiary }]}>AVG WEEKLY</Text>
+            <Dateline>AVG WEEKLY</Dateline>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {avgKm.toFixed(1)}<Text style={styles.unit}>km</Text>
             </Text>
           </View>
           <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
-            <Text style={[styles.statLabel, { color: text.tertiary }]}>BEST MOOD</Text>
+            <Dateline>BEST MOOD</Dateline>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {bestMoodWeek?.weekLabel ?? '—'}
             </Text>
@@ -125,7 +126,7 @@ export function VolumeVsMoodScreen() {
             </Text>
           </View>
           <View style={[styles.statCell, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
-            <Text style={[styles.statLabel, { color: text.tertiary }]}>HIGHEST VOL</Text>
+            <Dateline>HIGHEST VOL</Dateline>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {highestVolumeWeek?.weekLabel ?? '—'}
             </Text>
@@ -159,6 +160,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 17,
   },
@@ -167,13 +169,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
     gap: 4,
     minWidth: 50,
     justifyContent: 'center',
   },
   rangeLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
     fontSize: 12,
   },
@@ -182,7 +185,7 @@ const styles = StyleSheet.create({
   },
   chartCard: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 16,
     marginBottom: 16,
   },
@@ -194,29 +197,27 @@ const styles = StyleSheet.create({
   statCell: {
     flex: 1,
     padding: 10,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
   },
-  statLabel: {
-    fontWeight: '500',
-    fontSize: 7,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
   statValue: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 14,
   },
   unit: {
+    fontFamily: 'Manrope',
     fontSize: 10,
     fontWeight: '400',
   },
   statSub: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 9,
     marginTop: 2,
   },
   contextNote: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 10,
     textAlign: 'center',

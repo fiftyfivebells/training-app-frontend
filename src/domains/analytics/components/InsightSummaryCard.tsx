@@ -9,7 +9,7 @@ export type InsightSummaryCardProps = {
 }
 
 export function InsightSummaryCard({ headline, body, sentiment }: InsightSummaryCardProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, mood } = useTheme()
 
   let backgroundColor = bg.surface
   let borderColor = rule.subtle
@@ -35,16 +35,18 @@ export function InsightSummaryCard({ headline, body, sentiment }: InsightSummary
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     padding: 16,
     marginBottom: 16,
   },
   headline: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 14,
   },
   body: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 11,
     lineHeight: 17,

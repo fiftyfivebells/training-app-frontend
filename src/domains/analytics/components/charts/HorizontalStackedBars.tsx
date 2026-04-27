@@ -16,7 +16,7 @@ const SEGMENT_ORDER: MoodCategoryKey[] = [
 ]
 
 export function HorizontalStackedBars({ byType, compact }: HorizontalStackedBarsProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { text, mood } = useTheme()
 
   const SEGMENT_COLORS: Record<MoodCategoryKey, string> = {
     'high-pleasant': mood.highGood,
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   expandedLabel: {
+    fontFamily: 'Manrope',
     width: 52,
     fontWeight: '500',
     fontSize: 10,

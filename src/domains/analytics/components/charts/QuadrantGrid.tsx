@@ -16,7 +16,7 @@ const CELL_BG = {
 } as const
 
 export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { text, mood } = useTheme()
 
   const CELL_COLOR = {
     highRpeGood: mood.highGood,
@@ -103,10 +103,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   compactCount: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 16,
   },
   compactLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
     fontSize: 8,
   },
@@ -117,10 +119,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   expandedCount: {
-    fontWeight: '600',
+    fontFamily: 'Fraunces_400Regular',
     fontSize: 28,
   },
   expandedLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 9,
     marginTop: 4,

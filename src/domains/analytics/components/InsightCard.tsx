@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '@/theme/useTheme'
+import { Dateline } from '@/components/ui'
 import type { Sentiment } from '@/domains/analytics/utils/types'
 
 export type InsightCardProps = {
@@ -22,7 +23,7 @@ export function InsightCard({
   onPress,
   children,
 }: InsightCardProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, mood } = useTheme()
 
   const subColor =
     sentiment === 'positive'
@@ -44,7 +45,7 @@ export function InsightCard({
       ]}
     >
       <View style={styles.topRow}>
-        <Text style={[styles.label, { color: text.tertiary }]}>{label}</Text>
+        <Dateline>{label}</Dateline>
         <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
       </View>
       <Text style={[styles.headline, { color: text.primary }]}>{headline}</Text>
@@ -64,7 +65,7 @@ export function InsightCard({
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     marginHorizontal: 16,
     marginBottom: 8,
     padding: 12,
@@ -74,17 +75,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  label: {
-    fontWeight: '500',
-    fontSize: 8,
-    textTransform: 'uppercase',
-  },
   headline: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 13,
     marginTop: 4,
   },
   sub: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 10,
     marginTop: 2,

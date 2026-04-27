@@ -35,7 +35,7 @@ const RANGE_LABELS = {
 }
 
 export function AnalyticsScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontWeight: '600',
+    fontFamily: 'Fraunces_400Regular',
     fontSize: 28,
     letterSpacing: -0.5,
   },
@@ -173,11 +173,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 5,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
     gap: 6,
   },
   rangeLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
     fontSize: 12,
   },

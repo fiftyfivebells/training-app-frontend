@@ -18,6 +18,7 @@ import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
 import { InsightSummaryCard } from '@/domains/analytics/components/InsightSummaryCard'
 import { HorizontalStackedBars } from '@/domains/analytics/components/charts/HorizontalStackedBars'
 import { computeMoodByRunType } from '@/domains/analytics/utils'
+import { Dateline } from '@/components/ui'
 
 const RANGE_LABELS = {
   '4w': '4w',
@@ -27,7 +28,7 @@ const RANGE_LABELS = {
 }
 
 export function MoodByRunTypeScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, mood } = useTheme()
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { timeRange, setTimeRange } = useAnalyticsStore()
@@ -124,7 +125,7 @@ export function MoodByRunTypeScreen() {
           </View>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: text.tertiary }]}>BREAKDOWN</Text>
+        <Dateline style={{ marginBottom: 8, marginLeft: 4 }}>BREAKDOWN</Dateline>
         {moodByType.byType.map((type) => (
           <View
             key={type.runType}
@@ -176,6 +177,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 17,
   },
@@ -184,13 +186,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
     gap: 4,
     minWidth: 50,
     justifyContent: 'center',
   },
   rangeLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
     fontSize: 12,
   },
@@ -199,7 +202,7 @@ const styles = StyleSheet.create({
   },
   chartCard: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 16,
     marginBottom: 24,
   },
@@ -223,18 +226,13 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   legendText: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 9,
   },
-  sectionTitle: {
-    fontWeight: '500',
-    fontSize: 10,
-    marginBottom: 8,
-    marginLeft: 4,
-  },
   breakdownCard: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 12,
     marginBottom: 8,
   },
@@ -245,11 +243,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   typeLabel: {
+    fontFamily: 'Manrope',
     fontWeight: '600',
     fontSize: 14,
     textTransform: 'capitalize',
   },
   runCount: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
     fontSize: 11,
   },
@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   dotCount: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
     fontSize: 13,
   },
