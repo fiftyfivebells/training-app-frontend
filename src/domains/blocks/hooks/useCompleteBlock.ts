@@ -17,10 +17,10 @@ export function useCompleteBlock(
       return blockResponseToBlock(response)
     },
     ...options,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: blocksKeys.all })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, context)
+        return options.onSuccess(data, variables, context, mutation)
       }
     },
   })

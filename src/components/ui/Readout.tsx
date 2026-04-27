@@ -31,11 +31,14 @@ export function Readout({ value, unit, label, size = 'lg', style, ...props }: Re
       )}
       <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
         <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
           style={{
             fontFamily: 'Fraunces_400Regular',
             fontSize: valueFontSize,
             color: text.primary,
             fontVariant: ['tabular-nums'],
+            flexShrink: 1,
           }}
         >
           {value}

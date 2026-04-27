@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   LayoutChangeEvent,
   StyleSheet,
@@ -32,6 +33,7 @@ export function DistanceField({
   onLayout,
 }: DistanceFieldProps) {
   const { bg, text, rule, accent, semantic } = useTheme()
+  const [isFocused, setIsFocused] = useState(false)
 
   return (
     <View style={styles.root} onLayout={onLayout}>
@@ -48,9 +50,10 @@ export function DistanceField({
           ]}
           value={value}
           onChangeText={onChange}
-          onBlur={onBlur}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => { onBlur(); setIsFocused(false) }}
           keyboardType="decimal-pad"
-          placeholder="0.00"
+          placeholder={isFocused ? '' : '0.00'}
           placeholderTextColor={text.tertiary}
           accessibilityLabel="Distance"
         />

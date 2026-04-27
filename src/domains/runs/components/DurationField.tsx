@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   LayoutChangeEvent,
   StyleSheet,
@@ -35,6 +36,7 @@ export function DurationField({
   onLayout,
 }: DurationFieldProps) {
   const { bg, text, rule, accent, semantic } = useTheme()
+  const [focusedField, setFocusedField] = useState<string | null>(null)
 
   const fields = [
     { handlers: hh,  label: 'HH', accessLabel: 'Hours'   },
@@ -62,11 +64,12 @@ export function DurationField({
               ]}
               value={handlers.value}
               onChangeText={handlers.onChange}
-              onBlur={handlers.onBlur}
+              onFocus={() => setFocusedField(label)}
+              onBlur={() => { handlers.onBlur(); setFocusedField(null) }}
               keyboardType="number-pad"
               maxLength={3}
-              textAlign="center"
-              placeholder="00"
+              selectTextOnFocus
+              placeholder={focusedField === label ? '' : '00'}
               placeholderTextColor={text.tertiary}
               accessibilityLabel={accessLabel}
             />
@@ -108,6 +111,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontFamily: 'Manrope',
     fontWeight: '300',
+    textAlign: 'center',
   },
   paceRow: {
     flexDirection: 'row',

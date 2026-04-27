@@ -100,7 +100,8 @@ function MoodSquare({ mood, isSelected, moodColor, moodBgColor, onPress }: MoodS
       >
         <Text
           style={[styles.moodSquareText, { color: isSelected ? moodColor : text.primary }]}
-          numberOfLines={2}
+          numberOfLines={1}
+          adjustsFontSizeToFit
         >
           {mood.label}
         </Text>
@@ -486,6 +487,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 12,
     textAlign: 'center',
-    lineHeight: 15,
   },
 })

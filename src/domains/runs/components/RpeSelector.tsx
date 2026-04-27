@@ -25,13 +25,13 @@ export function RpeSelector({
   errorMessage,
   onLayout,
 }: RpeSelectorProps) {
-  const { bg, text, rule, accent, mood, semantic } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
 
   function rpeZoneColors(n: number) {
-    if (n <= 3) return { bg: semantic.successBg, border: '#2A4A2E', text: semantic.success }
-    if (n <= 6) return { bg: bg.surface, border: rule.subtle, text: text.tertiary }
-    if (n <= 8) return { bg: bg.surface, border: rule.subtle, text: mood.highTough }
-    return { bg: bg.surface, border: rule.subtle, text: semantic.error }
+    if (n <= 3) return { bg: semantic.successBg,  border: '#2A4A2E', text: semantic.success }
+    if (n <= 6) return { bg: moodBg.highGood,      border: '#4A3810', text: '#D4A843'       }
+    if (n <= 8) return { bg: moodBg.highTough,     border: '#4A1810', text: mood.highTough  }
+    return       { bg: semantic.errorBg,   border: '#4A1010', text: semantic.error  }
   }
 
   return (
