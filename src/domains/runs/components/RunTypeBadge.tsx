@@ -13,7 +13,7 @@ type BadgeStyle = {
 }
 
 export function RunTypeBadge({ runType }: RunTypeBadgeProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, mood, semantic } = useTheme()
 
   if (!runType) return null
 
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   label: {
+    fontFamily: 'Manrope',
     fontSize: 10,
     fontWeight: '500',
     lineHeight: 14,

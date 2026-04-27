@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native'
 
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 interface FieldHandlers {
@@ -33,7 +34,7 @@ export function DurationField({
   paceString,
   onLayout,
 }: DurationFieldProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, semantic } = useTheme()
 
   const fields = [
     { handlers: hh,  label: 'HH', accessLabel: 'Hours'   },
@@ -43,7 +44,7 @@ export function DurationField({
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>DURATION</Text>
+      <Dateline>DURATION</Dateline>
       <View style={styles.durationRow}>
         {fields.map(({ handlers, label, accessLabel }) => (
           <View key={label} style={styles.durationCell}>
@@ -69,14 +70,12 @@ export function DurationField({
               placeholderTextColor={text.tertiary}
               accessibilityLabel={accessLabel}
             />
-            <Text style={[styles.durationLabel, { color: text.tertiary }]}>
-              {label}
-            </Text>
+            <Dateline>{label}</Dateline>
           </View>
         ))}
       </View>
       <View style={styles.paceRow}>
-        <Text style={[styles.paceLabel, { color: text.tertiary }]}>PACE</Text>
+        <Dateline>PACE</Dateline>
         <Text style={[styles.paceValue, { color: accent.default }]}>{paceString}</Text>
       </View>
       {hhHasError && (
@@ -92,11 +91,6 @@ const styles = StyleSheet.create({
   root: {
     gap: 8,
   },
-  fieldLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
-  },
   durationRow: {
     flexDirection: 'row',
     gap: 8,
@@ -109,15 +103,11 @@ const styles = StyleSheet.create({
   durationInput: {
     width: '100%',
     height: 56,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     fontSize: 28,
+    fontFamily: 'Manrope',
     fontWeight: '300',
-  },
-  durationLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.4,
   },
   paceRow: {
     flexDirection: 'row',
@@ -125,16 +115,13 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     gap: 6,
   },
-  paceLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.4,
-  },
   paceValue: {
+    fontFamily: 'Manrope',
     fontSize: 15,
     fontWeight: '500',
   },
   errorText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     fontWeight: '500',
   },

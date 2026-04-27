@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 
 import { RUN_TYPE_GROUPS } from '@/domains/runs/constants'
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 interface RunTypePickerProps {
@@ -24,16 +25,14 @@ export function RunTypePicker({
   errorMessage,
   onLayout,
 }: RunTypePickerProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, semantic } = useTheme()
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>RUN TYPE</Text>
+      <Dateline>RUN TYPE</Dateline>
       {RUN_TYPE_GROUPS.map((group) => (
         <View key={group.label} style={styles.group}>
-          <Text style={[styles.groupLabel, { color: text.tertiary }]}>
-            {group.label}
-          </Text>
+          <Dateline>{group.label}</Dateline>
           <View style={styles.pills}>
             {group.types.map((type) => {
               const active = value === type
@@ -82,18 +81,8 @@ const styles = StyleSheet.create({
   root: {
     gap: 8,
   },
-  fieldLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
-  },
   group: {
     gap: 8,
-  },
-  groupLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.6,
   },
   pills: {
     flexDirection: 'row',
@@ -107,9 +96,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   pillText: {
+    fontFamily: 'Manrope',
     fontSize: 14,
   },
   errorText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     fontWeight: '500',
   },

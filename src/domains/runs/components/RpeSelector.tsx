@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 
 import { RPE_ZONES } from '@/domains/runs/constants'
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 interface RpeSelectorProps {
@@ -24,7 +25,7 @@ export function RpeSelector({
   errorMessage,
   onLayout,
 }: RpeSelectorProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, mood, semantic } = useTheme()
 
   function rpeZoneColors(n: number) {
     if (n <= 3) return { bg: semantic.successBg, border: '#2A4A2E', text: semantic.success }
@@ -35,7 +36,7 @@ export function RpeSelector({
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>RPE</Text>
+      <Dateline>RPE</Dateline>
       <View style={styles.grid}>
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
           const selected = value === n
@@ -104,11 +105,6 @@ const styles = StyleSheet.create({
   root: {
     gap: 8,
   },
-  fieldLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
-  },
   grid: {
     flexDirection: 'row',
     gap: 4,
@@ -122,6 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cellText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
   },
   zoneLabels: {
@@ -130,11 +127,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
   },
   zoneLabel: {
+    fontFamily: 'Manrope',
     fontSize: 10,
     fontWeight: '500',
     textAlign: 'center',
   },
   errorText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     fontWeight: '500',
   },

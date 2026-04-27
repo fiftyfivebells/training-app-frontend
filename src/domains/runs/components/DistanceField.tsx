@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native'
 
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 interface DistanceFieldProps {
@@ -30,11 +31,11 @@ export function DistanceField({
   onUnitToggle,
   onLayout,
 }: DistanceFieldProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, semantic } = useTheme()
 
   return (
     <View style={styles.root} onLayout={onLayout}>
-      <Text style={[styles.fieldLabel, { color: text.tertiary }]}>DISTANCE</Text>
+      <Dateline>DISTANCE</Dateline>
       <View style={styles.distanceRow}>
         <TextInput
           style={[
@@ -94,11 +95,6 @@ const styles = StyleSheet.create({
   root: {
     gap: 8,
   },
-  fieldLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
-  },
   distanceRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -107,10 +103,11 @@ const styles = StyleSheet.create({
   distanceInput: {
     flex: 1,
     height: 48,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     paddingHorizontal: 14,
     fontSize: 24,
+    fontFamily: 'Manrope',
     fontWeight: '300',
     textAlign: 'right',
   },
@@ -129,10 +126,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   unitBtnText: {
+    fontFamily: 'Manrope',
     fontSize: 13,
     fontWeight: '500',
   },
   errorText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     fontWeight: '500',
   },

@@ -25,7 +25,7 @@ const TAB_CONFIGS: TabConfig[] = [
 ]
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent } = useTheme()
 
   const leftRoutes = state.routes.slice(0, 2)
   const rightRoutes = state.routes.slice(2)
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     height: TAB_BAR_HEIGHT,
   },
   label: {
+    fontFamily: 'Manrope',
     fontSize: 10,
     lineHeight: 14,
     letterSpacing: 0.4,
