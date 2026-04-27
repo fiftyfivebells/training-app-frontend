@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Ionicons } from '@expo/vector-icons'
 
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import { BLOCK_TYPE_CONFIG } from '../constants/blockTypes'
@@ -36,7 +37,7 @@ function formatStartDate(date: Date, today: Date): string {
 
 export function BlockEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, radius } = useTheme()
   const insets = useSafeAreaInsets()
 
   const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
@@ -214,6 +215,7 @@ export function BlockEditScreen() {
                 backgroundColor: bg.surface,
                 borderColor: rule.subtle,
                 borderLeftColor: config.accentColor,
+                borderRadius: radius.lg,
                 opacity: 0.8,
               },
             ]}
@@ -247,7 +249,7 @@ export function BlockEditScreen() {
             accessibilityRole="button"
             accessibilityLabel="Start date"
           >
-            <Text style={[styles.fieldLabel, { color: text.tertiary }]}>START DATE</Text>
+            <Dateline style={{ marginBottom: 6 }}>START DATE</Dateline>
             <Text style={[styles.fieldValue, { color: text.primary }]}>
               {formatStartDate(startDate, today)}
             </Text>
@@ -288,7 +290,7 @@ export function BlockEditScreen() {
             accessibilityRole="button"
             accessibilityLabel="End date"
           >
-            <Text style={[styles.fieldLabel, { color: text.tertiary }]}>END DATE</Text>
+            <Dateline style={{ marginBottom: 6 }}>END DATE</Dateline>
             <Text style={[styles.fieldValue, { color: text.primary }]}>
               {format(endDate, 'MMM d, yyyy')}
             </Text>
@@ -346,6 +348,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     fontSize: 18,
     fontWeight: '700',
     flex: 1,
@@ -372,7 +375,6 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: 16,
-    borderRadius: 16,
     borderWidth: 1,
     borderLeftWidth: 4,
   },
@@ -385,16 +387,18 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
+    flexShrink: 0,
   },
   cardTitleCol: {
     flex: 1,
   },
   cardName: {
+    fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 18,
-    fontWeight: '700',
     lineHeight: 22,
   },
   cardTagline: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     marginTop: 2,
     letterSpacing: 0.1,
@@ -405,20 +409,16 @@ const styles = StyleSheet.create({
   },
   fieldBtn: {
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 10,
     borderWidth: 1,
   },
-  fieldLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    letterSpacing: 1,
-    marginBottom: 6,
-  },
   fieldValue: {
+    fontFamily: 'Manrope',
     fontSize: 17,
     fontWeight: '600',
   },
   lockedNote: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     marginTop: 8,
     fontStyle: 'italic',
@@ -442,6 +442,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   submitLabel: {
+    fontFamily: 'Manrope',
     marginTop: 10,
     fontSize: 14,
     fontWeight: '600',

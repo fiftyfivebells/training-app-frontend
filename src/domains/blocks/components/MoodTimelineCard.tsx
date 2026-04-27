@@ -15,6 +15,7 @@ import { DIM_FILL, QUADRANT_LABELS } from '@/domains/moods/moods.constants'
 import type { MoodCategoryKey } from '@/domains/moods/moods.types'
 import type { RunResponse } from '@/domains/runs/api/runsApi'
 import { formatDateLabel } from '@/domains/runs/utils/datetime'
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 const BREAKDOWN_ORDER: MoodCategoryKey[] = [
@@ -29,7 +30,7 @@ type Props = {
 }
 
 export function MoodTimelineCard({ blockRuns }: Props) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, mood, radius } = useTheme()
   const { data: moods = [] } = useGetAllMoods()
 
   const [timelineContainerWidth, setTimelineContainerWidth] = useState(0)
@@ -77,9 +78,7 @@ export function MoodTimelineCard({ blockRuns }: Props) {
         },
       ]}
     >
-      <Text style={[styles.sectionLabel, { color: text.tertiary }]}>
-        HOW IT FELT
-      </Text>
+      <Dateline style={{ marginBottom: 10 }}>HOW IT FELT</Dateline>
 
       <View
         style={styles.timelineWrapper}
@@ -147,6 +146,7 @@ export function MoodTimelineCard({ blockRuns }: Props) {
                     {
                       backgroundColor: DIM_FILL[key],
                       borderColor: QUAD_COLOR[key] + '26',
+                      borderRadius: radius.md,
                     },
                   ]}
                 >
@@ -179,16 +179,10 @@ export function MoodTimelineCard({ blockRuns }: Props) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 10,
     marginHorizontal: 16,
     marginTop: 8,
     padding: 16,
-  },
-  sectionLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.06,
-    marginBottom: 10,
   },
   timelineWrapper: {
     position: 'relative',
@@ -227,6 +221,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   axisLabel: {
+    fontFamily: 'Manrope',
     fontSize: 10,
   },
   breakdownGrid: {
@@ -240,7 +235,6 @@ const styles = StyleSheet.create({
   breakdownCell: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 8,
     padding: 10,
   },
   breakdownCellHeader: {
@@ -256,10 +250,13 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   breakdownLabel: {
+    fontFamily: 'Manrope',
+    fontWeight: '600',
     fontSize: 10,
     flex: 1,
   },
   breakdownCount: {
+    fontFamily: 'Manrope',
     fontSize: 14,
     fontWeight: '600',
   },

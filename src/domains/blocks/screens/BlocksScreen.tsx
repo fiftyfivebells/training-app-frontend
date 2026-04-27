@@ -2,7 +2,6 @@ import { format } from 'date-fns'
 import { router } from 'expo-router'
 import { useMemo } from 'react'
 import {
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import { useBlocks } from '../hooks/useBlocks'
@@ -70,7 +70,7 @@ export function BlocksScreen() {
         ]}
       >
         <Text style={[styles.headerTitle, { color: text.primary }]}>Blocks</Text>
-        <Pressable
+        <TouchableOpacity
           onPress={openBlockCreate}
           style={[
             styles.newBlockBtn,
@@ -81,11 +81,12 @@ export function BlocksScreen() {
           ]}
           accessibilityRole="button"
           accessibilityLabel="New block"
+          activeOpacity={0.7}
         >
           <Text style={[styles.newBlockBtnText, { color: accent.default }]}>
             + New block
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -102,7 +103,7 @@ export function BlocksScreen() {
             <Text
               style={[
                 styles.fullEmptyText,
-                { color: text.secondary, fontFamily: 'Fraunces_400Italic' },
+                { color: text.secondary, fontFamily: 'Fraunces_400Regular_Italic' },
               ]}
             >
               Your training history will appear here.
@@ -113,9 +114,7 @@ export function BlocksScreen() {
         {/* Current / Active Section */}
         {activeBlock && (
           <View style={styles.section}>
-            <Text style={[styles.sectionHeader, { color: text.tertiary }]}>
-              ACTIVE
-            </Text>
+            <Dateline style={{ paddingHorizontal: 16, marginBottom: 4 }}>ACTIVE</Dateline>
             <PastBlockCard
               block={activeBlock}
               runs={allRuns.filter((r) => r.blockId === activeBlock.id)}
@@ -127,9 +126,7 @@ export function BlocksScreen() {
         {/* Pending Section */}
         {pendingBlocks.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionHeader, { color: text.tertiary }]}>
-              PENDING
-            </Text>
+            <Dateline style={{ paddingHorizontal: 16, marginBottom: 4 }}>PENDING</Dateline>
             {pendingBlocks.map((block) => (
               <PastBlockCard
                 key={block.id}
@@ -144,9 +141,7 @@ export function BlocksScreen() {
         {/* Past blocks section */}
         {completedBlocks.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionHeader, { color: text.tertiary }]}>
-              PAST BLOCKS
-            </Text>
+            <Dateline style={{ paddingHorizontal: 16, marginBottom: 4 }}>PAST BLOCKS</Dateline>
             {completedBlocks.map((block) => (
               <PastBlockCard
                 key={block.id}
@@ -174,9 +169,9 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   headerTitle: {
+    fontFamily: 'Fraunces_400Regular',
     fontSize: 28,
-    fontWeight: '600',
-    letterSpacing: -0.5,
+    letterSpacing: -0.02 * 28,
   },
   newBlockBtn: {
     borderWidth: 1,
@@ -185,6 +180,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   newBlockBtnText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     fontWeight: '500',
   },
@@ -197,14 +193,6 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 8,
-  },
-  sectionHeader: {
-    fontSize: 10,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    paddingHorizontal: 16,
-    marginBottom: 4,
   },
   fullEmpty: {
     paddingHorizontal: 32,

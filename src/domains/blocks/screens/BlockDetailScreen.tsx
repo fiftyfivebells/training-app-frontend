@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { RunRow } from '@/domains/runs/components/RunRow'
 import { metersToDistanceUnit } from '@/domains/runs/utils/distance'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import { BLOCK_TYPE_CONFIG } from '../constants/blockTypes'
@@ -31,7 +32,7 @@ import { MoodTimelineCard } from '../components/MoodTimelineCard'
 
 export function BlockDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, semantic, radius } = useTheme()
   const insets = useSafeAreaInsets()
   const { unit: distUnit } = useDistanceUnit()
 
@@ -246,6 +247,8 @@ export function BlockDetailScreen() {
               backgroundColor: bg.surface,
               borderColor: rule.subtle,
               borderLeftColor: config.accentColor,
+              borderTopRightRadius: radius.lg,
+              borderBottomRightRadius: radius.lg,
             },
           ]}
         >
@@ -276,7 +279,7 @@ export function BlockDetailScreen() {
           <Text
             style={[
               styles.tagline,
-              { color: text.primary, fontFamily: 'Fraunces_400Regular' },
+              { color: text.primary, fontFamily: 'Fraunces_400Regular_Italic' },
             ]}
           >
             {config.tagline}
@@ -378,9 +381,7 @@ export function BlockDetailScreen() {
           ]}
         >
           <View style={styles.runsCardHeader}>
-            <Text style={[styles.sectionLabel, { color: text.tertiary }]}>
-              RUNS THIS BLOCK
-            </Text>
+            <Dateline>RUNS THIS BLOCK</Dateline>
             <TouchableOpacity
               onPress={() => router.push(`/blocks/${block.id}/runs`)}
               accessibilityRole="button"
@@ -426,6 +427,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     fontSize: 17,
     fontWeight: '600',
     flex: 1,
@@ -453,7 +455,7 @@ const styles = StyleSheet.create({
   dropdown: {
     position: 'absolute',
     right: 16,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     width: 180,
     zIndex: 100,
@@ -471,6 +473,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   dropdownLabel: {
+    fontFamily: 'Manrope',
     fontSize: 14,
     fontWeight: '500',
   },
@@ -489,8 +492,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderLeftWidth: 3,
-    borderTopRightRadius: 14,
-    borderBottomRightRadius: 14,
     padding: 16,
   },
   identityTop: {
@@ -510,6 +511,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   typeLabel: {
+    fontFamily: 'Manrope',
     fontSize: 10,
     fontWeight: '500',
     letterSpacing: 0.06,
@@ -522,9 +524,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   dayLabel: {
+    fontFamily: 'Manrope',
     fontSize: 10,
   },
   dayNumber: {
+    fontFamily: 'Manrope',
     fontSize: 22,
     fontWeight: '600',
     lineHeight: 26,
@@ -536,12 +540,13 @@ const styles = StyleSheet.create({
   },
   completionBadge: {
     alignSelf: 'flex-start',
-    borderRadius: 8,
+    borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 4,
     marginTop: 14,
   },
   completionBadgeText: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     fontWeight: '500',
   },
@@ -551,6 +556,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   progressMetaText: {
+    fontFamily: 'Manrope',
     fontSize: 11,
   },
   statsRow: {
@@ -562,29 +568,25 @@ const styles = StyleSheet.create({
   statCell: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 10,
     paddingVertical: 11,
     paddingHorizontal: 10,
     alignItems: 'center',
   },
   statValue: {
+    fontFamily: 'Manrope',
     fontSize: 20,
     fontWeight: '600',
     letterSpacing: -0.5,
   },
   statUnit: {
+    fontFamily: 'Manrope',
     fontSize: 10,
     marginTop: 2,
   },
-  sectionLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.06,
-    marginBottom: 10,
-  },
   runsCard: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 10,
     overflow: 'hidden',
     marginHorizontal: 16,
     marginTop: 8,
@@ -597,10 +599,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   seeAll: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     fontWeight: '500',
   },
   noRunsText: {
+    fontFamily: 'Manrope',
     fontSize: 14,
     padding: 16,
   },

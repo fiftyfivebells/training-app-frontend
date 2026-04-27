@@ -18,7 +18,7 @@ type Props = {
 }
 
 export function PastBlockCard({ block, runs, distUnit }: Props) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, mood, moodBg, semantic, radius } = useTheme()
   const config = BLOCK_TYPE_CONFIG[block.blockType]
 
   const totalMeters = runs.reduce((s, r) => s + r.distanceMeters, 0)
@@ -39,6 +39,8 @@ export function PastBlockCard({ block, runs, distUnit }: Props) {
           backgroundColor: bg.surface,
           borderColor: rule.subtle,
           borderLeftColor: config.accentColor,
+          borderTopRightRadius: radius.lg,
+          borderBottomRightRadius: radius.lg,
         },
       ]}
     >
@@ -77,8 +79,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderLeftWidth: 3,
-    borderTopRightRadius: 14,
-    borderBottomRightRadius: 14,
     paddingVertical: 14,
     paddingHorizontal: 14,
     flexDirection: 'row',
@@ -101,19 +101,23 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   typeLabel: {
+    fontFamily: 'Manrope',
     fontSize: 10,
     fontWeight: '500',
     letterSpacing: 0.06,
   },
   pastCardDates: {
+    fontFamily: 'Manrope',
     fontSize: 12,
   },
   pastCardStats: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     fontWeight: '500',
     marginHorizontal: 12,
   },
   pastCardStatsUnit: {
+    fontFamily: 'Manrope',
     fontWeight: '400',
   },
 })

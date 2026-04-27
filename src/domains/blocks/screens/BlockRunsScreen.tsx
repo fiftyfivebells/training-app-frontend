@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     fontSize: 17,
     fontWeight: '600',
     flex: 1,
@@ -147,6 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
+    fontFamily: 'Manrope',
     fontSize: 14,
   },
 })

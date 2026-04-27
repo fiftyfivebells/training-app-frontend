@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Ionicons } from '@expo/vector-icons'
 
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import type { BlockType } from '../blocks.types'
@@ -39,7 +40,7 @@ function formatStartDate(date: Date, today: Date): string {
 }
 
 export function BlockCreateScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, radius } = useTheme()
   const insets = useSafeAreaInsets()
   const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
   const { data: activeBlock, isLoading: activeLoading } = useActiveBlock()
@@ -256,14 +257,14 @@ export function BlockCreateScreen() {
                         borderColor: accent.default,
                         borderTopLeftRadius: 0,
                         borderBottomLeftRadius: 0,
-                        borderTopRightRadius: 14,
-                        borderBottomRightRadius: 14,
+                        borderTopRightRadius: radius.lg,
+                        borderBottomRightRadius: radius.lg,
                       }
                     : {
                         backgroundColor: bg.surface,
                         borderWidth: 1,
                         borderColor: rule.subtle,
-                        borderRadius: 14,
+                        borderRadius: radius.lg,
                       },
                 ]}
               >
@@ -311,11 +312,7 @@ export function BlockCreateScreen() {
                   >
                     <View style={styles.detailCols}>
                       <View style={styles.detailCol}>
-                        <Text
-                          style={[styles.detailLabel, { color: text.tertiary }]}
-                        >
-                          BEST FOR
-                        </Text>
+                        <Dateline style={{ marginBottom: 3 }}>BEST FOR</Dateline>
                         <Text
                           style={[styles.detailValue, { color: text.secondary }]}
                         >
@@ -323,11 +320,7 @@ export function BlockCreateScreen() {
                         </Text>
                       </View>
                       <View style={[styles.detailCol, styles.detailColRight]}>
-                        <Text
-                          style={[styles.detailLabel, { color: text.tertiary }]}
-                        >
-                          FOCUS
-                        </Text>
+                        <Dateline style={{ marginBottom: 3 }}>FOCUS</Dateline>
                         <Text
                           style={[styles.detailValue, { color: text.secondary }]}
                         >
@@ -436,7 +429,7 @@ export function BlockCreateScreen() {
                     style={[
                       styles.pillText,
                       isActive
-                        ? { color: bg.base, fontWeight: '600' }
+                        ? { color: bg.base, fontFamily: 'Manrope', fontWeight: '600' }
                         : { color: text.tertiary },
                     ]}
                   >
@@ -571,6 +564,7 @@ const styles = StyleSheet.create({
     marginLeft: -8,
   },
   headerTitle: {
+    fontFamily: 'Manrope',
     flex: 1,
     textAlign: 'center',
     fontSize: 17,
@@ -611,10 +605,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardName: {
+    fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 14,
-    fontWeight: '500',
   },
   cardTagline: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     marginTop: 2,
   },
@@ -643,25 +638,22 @@ const styles = StyleSheet.create({
   detailColRight: {
     marginLeft: 16,
   },
-  detailLabel: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.06,
-    marginBottom: 3,
-  },
   detailValue: {
+    fontFamily: 'Manrope',
     fontSize: 12,
     lineHeight: 17,
   },
   typicalRow: {
-    borderRadius: 8,
+    borderRadius: 6,
     paddingVertical: 9,
     paddingHorizontal: 12,
   },
   typicalText: {
+    fontFamily: 'Manrope',
     fontSize: 11,
   },
   typicalRange: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     fontWeight: '500',
   },
@@ -675,15 +667,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 10,
     paddingVertical: 14,
     paddingHorizontal: 16,
   },
   fieldLabel: {
+    fontFamily: 'Manrope',
     fontSize: 14,
     fontWeight: '500',
   },
   fieldValue: {
+    fontFamily: 'Manrope',
     fontSize: 14,
   },
   // Duration
@@ -694,10 +688,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   durationHeaderLabel: {
+    fontFamily: 'Manrope',
     fontSize: 14,
     fontWeight: '500',
   },
   durationValue: {
+    fontFamily: 'Manrope',
     fontSize: 13,
     fontWeight: '500',
   },
@@ -713,6 +709,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   pillText: {
+    fontFamily: 'Manrope',
     fontSize: 12,
   },
   customPill: {
@@ -723,6 +720,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   customPillText: {
+    fontFamily: 'Manrope',
     fontWeight: '500',
   },
   endsRow: {
@@ -732,13 +730,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   endsLabel: {
+    fontFamily: 'Manrope',
     fontSize: 11,
   },
   endsDate: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     fontWeight: '500',
   },
   changeEndDate: {
+    fontFamily: 'Manrope',
     fontSize: 11,
     fontWeight: '500',
   },
@@ -774,6 +775,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   submitLabel: {
+    fontFamily: 'Manrope',
     marginTop: 10,
     fontSize: 14,
     fontWeight: '600',
