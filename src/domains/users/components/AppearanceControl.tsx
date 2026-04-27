@@ -4,7 +4,7 @@ import { useTheme } from '@/theme/useTheme'
 import { AppearancePreference, useTokenContext } from '@/theme/ThemeContext'
 
 export function AppearanceControl() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent } = useTheme()
   const { appearance, setAppearance } = useTokenContext()
   const options: { label: string; value: AppearancePreference }[] = [
     { label: 'Dark', value: 'dark' },
@@ -33,7 +33,7 @@ export function AppearanceControl() {
             <Text
               style={[
                 styles.label,
-                active ? { color: bg.base, fontWeight: '600' } : { color: text.tertiary },
+                active ? { fontFamily: 'Manrope', color: bg.base, fontWeight: '600' } : { color: text.tertiary },
               ]}
             >
               {opt.label}
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 6,
     padding: 2,
     gap: 1,
   },
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   label: {
+    fontFamily: 'Manrope',
     fontSize: 11,
   },
 })

@@ -13,12 +13,13 @@ import { useUpdatePreferences } from '@/domains/users/hooks/useUpdatePreferences
 import { useLifetimeStats } from '@/domains/users/hooks/useLifetimeStats'
 import { useDistanceUnitPreference } from '@/domains/users/hooks/useDistanceUnitPreference'
 import { useLogout } from '@/domains/auth/hooks/useLogout'
+import { Dateline } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 import { CustomToggle } from '../components/CustomToggle'
 import { AppearanceControl } from '../components/AppearanceControl'
 
 export function ProfileScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { data: user } = useGetCurrentUser()
   const { data: prefs } = useGetUserPreferences()
@@ -49,7 +50,7 @@ export function ProfileScreen() {
     if (selectedDate) {
       setAffirmationTime(selectedDate)
       AsyncStorage.setItem('@basephase/affirmationTime', selectedDate.toISOString()).catch(() => {})
-      
+
       if (prefs?.dailyPushEnabled) {
         // Notification scheduling is mocked in Expo Go — no-op until dev build
       }
@@ -58,10 +59,8 @@ export function ProfileScreen() {
 
   const handleToggleAffirmation = async (val: boolean) => {
     if (val) {
-      // expo-notifications functionality is removed from Expo Go in SDK 53
-      // We must mock the permission request and scheduling here until a dev build is used.
       Alert.alert(
-        'Notifications mocked', 
+        'Notifications mocked',
         'Push notifications are not fully supported in Expo Go SDK 53+. We have mocked the permission for now.'
       )
     }
@@ -178,23 +177,23 @@ export function ProfileScreen() {
           <View style={[styles.statsRow, { borderTopColor: rule.subtle }]}>
             <View style={[styles.statCol, { borderRightWidth: 1, borderRightColor: rule.subtle }]}>
               <Text style={[styles.statVal, { color: text.primary }]}>{lifetimeStats?.runCount ?? 0}</Text>
-              <Text style={[styles.statLabel, { color: text.tertiary }]}>RUNS</Text>
+              <Dateline>RUNS</Dateline>
             </View>
             <View style={[styles.statCol, { borderRightWidth: 1, borderRightColor: rule.subtle }]}>
               <Text style={[styles.statVal, { color: text.primary }]}>
                 {Math.round((lifetimeStats?.totalDistanceMeters ?? 0) / (unit === 'imperial' ? 1609.344 : 1000))}
               </Text>
-              <Text style={[styles.statLabel, { color: text.tertiary }]}>{unit === 'imperial' ? 'MI' : 'KM'}</Text>
+              <Dateline>{unit === 'imperial' ? 'MI' : 'KM'}</Dateline>
             </View>
             <View style={styles.statCol}>
               <Text style={[styles.statVal, { color: text.primary }]}>{lifetimeStats?.blockCount ?? 0}</Text>
-              <Text style={[styles.statLabel, { color: text.tertiary }]}>BLOCKS</Text>
+              <Dateline>BLOCKS</Dateline>
             </View>
           </View>
         </View>
 
         {/* Running */}
-        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>RUNNING</Text>
+        <Dateline style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 8 }}>RUNNING</Dateline>
         <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
           <TouchableOpacity style={[styles.row, { borderBottomColor: rule.subtle }]} onPress={handleDistanceUnitPress}>
             <View style={styles.rowLeft}>
@@ -219,7 +218,7 @@ export function ProfileScreen() {
         </View>
 
         {/* Notifications */}
-        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>NOTIFICATIONS</Text>
+        <Dateline style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 8 }}>NOTIFICATIONS</Dateline>
         <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
           <TouchableOpacity style={[styles.row, { borderBottomColor: rule.subtle }]} onPress={() => setShowTimePicker(true)}>
             <View style={styles.rowLeft}>
@@ -244,7 +243,7 @@ export function ProfileScreen() {
         </View>
 
         {/* App */}
-        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>APP</Text>
+        <Dateline style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 8 }}>APP</Dateline>
         <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
           <View style={[styles.row, { borderBottomColor: rule.subtle }]}>
             <View style={styles.rowLeft}>
@@ -266,7 +265,7 @@ export function ProfileScreen() {
         </View>
 
         {/* Account */}
-        <Text style={[styles.sectionHeader, { color: text.tertiary }]}>ACCOUNT</Text>
+        <Dateline style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 8 }}>ACCOUNT</Dateline>
         <View style={[styles.card, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
           <TouchableOpacity style={[styles.row, { borderBottomWidth: 0 }]} onPress={handleSignOut}>
             <View style={styles.rowLeft}>
@@ -277,7 +276,7 @@ export function ProfileScreen() {
         </View>
 
         <TouchableOpacity onPress={handleDeleteAccount} style={{ marginTop: 24, alignItems: 'center' }}>
-          <Text style={{ color: semantic.error, opacity: 0.5, fontSize: 13 }}>Delete account</Text>
+          <Text style={{ fontFamily: 'Manrope', color: semantic.error, opacity: 0.5, fontSize: 13 }}>Delete account</Text>
         </TouchableOpacity>
 
       </ScrollView>
@@ -297,27 +296,25 @@ export function ProfileScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 16 },
-  headerTitle: { fontSize: 17, fontWeight: '600', textAlign: 'center' },
+  headerTitle: { fontFamily: 'Manrope', fontSize: 17, fontWeight: '600', textAlign: 'center' },
   backBtn: { width: 40, height: 40, justifyContent: 'center', marginLeft: -10 },
   headerRight: { width: 40 },
-  card: { borderRadius: 14, borderWidth: 1, marginHorizontal: 16 },
+  card: { borderRadius: 10, borderWidth: 1, marginHorizontal: 16 },
   avatar: { width: 56, height: 56, borderRadius: 28, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontSize: 20, fontWeight: '600' },
-  fullName: { fontSize: 18, fontWeight: '600', letterSpacing: -0.2 },
-  email: { fontSize: 13, marginTop: 3 },
-  timezone: { fontSize: 12, marginTop: 2 },
-  editBtn: { borderWidth: 1, borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
-  editBtnText: { fontSize: 12, fontWeight: '500' },
+  avatarText: { fontFamily: 'Fraunces_400Regular', fontSize: 20 },
+  fullName: { fontFamily: 'Fraunces_400Regular_Italic', fontSize: 18, letterSpacing: -0.2 },
+  email: { fontFamily: 'Manrope', fontSize: 13, marginTop: 3 },
+  timezone: { fontFamily: 'Manrope', fontSize: 12, marginTop: 2 },
+  editBtn: { borderWidth: 1, borderRadius: 6, paddingVertical: 6, paddingHorizontal: 12 },
+  editBtnText: { fontFamily: 'Manrope', fontSize: 12, fontWeight: '500' },
   statsRow: { flexDirection: 'row', marginTop: 16, paddingTop: 14, borderTopWidth: 1 },
   statCol: { flex: 1, alignItems: 'center' },
-  statVal: { fontSize: 18, fontWeight: '600' },
-  statLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 0.05, marginTop: 2 },
-  sectionHeader: { fontSize: 11, fontWeight: '500', paddingHorizontal: 20, paddingTop: 20, paddingBottom: 8 },
+  statVal: { fontFamily: 'Fraunces_400Regular', fontSize: 18 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1 },
   rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  iconBg: { width: 32, height: 32, borderRadius: 8 },
-  rowLabel: { fontSize: 15 },
-  rowSub: { fontSize: 12, marginTop: 2 },
+  iconBg: { width: 32, height: 32, borderRadius: 6 },
+  rowLabel: { fontFamily: 'Manrope', fontSize: 15 },
+  rowSub: { fontFamily: 'Manrope', fontSize: 12, marginTop: 2 },
   rowRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  rowValue: { fontSize: 14 },
+  rowValue: { fontFamily: 'Manrope', fontSize: 14 },
 })

@@ -9,7 +9,7 @@ interface CustomToggleProps {
 }
 
 export function CustomToggle({ value, onValueChange, disabled }: CustomToggleProps) {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { text, rule, accent } = useTheme()
   const translateX = useRef(new Animated.Value(value ? 18 : 0)).current
 
   useEffect(() => {

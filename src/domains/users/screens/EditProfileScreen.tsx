@@ -20,7 +20,7 @@ interface EditProfileForm {
 }
 
 export function EditProfileScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, rule, accent, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { data: user } = useGetCurrentUser()
   const { mutate: updateProfile, isPending } = useUpdateProfile()
@@ -180,21 +180,21 @@ export function EditProfileScreen() {
             )}
           />
         </View>
-        
+
         <View style={styles.fieldContainer}>
           <Text style={[styles.label, { color: text.tertiary }]}>Affirmation time</Text>
           <TouchableOpacity
             style={[styles.input, { backgroundColor: bg.input, borderColor: rule.subtle, justifyContent: 'center' }]}
             onPress={() => setShowTimePicker(true)}
           >
-            <Text style={{ color: text.primary }}>
+            <Text style={{ fontFamily: 'Manrope', color: text.primary }}>
               {affirmationTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
           </TouchableOpacity>
         </View>
 
       </ScrollView>
-      
+
       {showTimePicker && (
         <DateTimePicker
           value={affirmationTime}
@@ -210,12 +210,12 @@ export function EditProfileScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 16 },
-  headerTitle: { fontSize: 17, fontWeight: '600', textAlign: 'center' },
+  headerTitle: { fontFamily: 'Manrope', fontSize: 17, fontWeight: '600', textAlign: 'center' },
   backBtn: { width: 40, height: 40, justifyContent: 'center', marginLeft: -10 },
   headerRight: { width: 40, alignItems: 'flex-end', justifyContent: 'center' },
-  saveBtnText: { fontSize: 15, fontWeight: '500' },
+  saveBtnText: { fontFamily: 'Manrope', fontSize: 15, fontWeight: '500' },
   fieldContainer: { marginBottom: 20 },
-  label: { fontSize: 13, marginBottom: 8, fontWeight: '500' },
-  input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 16, height: 50, fontSize: 15 },
-  error: { fontSize: 12, marginTop: 6 },
+  label: { fontFamily: 'Manrope', fontSize: 13, marginBottom: 8, fontWeight: '500' },
+  input: { fontFamily: 'Manrope', borderWidth: 1, borderRadius: 10, paddingHorizontal: 16, height: 50, fontSize: 15 },
+  error: { fontFamily: 'Manrope', fontSize: 12, marginTop: 6 },
 })
