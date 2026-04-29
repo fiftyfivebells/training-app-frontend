@@ -1,11 +1,9 @@
 import { notifyLogout } from '@/domains/auth/context/authEvents'
 import { refreshAccessToken } from '@/lib/api/refreshManager'
-import { Platform } from 'react-native'
 import { tokenStorage } from '../../domains/auth/utils/tokenStorage'
 import { ApiError } from './error'
 
-// TODO: use env var for production
-const API_BASE_URL = Platform.OS === 'web' ? '' : 'http://192.168.0.18:8080'
+const API_BASE_URL = 'https://api.basephase.app'
 
 export abstract class BaseApiClient {
   protected baseUrl: string
