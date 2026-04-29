@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "generate-api": "openapi-typescript http://localhost:8080/openapi/docs/openapi.json --output src/generated/api/types.ts",
+    "generate-api": "openapi-typescript https://api.basephase.app/openapi/docs/openapi.json --output src/generated/api/types.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
