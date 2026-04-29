@@ -1,3 +1,4 @@
+import '@/lib/api/setup'
 import { View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
