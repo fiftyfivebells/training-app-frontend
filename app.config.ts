@@ -1,12 +1,19 @@
 export default {
   expo: {
-    name: 'training-app-frontend',
-    slug: 'training-app-frontend',
+    name: 'Base Phase App',
+    slug: 'base-phase-app',
+    owner: 'fiftyfivebells',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
+    updates: {
+      url: 'https://u.expo.dev/4481c69f-9524-4ddb-98cf-aaf4020b0fae'
+    },
+    runtimeVersion: {
+      policy: 'appVersion'
+    },
     splash: {
       image: './assets/splash-icon.png',
       resizeMode: 'contain',
@@ -32,6 +39,9 @@ export default {
     plugins: ['expo-localization', 'expo-router', 'expo-secure-store'],
     scheme: 'trainingapp',
     extra: {
+      eas: {
+        projectId: '4481c69f-9524-4ddb-98cf-aaf4020b0fae'  
+      },
       router: {
         origin: false,
       },
