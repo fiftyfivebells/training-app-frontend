@@ -1,5 +1,6 @@
 import { Button, Input, useAlert } from '@components/ui'
 import type { LoginRequest } from '@domains/auth/api/authClient'
+import { ApiError } from '@lib/api/error'
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -45,7 +46,14 @@ export function LoginScreen() {
     try {
       await login(data.email, data.password)
     } catch (err: any) {
-      alert('Login Failed', err?.message || 'Invalid email or password. Please try again.')
+      if (err instanceof ApiError && err.isForbidden) {
+        router.push({
+          pathname: '/(auth)/resend-verification',
+          params: { email: data.email, fromLogin: '1' },
+        })
+      } else {
+        alert('Login Failed', err?.message || 'Invalid email or password. Please try again.')
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -167,6 +175,15 @@ export function LoginScreen() {
               </Pressable>
             </View>
 
+            <Pressable
+              onPress={() => router.push('/(auth)/resend-verification')}
+              style={styles.resendBtn}
+            >
+              <Text style={[styles.resendText, { color: text.tertiary }]}>
+                Didn't receive your verification email?
+              </Text>
+            </Pressable>
+
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -229,5 +246,14 @@ const styles = StyleSheet.create({
   createLink: {
     fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 13,
+  },
+  resendBtn: {
+    alignSelf: 'center',
+    paddingVertical: 10,
+    marginTop: 4,
+  },
+  resendText: {
+    fontFamily: 'Manrope',
+    fontSize: 12,
   },
 })

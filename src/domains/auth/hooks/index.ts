@@ -1,4 +1,5 @@
 export { useLogin } from './useLogin'
 export { useLogout } from './useLogout'
 export { useRegister } from './useRegister'
+export { useResendVerification } from './useResendVerification'
 export { useSessionChecker } from './useSessionChecker'

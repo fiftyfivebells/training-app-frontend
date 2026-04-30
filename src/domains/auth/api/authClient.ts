@@ -4,6 +4,7 @@ import { BaseApiClient } from '@lib/api/base'
 export type CreateUserRequest = components['schemas']['CreateUserRequest']
 export type LoginRequest = components['schemas']['LoginRequest']
 export type RefreshRequest = components['schemas']['RefreshRequest']
+export type ResendVerificationRequest = components['schemas']['ResendVerificationRequest']
 export type SuccessResponse = components['schemas']['SuccessResponse']
 export type AuthResponse = components['schemas']['AuthResponse']
 export type UserResponse = components['schemas']['UserResponse']
@@ -25,6 +26,10 @@ export class AuthClient extends BaseApiClient {
 
   async refreshWeb() {
     return this.post<AuthResponse>(`${this.baseAuthRoute}/refresh/web`)
+  }
+
+  async resendVerification(body: ResendVerificationRequest) {
+    return this.post<SuccessResponse>(`${this.baseAuthRoute}/resend-verification`, body)
   }
 }
 
