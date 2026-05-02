@@ -11,6 +11,7 @@ import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 
 import { SessionChecker } from '@/domains/auth/components/SessionChecker'
+import { useBlockThemeSync } from '@/domains/blocks/hooks/useBlockThemeSync'
 import { useTheme } from '@/theme/useTheme'
 import { BaseThemeProvider } from '@/theme/ThemeContext'
 import { AuthGate } from '@/domains/auth/context/AuthGate'
@@ -54,6 +55,7 @@ export default function RootLayout() {
 
 function ThemedAppShell() {
   const { bg } = useTheme()
+  useBlockThemeSync()
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: bg.base }}>

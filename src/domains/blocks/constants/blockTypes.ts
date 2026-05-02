@@ -18,7 +18,7 @@ export type BlockTypeConfig = {
 export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
   base_building: {
     label: 'Base Building',
-    accentColor: '#B8D44A',
+    accentColor: '#8FA64A',
     tagline: 'Build your aerobic foundation',
     bestFor: 'Early season, returning from a break, building volume',
     focus: 'High easy volume, long runs, minimal intensity',
@@ -30,7 +30,7 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
   },
   race_specific: {
     label: 'Race Specific',
-    accentColor: '#E07840',
+    accentColor: '#C4673A',
     tagline: 'Add quality to your fitness',
     bestFor: 'After base building, building toward a race',
     focus: 'Tempo and speed work alongside easy volume',
@@ -42,7 +42,7 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
   },
   peaking: {
     label: 'Peaking',
-    accentColor: '#C87941',
+    accentColor: '#B5743A',
     tagline: 'Sharpen for race day',
     bestFor: 'Final phase before a target race',
     focus: 'Race-specific workouts, taper',
@@ -54,7 +54,7 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
   },
   tapering: {
     label: 'Taper',
-    accentColor: '#7B9EB0',
+    accentColor: '#6A8E9E',
     tagline: 'Less is more',
     bestFor: 'Final 1–3 weeks before a race',
     focus: 'Reduced volume, race-pace strides',
@@ -66,7 +66,7 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
   },
   recovery: {
     label: 'Recovery',
-    accentColor: '#4AC4D4',
+    accentColor: '#4A9490',
     tagline: 'Let your body absorb the work',
     bestFor: 'After a race, after a hard block, when fatigued',
     focus: 'Easy running only, reduced volume',
@@ -78,7 +78,7 @@ export const BLOCK_TYPE_CONFIG: Record<BlockType, BlockTypeConfig> = {
   },
   off_season: {
     label: 'Off Season',
-    accentColor: '#9B60B8',
+    accentColor: '#7A5A8A',
     tagline: 'Rest and recharge',
     bestFor: 'End of season, mental reset, extended recovery',
     focus: 'Unstructured running, cross training, rest',

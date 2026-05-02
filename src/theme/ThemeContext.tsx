@@ -12,6 +12,7 @@ type ThemeContextValue = {
   tokens: ThemeTokens
   appearance: AppearancePreference
   setAppearance: (pref: AppearancePreference) => void
+  setAccentOverride: (color: string | null) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
@@ -28,6 +29,7 @@ function resolveTokens(
 export function BaseThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useColorScheme()
   const [appearance, setAppearanceState] = useState<AppearancePreference>('dark')
+  const [accentOverride, setAccentOverride] = useState<string | null>(null)
 
   useEffect(() => {
     AsyncStorage.getItem(APPEARANCE_KEY)
@@ -44,11 +46,27 @@ export function BaseThemeProvider({ children }: { children: React.ReactNode }) {
     AsyncStorage.setItem(APPEARANCE_KEY, pref).catch(() => {})
   }, [])
 
-  const tokens = resolveTokens(appearance, systemScheme)
+  const baseTokens = resolveTokens(appearance, systemScheme)
+
+  const tokens: ThemeTokens = useMemo(
+    () =>
+      accentOverride
+        ? {
+            ...baseTokens,
+            accent: {
+              default: accentOverride,
+              hover: accentOverride + 'CC',
+              pressed: accentOverride + '99',
+              onAccent: baseTokens.accent.onAccent,
+            },
+          }
+        : baseTokens,
+    [baseTokens, accentOverride],
+  )
 
   const value = useMemo(
-    () => ({ tokens, appearance, setAppearance }),
-    [tokens, appearance, setAppearance],
+    () => ({ tokens, appearance, setAppearance, setAccentOverride }),
+    [tokens, appearance, setAppearance, setAccentOverride],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
@@ -58,4 +76,8 @@ export function useTokenContext(): ThemeContextValue {
   const ctx = useContext(ThemeContext)
   if (!ctx) throw new Error('useTokenContext must be used within BaseThemeProvider')
   return ctx
+}
+
+export function useSetAccentOverride(): (color: string | null) => void {
+  return useTokenContext().setAccentOverride
 }
