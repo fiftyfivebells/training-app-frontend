@@ -21,9 +21,8 @@ import { Ionicons } from '@expo/vector-icons'
 
 import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
 import type { MoodCategoryKey } from '@/domains/moods/moods.types'
-import { QUADRANT_COLOR_KEY, QUADRANT_CELLS } from '@/domains/moods/moods.constants'
 import { MoodGridModal } from '@/domains/moods/components/MoodGridModal'
-import { MoodSelectedBox } from '@/domains/moods/components/MoodSelectedBox'
+import { MoodGridTrigger } from '@/domains/moods/components/MoodGridTrigger'
 import { useUpdateRun } from '@/domains/runs/hooks/useUpdateRun'
 import { useRun } from '@/domains/runs/hooks/useRun'
 import { calculateMeters, metersToDistanceUnit } from '@/domains/runs/utils/distance'
@@ -54,7 +53,7 @@ interface FormValues {
 }
 
 export function EditRunScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic, radius } = useTheme()
+  const { bg, text, rule, accent, semantic, radius } = useTheme()
   const insets = useSafeAreaInsets()
   const { id } = useLocalSearchParams<{ id: string }>()
 
@@ -163,9 +162,6 @@ export function EditRunScreen() {
     () => moods.find((m) => m.id === watchedMoodId) ?? null,
     [watchedMoodId, moods],
   )
-
-  const moodColor = selectedMood ? mood[QUADRANT_COLOR_KEY[selectedMood.quadrant]] : null
-  const moodBgColor = selectedMood ? moodBg[QUADRANT_COLOR_KEY[selectedMood.quadrant]] : null
 
   const handleDurationBlur = useCallback(() => {
     const { hh, mm, ss } = redistributeTime(watchedHH, watchedMM, watchedSS)
@@ -415,46 +411,11 @@ export function EditRunScreen() {
             >
               <Dateline>HOW DID IT FEEL?</Dateline>
 
-              <MoodSelectedBox
-                mood={selectedMood}
-                moodColor={moodColor}
-                moodBgColor={moodBgColor}
-                onPress={() => openMoodGrid(selectedMood?.quadrant ?? null)}
+              <MoodGridTrigger
+                selectedMood={selectedMood}
+                onZoneTap={(q) => openMoodGrid(q)}
+                onChangeTap={() => openMoodGrid(selectedMood?.quadrant ?? null)}
               />
-
-              <View style={styles.moodGrid}>
-                {QUADRANT_CELLS.map((cell) => {
-                  const isActive = selectedMood?.quadrant === cell.quadrant
-                  return (
-                    <TouchableOpacity
-                      key={cell.key}
-                      style={[
-                        styles.moodCell,
-                        {
-                          backgroundColor: isActive ? moodBg[cell.key] : 'transparent',
-                          borderColor: isActive ? mood[cell.key] : rule.default,
-                          borderWidth: isActive ? 2 : 1,
-                          borderRadius: radius.sm,
-                        },
-                      ]}
-                      onPress={() => openMoodGrid(cell.quadrant)}
-                      activeOpacity={0.7}
-                    >
-                      <Text style={[styles.moodCellLabel, { color: isActive ? mood[cell.key] : text.tertiary }]}>
-                        {cell.label}
-                      </Text>
-                      <Text style={[styles.moodCellSublabel, { color: isActive ? mood[cell.key] : text.secondary }]}>
-                        {cell.sublabel}
-                      </Text>
-                    </TouchableOpacity>
-                  )
-                })}
-              </View>
-
-              <View style={styles.moodAxisRow}>
-                <Text style={[styles.moodAxisLabel, { color: text.tertiary }]}>← TOUGH</Text>
-                <Text style={[styles.moodAxisLabel, { color: text.tertiary }]}>GOOD →</Text>
-              </View>
 
               {!!errors.moodId && (
                 <Text style={[styles.errorText, { color: semantic.error }]}>
@@ -497,9 +458,8 @@ export function EditRunScreen() {
 
       <MoodGridModal
         visible={showMoodGrid}
-        initialQuadrant={openQuadrant}
+        focusQuadrant={openQuadrant}
         initialMoodId={watchedMoodId}
-        moods={moods}
         onSelect={(m) => { setValue('moodId', m.id); setShowMoodGrid(false) }}
         onDismiss={() => setShowMoodGrid(false)}
       />
@@ -572,38 +532,6 @@ const styles = StyleSheet.create({
   },
   moodSection: {
     gap: 8,
-  },
-  moodGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  moodCell: {
-    width: '47%',
-    padding: 12,
-    gap: 4,
-  },
-  moodCellLabel: {
-    fontFamily: 'Manrope',
-    fontWeight: '600',
-    fontSize: 9,
-    letterSpacing: 0.14 * 9,
-  },
-  moodCellSublabel: {
-    fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 13,
-    lineHeight: 16,
-  },
-  moodAxisRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 4,
-  },
-  moodAxisLabel: {
-    fontFamily: 'Manrope',
-    fontWeight: '600',
-    fontSize: 9,
-    letterSpacing: 0.12 * 9,
   },
   errorText: {
     fontFamily: 'Manrope',

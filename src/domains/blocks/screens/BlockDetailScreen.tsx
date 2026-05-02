@@ -319,31 +319,20 @@ export function BlockDetailScreen() {
         </View>
 
         {/* Stats row */}
-        <View style={styles.statsRow}>
-          <View
-            style={[
-              styles.statCell,
-              {
-                backgroundColor: bg.surface,
-                borderColor: rule.subtle,
-              },
-            ]}
-          >
+        <View
+          style={[
+            styles.statsRow,
+            { backgroundColor: bg.surface, borderColor: rule.subtle },
+          ]}
+        >
+          <View style={styles.statCell}>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {stats?.runCount ?? 0}
             </Text>
             <Text style={[styles.statUnit, { color: text.tertiary }]}>Runs</Text>
           </View>
 
-          <View
-            style={[
-              styles.statCell,
-              {
-                backgroundColor: bg.surface,
-                borderColor: rule.subtle,
-              },
-            ]}
-          >
+          <View style={[styles.statCell, styles.statCellMiddle, { borderColor: rule.subtle }]}>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {distValue}
             </Text>
@@ -352,15 +341,7 @@ export function BlockDetailScreen() {
             </Text>
           </View>
 
-          <View
-            style={[
-              styles.statCell,
-              {
-                backgroundColor: bg.surface,
-                borderColor: rule.subtle,
-              },
-            ]}
-          >
+          <View style={styles.statCell}>
             <Text style={[styles.statValue, { color: text.primary }]}>
               {stats && stats.runCount > 0 ? stats.avgRpe.toFixed(1) : '—'}
             </Text>
@@ -561,17 +542,21 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 8,
     marginHorizontal: 16,
     marginTop: 8,
+    borderWidth: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   statCell: {
     flex: 1,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingVertical: 11,
+    paddingVertical: 12,
     paddingHorizontal: 10,
     alignItems: 'center',
+  },
+  statCellMiddle: {
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
   },
   statValue: {
     fontFamily: 'Manrope',

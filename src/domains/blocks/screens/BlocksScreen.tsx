@@ -19,7 +19,7 @@ import { useBlocks } from '../hooks/useBlocks'
 import { PastBlockCard } from '../components/PastBlockCard'
 
 export function BlocksScreen() {
-  const { bg, text, rule, accent, mood, moodBg, semantic } = useTheme()
+  const { bg, text, accent } = useTheme()
   const insets = useSafeAreaInsets()
 
   const { data: blocks = [], isLoading: blocksLoading } = useBlocks()
@@ -119,6 +119,7 @@ export function BlocksScreen() {
               block={activeBlock}
               runs={allRuns.filter((r) => r.blockId === activeBlock.id)}
               distUnit={distUnit}
+              isActive
             />
           </View>
         )}

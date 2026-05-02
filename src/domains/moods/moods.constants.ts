@@ -54,14 +54,3 @@ export const QUADRANT_COLOR_KEY: Record<MoodCategoryKey, 'highGood' | 'highTough
   'low-challenging':  'lowTough',
 }
 
-export const QUADRANT_CELLS: Array<{
-  key: 'highGood' | 'highTough' | 'lowGood' | 'lowTough'
-  quadrant: MoodCategoryKey
-  label: string
-  sublabel: string
-}> = [
-  { key: 'highTough', quadrant: 'high-challenging', label: 'HIGH · TOUGH', sublabel: 'Hard work & grit' },
-  { key: 'highGood',  quadrant: 'high-pleasant',    label: 'HIGH · GOOD',  sublabel: 'Energized & thriving' },
-  { key: 'lowTough',  quadrant: 'low-challenging',  label: 'LOW · TOUGH',  sublabel: 'Drained & heavy' },
-  { key: 'lowGood',   quadrant: 'low-pleasant',     label: 'LOW · GOOD',   sublabel: 'Calm & restorative' },
-]

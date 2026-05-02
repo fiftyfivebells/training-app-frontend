@@ -249,7 +249,7 @@ export function BlockCreateScreen() {
                   styles.card,
                   isSelected
                     ? {
-                        backgroundColor: bg.surface,
+                        backgroundColor: accent.default + '0F',
                         borderTopWidth: 1,
                         borderRightWidth: 1,
                         borderBottomWidth: 1,
@@ -291,7 +291,7 @@ export function BlockCreateScreen() {
                           }
                         : {
                             backgroundColor: 'transparent',
-                            borderColor: rule.default,
+                            borderColor: rule.strong,
                           },
                     ]}
                   >
@@ -299,7 +299,7 @@ export function BlockCreateScreen() {
                       <Ionicons
                         name="checkmark"
                         size={11}
-                        color={bg.base}
+                        color={accent.onAccent}
                       />
                     )}
                   </View>
@@ -418,7 +418,7 @@ export function BlockCreateScreen() {
                         }
                       : {
                           backgroundColor: bg.surface,
-                          borderColor: rule.subtle,
+                          borderColor: rule.default,
                         },
                   ]}
                   accessibilityRole="radio"
@@ -429,7 +429,7 @@ export function BlockCreateScreen() {
                     style={[
                       styles.pillText,
                       isActive
-                        ? { color: bg.base, fontFamily: 'Manrope', fontWeight: '600' }
+                        ? { color: accent.onAccent, fontFamily: 'Manrope', fontWeight: '600' }
                         : { color: text.tertiary },
                     ]}
                   >
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   radio: {
     width: 18,
     height: 18,
-    borderRadius: 9,
+    borderRadius: 2,
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -704,7 +704,7 @@ const styles = StyleSheet.create({
   },
   pill: {
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 4,
     paddingVertical: 7,
     paddingHorizontal: 12,
   },

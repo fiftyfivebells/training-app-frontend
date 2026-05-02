@@ -15,10 +15,11 @@ type Props = {
   block: Block
   runs: RunResponse[]
   distUnit: 'km' | 'mi'
+  isActive?: boolean
 }
 
-export function PastBlockCard({ block, runs, distUnit }: Props) {
-  const { bg, text, rule, accent, mood, moodBg, semantic, radius } = useTheme()
+export function PastBlockCard({ block, runs, distUnit, isActive = false }: Props) {
+  const { bg, text, rule, radius } = useTheme()
   const config = BLOCK_TYPE_CONFIG[block.blockType]
 
   const totalMeters = runs.reduce((s, r) => s + r.distanceMeters, 0)
@@ -36,7 +37,7 @@ export function PastBlockCard({ block, runs, distUnit }: Props) {
       style={[
         styles.pastCard,
         {
-          backgroundColor: bg.surface,
+          backgroundColor: isActive ? config.accentColor + '12' : bg.surface,
           borderColor: rule.subtle,
           borderLeftColor: config.accentColor,
           borderTopRightRadius: radius.lg,
