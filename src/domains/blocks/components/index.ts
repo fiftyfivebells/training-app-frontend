@@ -1,3 +1,5 @@
 export { ActiveBlockBanner } from './ActiveBlockBanner'
+export { ActiveBlockCard } from './ActiveBlockCard'
+export { BlockSwatch } from './BlockSwatch'
 export { MoodTimelineCard } from './MoodTimelineCard'
 export { PastBlockCard } from './PastBlockCard'

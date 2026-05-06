@@ -10,16 +10,16 @@ import { useTheme } from '@/theme/useTheme'
 
 import type { Block } from '../blocks.types'
 import { BLOCK_TYPE_CONFIG } from '../constants/blockTypes'
+import { BlockSwatch } from './BlockSwatch'
 
 type Props = {
   block: Block
   runs: RunResponse[]
   distUnit: 'km' | 'mi'
-  isActive?: boolean
 }
 
-export function PastBlockCard({ block, runs, distUnit, isActive = false }: Props) {
-  const { bg, text, rule, radius } = useTheme()
+export function PastBlockCard({ block, runs, distUnit }: Props) {
+  const { bg, text, rule } = useTheme()
   const config = BLOCK_TYPE_CONFIG[block.blockType]
 
   const totalMeters = runs.reduce((s, r) => s + r.distanceMeters, 0)
@@ -35,90 +35,89 @@ export function PastBlockCard({ block, runs, distUnit, isActive = false }: Props
       accessibilityRole="button"
       accessibilityLabel={`${config.label} block`}
       style={[
-        styles.pastCard,
+        styles.card,
         {
-          backgroundColor: isActive ? config.accentColor + '12' : bg.surface,
+          backgroundColor: bg.surface,
           borderColor: rule.subtle,
           borderLeftColor: config.accentColor,
-          borderTopRightRadius: radius.lg,
-          borderBottomRightRadius: radius.lg,
+          borderRadius: 4,
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
         },
       ]}
     >
-      <View style={styles.pastCardLeft}>
-        <View style={styles.pastCardTypeRow}>
-          <View style={[styles.dot8, { backgroundColor: config.accentColor }]} />
+      <View style={styles.cardLeft}>
+        <View style={styles.typeRow}>
+          <BlockSwatch color={config.accentColor} size={7} />
           <Text style={[styles.typeLabel, { color: config.accentColor }]}>
             {config.label.toUpperCase()}
           </Text>
         </View>
-        <Text style={[styles.pastCardDates, { color: text.tertiary }]}>
+        <Text style={[styles.dates, { color: text.tertiary }]}>
           {format(parseISO(block.startDate), 'MMM d')} –{' '}
           {format(parseISO(displayEndDate), 'MMM d')}
         </Text>
       </View>
 
-      <Text style={[styles.pastCardStats, { color: text.primary }]}>
-        {runs.length}{' '}
-        <Text style={[styles.pastCardStatsUnit, { color: text.tertiary }]}>
-          {runs.length === 1 ? 'run' : 'runs'}
+      <View style={styles.statsArea}>
+        <Text style={[styles.statsNum, { color: text.secondary }]}>
+          {runs.length}
+          <Text style={[styles.statsItalic, { color: text.tertiary }]}>
+            {' runs'}
+          </Text>
+          {'  '}
+          {distStr}
         </Text>
-        {'  '}
-        {distStr}
-      </Text>
+      </View>
 
-      <Ionicons name="chevron-forward" size={16} color={text.tertiary} />
+      <Ionicons name="chevron-forward" size={14} color={text.tertiary} />
     </TouchableOpacity>
   )
 }
 
 const styles = StyleSheet.create({
-  pastCard: {
+  card: {
     marginHorizontal: 16,
     marginBottom: 8,
     borderTopWidth: 1,
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderLeftWidth: 3,
-    paddingVertical: 14,
+    paddingVertical: 12,
     paddingHorizontal: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  pastCardLeft: {
+  cardLeft: {
     flex: 1,
     gap: 3,
   },
-  pastCardTypeRow: {
+  typeRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  dot8: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    flexShrink: 0,
-  },
   typeLabel: {
     fontFamily: 'Manrope',
     fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.06,
+    fontWeight: '600',
+    letterSpacing: 0.1 * 10,
   },
-  pastCardDates: {
+  dates: {
     fontFamily: 'Manrope',
-    fontSize: 12,
+    fontSize: 11,
   },
-  pastCardStats: {
-    fontFamily: 'Manrope',
-    fontSize: 12,
-    fontWeight: '500',
-    marginHorizontal: 12,
+  statsArea: {
+    marginHorizontal: 10,
   },
-  pastCardStatsUnit: {
-    fontFamily: 'Manrope',
-    fontWeight: '400',
+  statsNum: {
+    fontFamily: 'Fraunces_400Regular',
+    fontSize: 13,
+    fontVariant: ['tabular-nums'],
+  },
+  statsItalic: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 13,
   },
 })

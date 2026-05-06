@@ -25,6 +25,7 @@ import { useTheme } from '@/theme/useTheme'
 
 import type { BlockType } from '../blocks.types'
 import { BLOCK_TYPE_CONFIG, BLOCK_TYPE_ORDER } from '../constants/blockTypes'
+import { BlockSwatch } from '../components/BlockSwatch'
 import { useActiveBlock } from '../hooks/useActiveBlock'
 import { useBlocks } from '../hooks/useBlocks'
 import { useCompleteBlock } from '../hooks/useCompleteBlock'
@@ -40,7 +41,7 @@ function formatStartDate(date: Date, today: Date): string {
 }
 
 export function BlockCreateScreen() {
-  const { bg, text, rule, accent, radius } = useTheme()
+  const { bg, text, rule, accent } = useTheme()
   const insets = useSafeAreaInsets()
   const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
   const { data: activeBlock, isLoading: activeLoading } = useActiveBlock()
@@ -249,30 +250,33 @@ export function BlockCreateScreen() {
                   styles.card,
                   isSelected
                     ? {
-                        backgroundColor: accent.default + '0F',
+                        backgroundColor: config.accentColor + '0F',
                         borderTopWidth: 1,
                         borderRightWidth: 1,
                         borderBottomWidth: 1,
                         borderLeftWidth: 3,
-                        borderColor: accent.default,
+                        borderColor: config.accentColor,
+                        borderRadius: 4,
                         borderTopLeftRadius: 0,
                         borderBottomLeftRadius: 0,
-                        borderTopRightRadius: radius.lg,
-                        borderBottomRightRadius: radius.lg,
                       }
                     : {
                         backgroundColor: bg.surface,
-                        borderWidth: 1,
+                        borderTopWidth: 1,
+                        borderRightWidth: 1,
+                        borderBottomWidth: 1,
+                        borderLeftWidth: 3,
                         borderColor: rule.subtle,
-                        borderRadius: radius.lg,
+                        borderLeftColor: 'transparent',
+                        borderRadius: 4,
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
                       },
                 ]}
               >
                 {/* Card header — always visible */}
                 <View style={styles.cardHeader}>
-                  <View
-                    style={[styles.typeDot, { backgroundColor: config.accentColor }]}
-                  />
+                  <BlockSwatch color={config.accentColor} size={10} />
                   <View style={styles.cardTitleCol}>
                     <Text style={[styles.cardName, { color: text.primary }]}>
                       {config.label}
@@ -286,8 +290,8 @@ export function BlockCreateScreen() {
                       styles.radio,
                       isSelected
                         ? {
-                            backgroundColor: accent.default,
-                            borderColor: accent.default,
+                            backgroundColor: config.accentColor,
+                            borderColor: config.accentColor,
                           }
                         : {
                             backgroundColor: 'transparent',
@@ -299,7 +303,7 @@ export function BlockCreateScreen() {
                       <Ionicons
                         name="checkmark"
                         size={11}
-                        color={accent.onAccent}
+                        color={bg.base}
                       />
                     )}
                   </View>
@@ -429,7 +433,7 @@ export function BlockCreateScreen() {
                     style={[
                       styles.pillText,
                       isActive
-                        ? { color: accent.onAccent, fontFamily: 'Manrope', fontWeight: '600' }
+                        ? { color: bg.base, fontFamily: 'Manrope', fontWeight: '600' }
                         : { color: text.tertiary },
                     ]}
                   >
@@ -591,22 +595,16 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 13,
+    gap: 10,
+    paddingVertical: 12,
     paddingHorizontal: 14,
-  },
-  typeDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginRight: 10,
-    flexShrink: 0,
   },
   cardTitleCol: {
     flex: 1,
   },
   cardName: {
     fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 14,
+    fontSize: 15,
   },
   cardTagline: {
     fontFamily: 'Manrope',
@@ -640,8 +638,8 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     fontFamily: 'Manrope',
-    fontSize: 12,
-    lineHeight: 17,
+    fontSize: 11,
+    lineHeight: 15,
   },
   typicalRow: {
     borderRadius: 6,
@@ -667,7 +665,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 4,
     paddingVertical: 14,
     paddingHorizontal: 16,
   },

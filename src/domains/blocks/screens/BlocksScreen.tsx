@@ -12,10 +12,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { useDistanceUnit } from '@/hooks/useDistanceUnit'
-import { Dateline } from '@/components/ui'
+import { Dateline, DoubleRule } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 
 import { useBlocks } from '../hooks/useBlocks'
+import { ActiveBlockCard } from '../components/ActiveBlockCard'
 import { PastBlockCard } from '../components/PastBlockCard'
 
 export function BlocksScreen() {
@@ -64,29 +65,27 @@ export function BlocksScreen() {
         style={[
           styles.header,
           {
-            paddingTop: insets.top + 8,
+            paddingTop: insets.top + 10,
             backgroundColor: bg.base,
           },
         ]}
       >
-        <Text style={[styles.headerTitle, { color: text.primary }]}>Blocks</Text>
-        <TouchableOpacity
-          onPress={openBlockCreate}
-          style={[
-            styles.newBlockBtn,
-            {
-              backgroundColor: bg.surface,
-              borderColor: bg.elevated,
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="New block"
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.newBlockBtnText, { color: accent.default }]}>
-            + New block
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.headerTop}>
+          <Dateline>TRAINING</Dateline>
+          <TouchableOpacity
+            onPress={openBlockCreate}
+            style={[styles.newBlockBtn, { borderColor: accent.default + '50' }]}
+            accessibilityRole="button"
+            accessibilityLabel="New block"
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.newBlockBtnText, { color: accent.default }]}>
+              + New block
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={[styles.headerTitle, { color: text.primary }]}>Blocks.</Text>
+        <DoubleRule style={{ marginTop: 10 }} />
       </View>
 
       <ScrollView
@@ -111,15 +110,14 @@ export function BlocksScreen() {
           </View>
         )}
 
-        {/* Current / Active Section */}
+        {/* Active section */}
         {activeBlock && (
           <View style={styles.section}>
-            <Dateline style={{ paddingHorizontal: 16, marginBottom: 4 }}>ACTIVE</Dateline>
-            <PastBlockCard
+            <Dateline style={{ paddingHorizontal: 20, marginBottom: 8 }}>ACTIVE</Dateline>
+            <ActiveBlockCard
               block={activeBlock}
               runs={allRuns.filter((r) => r.blockId === activeBlock.id)}
               distUnit={distUnit}
-              isActive
             />
           </View>
         )}
@@ -127,7 +125,7 @@ export function BlocksScreen() {
         {/* Pending Section */}
         {pendingBlocks.length > 0 && (
           <View style={styles.section}>
-            <Dateline style={{ paddingHorizontal: 16, marginBottom: 4 }}>PENDING</Dateline>
+            <Dateline style={{ paddingHorizontal: 20, marginBottom: 8 }}>PENDING</Dateline>
             {pendingBlocks.map((block) => (
               <PastBlockCard
                 key={block.id}
@@ -142,7 +140,7 @@ export function BlocksScreen() {
         {/* Past blocks section */}
         {completedBlocks.length > 0 && (
           <View style={styles.section}>
-            <Dateline style={{ paddingHorizontal: 16, marginBottom: 4 }}>PAST BLOCKS</Dateline>
+            <Dateline style={{ paddingHorizontal: 20, marginBottom: 8 }}>PAST BLOCKS</Dateline>
             {completedBlocks.map((block) => (
               <PastBlockCard
                 key={block.id}
@@ -163,37 +161,43 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingBottom: 0,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginBottom: 6,
   },
   headerTitle: {
-    fontFamily: 'Fraunces_400Regular',
-    fontSize: 28,
-    letterSpacing: -0.02 * 28,
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 32,
+    letterSpacing: -0.02 * 32,
+    lineHeight: 34,
   },
   newBlockBtn: {
     borderWidth: 1,
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
+    borderRadius: 4,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
   },
   newBlockBtnText: {
     fontFamily: 'Manrope',
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.08 * 11,
+    textTransform: 'uppercase',
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 8,
-    gap: 16,
+    paddingTop: 14,
+    gap: 18,
   },
   section: {
-    gap: 8,
+    gap: 0,
   },
   fullEmpty: {
     paddingHorizontal: 32,

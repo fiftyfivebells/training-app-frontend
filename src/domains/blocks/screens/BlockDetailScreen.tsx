@@ -28,11 +28,12 @@ import { useBlockRuns } from '../hooks/useBlockRuns'
 import { useBlockStats } from '../hooks/useBlockStats'
 import { useCompleteBlock } from '../hooks/useCompleteBlock'
 import { useDeleteBlock } from '../hooks/useDeleteBlock'
+import { BlockSwatch } from '../components/BlockSwatch'
 import { MoodTimelineCard } from '../components/MoodTimelineCard'
 
 export function BlockDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { bg, text, rule, accent, semantic, radius } = useTheme()
+  const { bg, text, rule, accent, semantic } = useTheme()
   const insets = useSafeAreaInsets()
   const { unit: distUnit } = useDistanceUnit()
 
@@ -127,7 +128,15 @@ export function BlockDetailScreen() {
   }
 
   const config = BLOCK_TYPE_CONFIG[block.blockType]
-  const totalDays = differenceInCalendarDays(parseISO(block.endDate), parseISO(block.startDate)) + 1
+  const ac = config.accentColor
+  const today = new Date()
+  const startDate = parseISO(block.startDate)
+  const endDate = parseISO(block.endDate)
+  const totalDays = differenceInCalendarDays(endDate, startDate) + 1
+  const currentDay = Math.min(totalDays, Math.max(1, differenceInCalendarDays(today, startDate) + 1))
+  const daysLeft = Math.max(0, differenceInCalendarDays(endDate, today))
+  const progress = Math.min(1, currentDay / totalDays)
+  const isActive = block.status === 'active'
 
   const distValue = stats
     ? Math.round(
@@ -244,76 +253,78 @@ export function BlockDetailScreen() {
           style={[
             styles.identityCard,
             {
-              backgroundColor: bg.surface,
+              backgroundColor: ac + '0F',
               borderColor: rule.subtle,
-              borderLeftColor: config.accentColor,
-              borderTopRightRadius: radius.lg,
-              borderBottomRightRadius: radius.lg,
+              borderLeftColor: ac,
+              borderRadius: 4,
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
             },
           ]}
         >
           <View style={styles.identityTop}>
-            <View style={styles.identityTypeRow}>
-              <View style={[styles.dot8, { backgroundColor: config.accentColor }]} />
-              <Text style={[styles.typeLabel, { color: config.accentColor }]}>
-                {config.label.toUpperCase()}
+            <View style={styles.identityLeft}>
+              <View style={styles.identityTypeRow}>
+                <BlockSwatch color={ac} size={8} />
+                <Text style={[styles.typeLabel, { color: ac }]}>
+                  {config.label.toUpperCase()}
+                </Text>
+              </View>
+              <Text
+                style={[
+                  styles.tagline,
+                  { color: text.primary },
+                ]}
+              >
+                {config.tagline}.
               </Text>
             </View>
 
+            {/* Day counter */}
             <View
               style={[
                 styles.dayCounter,
                 {
-                  backgroundColor: config.accentColor + '14',
-                  borderColor: config.accentColor + '26',
+                  backgroundColor: ac + '14',
+                  borderColor: ac + '28',
                 },
               ]}
             >
+              <Text style={[styles.dayLabel, { color: text.tertiary }]}>DAY</Text>
               <Text style={[styles.dayNumber, { color: text.primary }]}>
-                {totalDays}
+                {isActive ? currentDay : totalDays}
               </Text>
-              <Text style={[styles.dayLabel, { color: text.tertiary }]}>Days</Text>
+              <Text style={[styles.dayOf, { color: text.tertiary }]}>of {totalDays}</Text>
             </View>
           </View>
 
-          <Text
-            style={[
-              styles.tagline,
-              { color: text.primary, fontFamily: 'Fraunces_400Regular_Italic' },
-            ]}
-          >
-            {config.tagline}
-          </Text>
-
-          {block.status === 'completed' ? (
-            <View
-              style={[
-                styles.completionBadge,
-                {
-                  backgroundColor: semantic.successBg,
-                },
-              ]}
-            >
-              <Text
+          {/* Progress bar */}
+          {isActive && (
+            <View style={[styles.progressTrack, { backgroundColor: ac + '22' }]}>
+              <View
                 style={[
-                  styles.completionBadgeText,
-                  { color: semantic.success },
+                  styles.progressFill,
+                  { backgroundColor: ac, width: `${Math.round(progress * 100)}%` },
                 ]}
-              >
-                Completed · {format(parseISO(block.endDate), 'MMM d')}
-              </Text>
-            </View>
-          ) : (
-            <View style={styles.progressMeta}>
-              <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
-                Ends {format(parseISO(block.endDate), 'MMM d')}
-              </Text>
+              />
             </View>
           )}
 
-          <View style={styles.progressMeta}>
-            <Text style={[styles.progressMetaText, { color: text.tertiary }]}>
-              Started {format(parseISO(block.startDate), 'MMM d')}
+          {/* Meta line */}
+          <View style={styles.metaLine}>
+            {block.status === 'completed' ? (
+              <Text style={[styles.metaText, { color: text.tertiary }]}>
+                Completed · {format(endDate, 'MMM d')}
+              </Text>
+            ) : (
+              <Text style={[styles.metaText, { color: text.tertiary }]}>
+                Started {format(startDate, 'MMM d')}
+              </Text>
+            )}
+            <Text style={[styles.metaText, { color: text.tertiary }]}>
+              {isActive
+                ? `Ends ${format(endDate, 'MMM d')} · ${daysLeft} days left`
+                : `Started ${format(startDate, 'MMM d')}`}
             </Text>
           </View>
         </View>
@@ -325,28 +336,30 @@ export function BlockDetailScreen() {
             { backgroundColor: bg.surface, borderColor: rule.subtle },
           ]}
         >
-          <View style={styles.statCell}>
-            <Text style={[styles.statValue, { color: text.primary }]}>
-              {stats?.runCount ?? 0}
-            </Text>
-            <Text style={[styles.statUnit, { color: text.tertiary }]}>Runs</Text>
-          </View>
-
-          <View style={[styles.statCell, styles.statCellMiddle, { borderColor: rule.subtle }]}>
-            <Text style={[styles.statValue, { color: text.primary }]}>
-              {distValue}
-            </Text>
-            <Text style={[styles.statUnit, { color: text.tertiary }]}>
-              {distUnit}
-            </Text>
-          </View>
-
-          <View style={styles.statCell}>
-            <Text style={[styles.statValue, { color: text.primary }]}>
-              {stats && stats.runCount > 0 ? stats.avgRpe.toFixed(1) : '—'}
-            </Text>
-            <Text style={[styles.statUnit, { color: text.tertiary }]}>Avg RPE</Text>
-          </View>
+          {[
+            { label: 'RUNS', value: String(stats?.runCount ?? 0), unit: 'runs' },
+            { label: 'DISTANCE', value: String(distValue), unit: distUnit },
+            { label: 'AVG RPE', value: stats && stats.runCount > 0 ? stats.avgRpe.toFixed(1) : '—', unit: 'rpe' },
+          ].map((stat, i) => (
+            <View
+              key={stat.label}
+              style={[
+                styles.statCell,
+                i < 2 && styles.statCellBorder,
+                i < 2 && { borderColor: rule.subtle },
+              ]}
+            >
+              <Dateline style={{ fontSize: 9, marginBottom: 3 }}>{stat.label}</Dateline>
+              <View style={styles.statValueRow}>
+                <Text style={[styles.statValue, { color: text.primary }]}>
+                  {stat.value}
+                </Text>
+                <Text style={[styles.statUnit, { color: text.tertiary }]}>
+                  {stat.unit}
+                </Text>
+              </View>
+            </View>
+          ))}
         </View>
 
         <MoodTimelineCard blockRuns={blockRuns} />
@@ -361,14 +374,14 @@ export function BlockDetailScreen() {
             },
           ]}
         >
-          <View style={styles.runsCardHeader}>
-            <Dateline>RUNS THIS BLOCK</Dateline>
+          <View style={[styles.runsCardHeader, { borderBottomColor: rule.subtle }]}>
+            <Dateline style={{ fontSize: 9 }}>RUNS THIS BLOCK</Dateline>
             <TouchableOpacity
               onPress={() => router.push(`/blocks/${block.id}/runs`)}
               accessibilityRole="button"
               accessibilityLabel={`See all ${blockRuns.length} runs`}
             >
-              <Text style={[styles.seeAll, { color: accent.default }]}>
+              <Text style={[styles.seeAll, { color: ac }]}>
                 See all {blockRuns.length}
               </Text>
             </TouchableOpacity>
@@ -466,6 +479,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 4,
+    gap: 12,
+    paddingHorizontal: 0,
   },
   identityCard: {
     marginHorizontal: 16,
@@ -473,120 +488,128 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderLeftWidth: 3,
-    padding: 16,
+    padding: 14,
   },
   identityTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  identityLeft: {
+    flex: 1,
+    gap: 6,
+    marginRight: 16,
   },
   identityTypeRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  dot8: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    flexShrink: 0,
-  },
   typeLabel: {
     fontFamily: 'Manrope',
     fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 0.06,
+    fontWeight: '600',
+    letterSpacing: 0.1 * 10,
+  },
+  tagline: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 22,
+    lineHeight: 24,
+    letterSpacing: -0.02 * 22,
   },
   dayCounter: {
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 4,
     paddingVertical: 8,
     paddingHorizontal: 10,
     alignItems: 'flex-end',
+    flexShrink: 0,
   },
   dayLabel: {
     fontFamily: 'Manrope',
-    fontSize: 10,
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 0.1 * 9,
   },
   dayNumber: {
-    fontFamily: 'Manrope',
-    fontSize: 22,
-    fontWeight: '600',
+    fontFamily: 'Fraunces_400Regular',
+    fontSize: 26,
     lineHeight: 26,
+    fontVariant: ['tabular-nums', 'lining-nums'],
   },
-  tagline: {
-    fontSize: 22,
-    lineHeight: 28,
-    marginTop: 8,
-  },
-  completionBadge: {
-    alignSelf: 'flex-start',
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    marginTop: 14,
-  },
-  completionBadgeText: {
+  dayOf: {
     fontFamily: 'Manrope',
-    fontSize: 11,
-    fontWeight: '500',
+    fontSize: 9,
+    marginTop: 1,
   },
-  progressMeta: {
+  progressTrack: {
+    height: 3,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: 6,
+  },
+  progressFill: {
+    height: 3,
+    borderRadius: 2,
+  },
+  metaLine: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 6,
   },
-  progressMetaText: {
+  metaText: {
     fontFamily: 'Manrope',
-    fontSize: 11,
+    fontSize: 10,
   },
   statsRow: {
     flexDirection: 'row',
     marginHorizontal: 16,
-    marginTop: 8,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   statCell: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 10,
-    alignItems: 'center',
+    paddingHorizontal: 12,
   },
-  statCellMiddle: {
-    borderLeftWidth: 1,
+  statCellBorder: {
     borderRightWidth: 1,
   },
+  statValueRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 3,
+  },
   statValue: {
-    fontFamily: 'Manrope',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.5,
+    fontFamily: 'Fraunces_400Regular',
+    fontSize: 26,
+    letterSpacing: -0.02 * 26,
+    lineHeight: 28,
+    fontVariant: ['tabular-nums', 'lining-nums'],
   },
   statUnit: {
-    fontFamily: 'Manrope',
+    fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 10,
-    marginTop: 2,
   },
   runsCard: {
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 4,
     overflow: 'hidden',
     marginHorizontal: 16,
-    marginTop: 8,
   },
   runsCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
   },
   seeAll: {
-    fontFamily: 'Manrope',
-    fontSize: 11,
-    fontWeight: '500',
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 12,
   },
   noRunsText: {
     fontFamily: 'Manrope',
