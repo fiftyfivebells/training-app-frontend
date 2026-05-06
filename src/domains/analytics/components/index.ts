@@ -1,5 +1,3 @@
-export { InsightCard } from './InsightCard'
-export type { InsightCardProps } from './InsightCard'
 export { InsightSummaryCard } from './InsightSummaryCard'
 export { StackedBarChart } from './charts/StackedBarChart'
 export { HorizontalStackedBars } from './charts/HorizontalStackedBars'
