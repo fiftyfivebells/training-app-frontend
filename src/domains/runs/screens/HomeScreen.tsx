@@ -155,19 +155,15 @@ function NoBlockPrompt() {
   )
 }
 
-type AffirmationCardProps = { affirmation: string | undefined }
+type AffirmationCardProps = { affirmation: string | undefined; accentColor?: string }
 
-function AffirmationCard({ affirmation }: AffirmationCardProps) {
-  const { bg, text, accent, radius } = useTheme()
+function AffirmationCard({ affirmation, accentColor }: AffirmationCardProps) {
+  const { text, rule, accent } = useTheme()
   if (!affirmation) return null
+  const labelColor = accentColor ?? accent.default
   return (
-    <View
-      style={[
-        styles.affirmationCard,
-        { backgroundColor: bg.surface, borderColor: bg.elevated, borderRadius: radius.sm },
-      ]}
-    >
-      <Dateline style={[styles.blockLabelSpacing, { color: accent.default }]}>Today</Dateline>
+    <View style={[styles.affirmationCard, { borderBottomColor: rule.subtle }]}>
+      <Dateline style={[styles.blockLabelSpacing, { color: labelColor }]}>TODAY</Dateline>
       <Text style={[styles.affirmationText, { color: text.primary }]}>
         {affirmation}
       </Text>
@@ -369,7 +365,10 @@ export function HomeScreen() {
 
         {/* 2. Affirmation — only when block + affirmation exist */}
         {activeBlock && affirmation?.affirmation && (
-          <AffirmationCard affirmation={affirmation.affirmation} />
+          <AffirmationCard
+            affirmation={affirmation.affirmation}
+            accentColor={BLOCK_TYPE_CONFIG[activeBlock.blockType].accentColor}
+          />
         )}
 
         {/* 3. Block focus — only when block active */}
@@ -509,9 +508,9 @@ const styles = StyleSheet.create({
   },
   // Affirmation card
   affirmationCard: {
-    marginHorizontal: 16,
-    borderWidth: 1,
-    padding: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
   },
   blockLabelSpacing: {
     marginBottom: 6,

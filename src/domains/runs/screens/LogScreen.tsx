@@ -384,8 +384,6 @@ export function LogScreen() {
               style={styles.moodSection}
               onLayout={(e) => { fieldPositions.current.moodId = e.nativeEvent.layout.y }}
             >
-              <Dateline>HOW DID IT FEEL?</Dateline>
-
               <MoodGridTrigger
                 selectedMood={selectedMood}
                 onZoneTap={(q) => openMoodGrid(q)}
@@ -427,8 +425,7 @@ const styles = StyleSheet.create({
   },
   headerCancel: {
     fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
   },
   entryLabel: {
     flex: 1,
@@ -436,19 +433,17 @@ const styles = StyleSheet.create({
   },
   headerSave: {
     fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
   },
   screenTitle: {
     fontFamily: 'Fraunces_400Regular',
-    fontSize: 24,
-    letterSpacing: -0.02 * 24,
-    lineHeight: 28,
+    fontSize: 32,
+    letterSpacing: -0.02 * 32,
+    lineHeight: 35,
   },
   dateLabel: {
     fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 15,
   },
   headerRule: {
     marginTop: 4,

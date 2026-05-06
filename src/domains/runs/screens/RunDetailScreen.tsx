@@ -383,14 +383,14 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     fontFamily: 'Fraunces_400Regular_Italic',
-    fontSize: 13,
+    fontSize: 15,
   },
   heroMoodWord: {
     fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 64,
-    lineHeight: 68,
-    letterSpacing: -1,
-    marginTop: 16,
+    lineHeight: 59,
+    letterSpacing: -0.03 * 64,
+    marginTop: 8,
   },
   heroSubtitle: {
     fontFamily: 'Fraunces_400Regular_Italic',

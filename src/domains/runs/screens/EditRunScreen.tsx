@@ -409,8 +409,6 @@ export function EditRunScreen() {
               style={styles.moodSection}
               onLayout={(e) => { fieldPositions.current.moodId = e.nativeEvent.layout.y }}
             >
-              <Dateline>HOW DID IT FEEL?</Dateline>
-
               <MoodGridTrigger
                 selectedMood={selectedMood}
                 onZoneTap={(q) => openMoodGrid(q)}
