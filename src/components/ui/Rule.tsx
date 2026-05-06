@@ -25,7 +25,7 @@ export function DoubleRule({ style, ...props }: ViewProps) {
           borderBottomWidth: 1,
           borderTopColor: rule.default,
           borderBottomColor: rule.default,
-          paddingVertical: 3,
+          height: 5,
         },
         style,
       ]}
