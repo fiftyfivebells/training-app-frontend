@@ -9,47 +9,37 @@ export type InsightSummaryCardProps = {
 }
 
 export function InsightSummaryCard({ headline, body, sentiment }: InsightSummaryCardProps) {
-  const { bg, text, rule, mood } = useTheme()
+  const { text, mood } = useTheme()
 
-  let backgroundColor = bg.surface
-  let borderColor = rule.subtle
-  let headlineColor = text.primary
-
-  if (sentiment === 'positive') {
-    backgroundColor = '#141A0A'
-    borderColor = 'rgba(184, 212, 74, 0.2)'
-    headlineColor = mood.highGood
-  } else if (sentiment === 'warning') {
-    backgroundColor = '#16101E'
-    borderColor = 'rgba(155, 96, 184, 0.2)'
-    headlineColor = mood.lowTough
-  }
+  const bodyColor =
+    sentiment === 'positive'
+      ? mood.highGood
+      : sentiment === 'warning'
+        ? mood.lowTough
+        : text.secondary
 
   return (
-    <View style={[styles.card, { backgroundColor, borderColor }]}>
-      <Text style={[styles.headline, { color: headlineColor }]}>{headline}</Text>
-      <Text style={[styles.body, { color: text.secondary }]}>{body}</Text>
+    <View style={styles.container}>
+      <Text style={[styles.headline, { color: text.primary }]}>{headline}</Text>
+      <Text style={[styles.body, { color: bodyColor }]}>{body}</Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 10,
-    borderWidth: 1,
-    padding: 16,
-    marginBottom: 16,
+  container: {
+    paddingBottom: 16,
   },
   headline: {
-    fontFamily: 'Manrope',
-    fontWeight: '600',
-    fontSize: 14,
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 20,
+    letterSpacing: -0.02 * 20,
+    lineHeight: 24,
   },
   body: {
     fontFamily: 'Manrope',
-    fontWeight: '400',
     fontSize: 11,
-    lineHeight: 17,
+    lineHeight: 11 * 1.5,
     marginTop: 6,
   },
 })
