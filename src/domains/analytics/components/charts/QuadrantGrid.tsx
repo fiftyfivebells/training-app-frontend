@@ -8,21 +8,21 @@ export type QuadrantGridProps = {
   compact: boolean
 }
 
-const CELL_BG = {
-  highRpeGood: '#141A0A',
-  highRpeTough: '#211208',
-  lowRpeGood: '#091D1E',
-  lowRpeTough: '#160E1E',
-} as const
-
 export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
-  const { text, mood } = useTheme()
+  const { text, mood, moodBg } = useTheme()
 
-  const CELL_COLOR = {
+  const CELL_COLOR: Record<keyof typeof grid, string> = {
     highRpeGood: mood.highGood,
     highRpeTough: mood.highTough,
     lowRpeGood: mood.lowGood,
     lowRpeTough: mood.lowTough,
+  }
+
+  const CELL_BG: Record<keyof typeof grid, string> = {
+    highRpeGood: moodBg.highGood,
+    highRpeTough: moodBg.highTough,
+    lowRpeGood: moodBg.lowGood,
+    lowRpeTough: moodBg.lowTough,
   }
 
   const renderCell = (
@@ -40,7 +40,7 @@ export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
           key={key}
           style={[
             styles.compactCell,
-            { backgroundColor: CELL_BG[key], opacity: 0.8 },
+            { backgroundColor: CELL_BG[key] },
             isWarningActive && {
               borderWidth: 2,
               borderColor: mood.lowTough,
@@ -70,8 +70,11 @@ export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
             style={[styles.warningDot, { backgroundColor: mood.lowTough }]}
           />
         )}
-        <Text style={[styles.expandedCount, { color: CELL_COLOR[key] }]}>{count}</Text>
-        <Text style={[styles.expandedLabel, { color: text.tertiary }]}>
+        <View style={styles.countRow}>
+          <Text style={[styles.expandedCount, { color: CELL_COLOR[key] }]}>{count}</Text>
+          <Text style={[styles.expandedUnit, { color: text.tertiary }]}>runs</Text>
+        </View>
+        <Text style={[styles.expandedLabel, { color: CELL_COLOR[key] }]}>
           {label}
         </Text>
       </View>
@@ -80,27 +83,36 @@ export function QuadrantGrid({ grid, isWarning, compact }: QuadrantGridProps) {
 
   return (
     <View style={styles.grid}>
-      {renderCell('highRpeGood', 'High RPE · Good', false)}
-      {renderCell('highRpeTough', 'High RPE · Tough', false)}
-      {renderCell('lowRpeGood', 'Low RPE · Good', false)}
-      {renderCell('lowRpeTough', 'Low RPE · Tough', true)}
+      <View style={styles.row}>
+        {renderCell('highRpeGood', 'High RPE · Good', false)}
+        {renderCell('highRpeTough', 'High RPE · Tough', false)}
+      </View>
+      <View style={styles.row}>
+        {renderCell('lowRpeGood', 'Low RPE · Good', false)}
+        {renderCell('lowRpeTough', 'Low RPE · Tough', true)}
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   grid: {
+    flexDirection: 'column',
+    gap: 4,
+  },
+  row: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    gap: 4,
   },
   compactCell: {
-    width: '50%',
+    flex: 1,
     padding: 4,
     height: 36,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     gap: 8,
+    borderRadius: 4,
   },
   compactCount: {
     fontFamily: 'Manrope',
@@ -113,21 +125,33 @@ const styles = StyleSheet.create({
     fontSize: 8,
   },
   expandedCell: {
-    width: '50%',
+    flex: 1,
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 4,
+  },
+  countRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 3,
   },
   expandedCount: {
     fontFamily: 'Fraunces_400Regular',
     fontSize: 28,
   },
+  expandedUnit: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 10,
+  },
   expandedLabel: {
     fontFamily: 'Manrope',
-    fontWeight: '400',
-    fontSize: 9,
+    fontWeight: '600',
+    fontSize: 8,
+    letterSpacing: 0.12 * 8,
     marginTop: 4,
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
   warningDot: {
     position: 'absolute',

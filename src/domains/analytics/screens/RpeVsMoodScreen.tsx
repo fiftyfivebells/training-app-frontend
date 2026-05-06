@@ -1,115 +1,74 @@
-import {
-  ActionSheetIOS,
-  Alert,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useRouter } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '@/theme/useTheme'
 import { useAnalyticsStore } from '@/store/analyticsStore'
 import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
-import { InsightSummaryCard } from '@/domains/analytics/components/InsightSummaryCard'
-import { QuadrantGrid } from '@/domains/analytics/components/charts/QuadrantGrid'
 import { computeRpeVsMood } from '@/domains/analytics/utils'
-
-const RANGE_LABELS = {
-  '4w': '4w',
-  '8w': '8w',
-  '12w': '12w',
-  all: 'All',
-}
+import { Dateline } from '@/components/ui'
+import { DetailHeader } from '../components/DetailHeader'
+import { InsightSummaryCard } from '../components/InsightSummaryCard'
+import { StatCells } from '../components/StatCells'
+import { QuadrantGrid } from '../components/charts/QuadrantGrid'
 
 export function RpeVsMoodScreen() {
-  const { bg, text, rule, accent } = useTheme()
+  const { bg, text, rule, mood } = useTheme()
   const insets = useSafeAreaInsets()
-  const router = useRouter()
-  const { timeRange, setTimeRange } = useAnalyticsStore()
+  const { timeRange } = useAnalyticsStore()
   const { data: runs = [] } = useRuns()
   const { data: moods = [] } = useGetAllMoods()
 
   const rpeVsMood = computeRpeVsMood(runs, timeRange, moods)
 
-  const handleRangePress = () => {
-    const options = ['Cancel', 'Last 4 weeks', 'Last 8 weeks', 'Last 12 weeks', 'All time']
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        { options, cancelButtonIndex: 0 },
-        (buttonIndex) => {
-          if (buttonIndex === 1) setTimeRange('4w')
-          if (buttonIndex === 2) setTimeRange('8w')
-          if (buttonIndex === 3) setTimeRange('12w')
-          if (buttonIndex === 4) setTimeRange('all')
-        }
-      )
-    } else {
-      Alert.alert('Select range', '', [
-        { text: 'Last 4 weeks', onPress: () => setTimeRange('4w') },
-        { text: 'Last 8 weeks', onPress: () => setTimeRange('8w') },
-        { text: 'Last 12 weeks', onPress: () => setTimeRange('12w') },
-        { text: 'All time', onPress: () => setTimeRange('all') },
-        { text: 'Cancel', style: 'cancel' },
-      ])
-    }
-  }
+  const totalRuns = Object.values(rpeVsMood.grid).reduce((s, v) => s + v, 0)
+  const highEffortRuns = rpeVsMood.grid.highRpeGood + rpeVsMood.grid.highRpeTough
+  const goodMoodRuns = rpeVsMood.grid.highRpeGood + rpeVsMood.grid.lowRpeGood
+
+  const explanations = [
+    { label: 'HIGH · GOOD', color: mood.highGood, text: 'Working hard and thriving. A great sign.' },
+    { label: 'HIGH · TOUGH', color: mood.highTough, text: 'Pushed through difficulty. Normal occasionally.' },
+    { label: 'LOW · GOOD', color: mood.lowGood, text: 'Aerobic base in shape — easy runs feel easy.' },
+    { label: 'LOW · TOUGH', color: mood.lowTough, text: 'Easy runs feeling hard. Often signals fatigue.' },
+  ]
 
   return (
     <View style={[styles.container, { backgroundColor: bg.base }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <Pressable onPress={() => router.back()} style={styles.headerLeft}>
-          <Ionicons name="arrow-back" size={24} color={text.primary} />
-        </Pressable>
-        <Text style={[styles.headerTitle, { color: text.primary }]}>RPE vs mood</Text>
-        <Pressable
-          onPress={handleRangePress}
-          style={[
-            styles.rangePicker,
-            { backgroundColor: bg.surface, borderColor: rule.default },
-          ]}
-        >
-          <Text style={[styles.rangeLabel, { color: accent.default }]}>
-            {RANGE_LABELS[timeRange]}
-          </Text>
-          <Ionicons name="chevron-down" size={12} color={text.tertiary} />
-        </Pressable>
-      </View>
-
-      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}>
+      <DetailHeader title="RPE vs mood" />
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 32 }]}
+      >
         <InsightSummaryCard
           headline={rpeVsMood.headline}
           body={rpeVsMood.sub}
           sentiment={rpeVsMood.sentiment}
         />
 
-        <View
-          style={[
-            styles.chartCard,
-            { backgroundColor: bg.surface, borderColor: rule.subtle },
-          ]}
-        >
+        <View style={styles.gridWrapper}>
           <QuadrantGrid grid={rpeVsMood.grid} isWarning={rpeVsMood.isWarning} compact={false} />
         </View>
 
-        <View style={[styles.explanationCard, { backgroundColor: bg.surface }]}>
-          <Text style={[styles.explanationText, { color: text.secondary }]}>
-            High RPE · Good — working hard and thriving.
-          </Text>
-          <Text style={[styles.explanationText, { color: text.secondary }]}>
-            High RPE · Tough — pushing through difficulty. Normal occasionally.
-          </Text>
-          <Text style={[styles.explanationText, { color: text.secondary }]}>
-            Low RPE · Good — your aerobic base is in great shape.
-          </Text>
-          <Text style={[styles.explanationText, { color: text.secondary }]}>
-            Low RPE · Tough — easy runs feeling hard. Often signals fatigue accumulation.
-          </Text>
-        </View>
+        <StatCells
+          cells={[
+            { label: 'TOTAL RUNS', value: String(totalRuns), sub: 'this period', color: text.primary },
+            { label: 'HIGH EFFORT', value: String(highEffortRuns), sub: 'high RPE runs', color: mood.highTough },
+            { label: 'GOOD MOOD', value: String(goodMoodRuns), sub: 'felt good', color: mood.highGood },
+          ]}
+        />
+
+        <Dateline style={{ marginBottom: 10 }}>HOW TO READ THIS</Dateline>
+
+        {explanations.map((e, i) => (
+          <View
+            key={i}
+            style={[styles.explanationRow, { borderBottomColor: rule.subtle }]}
+          >
+            <View style={[styles.spine, { backgroundColor: e.color }]} />
+            <View style={styles.explanationBody}>
+              <Text style={[styles.explanationLabel, { color: e.color }]}>{e.label}</Text>
+              <Text style={[styles.explanationText, { color: text.secondary }]}>{e.text}</Text>
+            </View>
+          </View>
+        ))}
       </ScrollView>
     </View>
   )
@@ -119,56 +78,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 16,
-  },
-  headerLeft: {
-    width: 40,
-  },
-  headerTitle: {
-    fontFamily: 'Manrope',
-    fontWeight: '600',
-    fontSize: 17,
-  },
-  rangePicker: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 1,
-    gap: 4,
-    minWidth: 50,
-    justifyContent: 'center',
-  },
-  rangeLabel: {
-    fontFamily: 'Manrope',
-    fontWeight: '500',
-    fontSize: 12,
-  },
   scrollContent: {
-    padding: 16,
+    padding: 20,
   },
-  chartCard: {
-    borderWidth: 1,
-    borderRadius: 10,
-    overflow: 'hidden',
+  gridWrapper: {
     marginBottom: 16,
   },
-  explanationCard: {
-    borderRadius: 10,
-    padding: 16,
-    gap: 8,
+  explanationRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 10,
+    borderBottomWidth: 1,
+    paddingVertical: 8,
+  },
+  spine: {
+    width: 3,
+    alignSelf: 'stretch',
+    borderRadius: 2,
+    flexShrink: 0,
+  },
+  explanationBody: {
+    flex: 1,
+  },
+  explanationLabel: {
+    fontFamily: 'Manrope',
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 0.12 * 9,
+    marginBottom: 2,
+    textTransform: 'uppercase',
   },
   explanationText: {
     fontFamily: 'Manrope',
-    fontWeight: '400',
     fontSize: 11,
-    lineHeight: 16.5,
+    lineHeight: 11 * 1.4,
   },
 })
