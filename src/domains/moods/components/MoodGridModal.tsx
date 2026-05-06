@@ -27,9 +27,7 @@ const CANVAS_W = 504
 const CANVAS_H = 812
 const QUADRANT_H = 380
 const AXIS_ROW_H = 32
-const VIEWPORT_H = 576
 const MIN_X = -(CANVAS_W - DEVICE_W)
-const MIN_Y = -(CANVAS_H - VIEWPORT_H)
 const FRICTION = 0.88
 const STOP_THRESHOLD = 0.3
 
@@ -39,11 +37,16 @@ function clamp(v: number, lo: number, hi: number): number {
 
 // ---------- Focus positions ----------
 
-const FOCUS_PAN: Record<MoodCategoryKey, { x: number; y: number }> = {
-  'high-challenging': { x: 0,     y: 0    },
-  'high-pleasant':    { x: MIN_X, y: 0    },
-  'low-challenging':  { x: 0,     y: MIN_Y },
-  'low-pleasant':     { x: MIN_X, y: MIN_Y },
+function getFocusPan(
+  quadrant: MoodCategoryKey,
+  minY: number,
+): { x: number; y: number } {
+  switch (quadrant) {
+    case 'high-challenging': return { x: 0,     y: 0    }
+    case 'high-pleasant':    return { x: MIN_X, y: 0    }
+    case 'low-challenging':  return { x: 0,     y: minY }
+    case 'low-pleasant':     return { x: MIN_X, y: minY }
+  }
 }
 
 // ---------- Quadrant labels ----------
@@ -56,7 +59,7 @@ const QUADRANT_LABEL: Record<MoodCategoryKey, string> = {
 }
 
 const QUADRANT_SUBTITLE: Record<MoodCategoryKey, string> = {
-  'high-challenging': 'Fired up & grinding',
+  'high-challenging': 'Hard work & grit',
   'high-pleasant':    'Energized & thriving',
   'low-challenging':  'Drained & heavy',
   'low-pleasant':     'Calm & restorative',
@@ -89,7 +92,15 @@ function WordRow({ mood, isSelected, moodColor, onPress }: WordRowProps) {
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.wordRow}>
+      <View
+        style={[
+          styles.wordRow,
+          {
+            backgroundColor: isSelected ? moodColor + '1F' : 'transparent',
+            borderBottomColor: isSelected ? moodColor + '30' : 'rgba(255,255,255,0.05)',
+          },
+        ]}
+      >
         <View
           style={[
             styles.wordSpine,
@@ -108,7 +119,7 @@ function WordRow({ mood, isSelected, moodColor, onPress }: WordRowProps) {
             {mood.label}{isSelected ? '.' : ''}
           </Animated.Text>
           {isSelected && mood.description ? (
-            <Text style={[styles.wordDef, { color: text.secondary }]}>
+            <Text style={[styles.wordDef, { color: moodColor, opacity: 0.8 }]}>
               {mood.description}
             </Text>
           ) : null}
@@ -203,7 +214,7 @@ export function MoodGridModal({
     if (visible) {
       const initial = moods.find((m) => m.id === initialMoodId) ?? null
       setSelectedMood(initial)
-      const snap = focusQuadrant ? FOCUS_PAN[focusQuadrant] : { x: 0, y: 0 }
+      const snap = focusQuadrant ? getFocusPan(focusQuadrant, minYRef.current) : { x: 0, y: 0 }
       posRef.current = snap
       panXAnim.setValue(snap.x)
       panYAnim.setValue(snap.y)
@@ -212,6 +223,9 @@ export function MoodGridModal({
   }, [visible])
 
   // Canvas pan state
+  const minYRef = useRef(-(CANVAS_H - 576))
+  const viewportHRef = useRef(576)
+  const canvasHRef = useRef(CANVAS_H)
   const panXAnim = useRef(new Animated.Value(0)).current
   const panYAnim = useRef(new Animated.Value(0)).current
   const posRef = useRef({ x: 0, y: 0 })
@@ -219,6 +233,20 @@ export function MoodGridModal({
   const velRef = useRef({ x: 0, y: 0 })
   const lastMoveRef = useRef({ x: 0, y: 0, time: 0 })
   const rafRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null)
+
+  function updateMinY() {
+    minYRef.current = Math.min(0, -(canvasHRef.current - viewportHRef.current))
+  }
+
+  function onViewportLayout(e: { nativeEvent: { layout: { height: number } } }) {
+    viewportHRef.current = e.nativeEvent.layout.height
+    updateMinY()
+  }
+
+  function onCanvasLayout(e: { nativeEvent: { layout: { height: number } } }) {
+    canvasHRef.current = e.nativeEvent.layout.height
+    updateMinY()
+  }
 
   function stopMomentum() {
     if (rafRef.current !== null) {
@@ -239,7 +267,7 @@ export function MoodGridModal({
         return
       }
       const nx = clamp(posRef.current.x + velRef.current.x, MIN_X, 0)
-      const ny = clamp(posRef.current.y + velRef.current.y, MIN_Y, 0)
+      const ny = clamp(posRef.current.y + velRef.current.y, minYRef.current, 0)
       posRef.current = { x: nx, y: ny }
       panXAnim.setValue(nx)
       panYAnim.setValue(ny)
@@ -250,8 +278,8 @@ export function MoodGridModal({
 
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 5 || Math.abs(gs.dy) > 5,
       onPanResponderGrant: () => {
         stopMomentum()
         offsetRef.current = { x: posRef.current.x, y: posRef.current.y }
@@ -261,7 +289,7 @@ export function MoodGridModal({
       onPanResponderMove: (_, gs) => {
         const now = Date.now()
         const nx = clamp(offsetRef.current.x + gs.dx, MIN_X, 0)
-        const ny = clamp(offsetRef.current.y + gs.dy, MIN_Y, 0)
+        const ny = clamp(offsetRef.current.y + gs.dy, minYRef.current, 0)
         const dt = Math.max(now - lastMoveRef.current.time, 1)
         velRef.current = {
           x: ((nx - lastMoveRef.current.x) / dt) * 16.67,
@@ -326,7 +354,7 @@ export function MoodGridModal({
         <View
           style={[
             styles.sheet,
-            { backgroundColor: bg.base, paddingBottom: insets.bottom },
+            { backgroundColor: bg.base, paddingBottom: insets.bottom, top: insets.top + 10 },
           ]}
         >
           {/* Handle */}
@@ -355,9 +383,8 @@ export function MoodGridModal({
                 )}
               </View>
               <TouchableOpacity
-                onPress={selectedMood ? () => onSelect(selectedMood) : undefined}
+                onPress={selectedMood ? () => onSelect(selectedMood) : onDismiss}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-                disabled={!selectedMood}
               >
                 <Text
                   style={[
@@ -365,7 +392,7 @@ export function MoodGridModal({
                     { color: selectedMood ? (selectedMoodColor ?? text.secondary) : text.secondary },
                   ]}
                 >
-                  Done
+                  {selectedMood ? 'Done' : 'Cancel'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -387,8 +414,8 @@ export function MoodGridModal({
           </View>
 
           {/* Pannable viewport */}
-          <View style={styles.viewport} {...panResponder.panHandlers}>
-            <Animated.View style={[styles.canvas, canvasStyle]}>
+          <View style={styles.viewport} onLayout={onViewportLayout} {...panResponder.panHandlers}>
+            <Animated.View style={[styles.canvas, canvasStyle]} onLayout={onCanvasLayout}>
               {/* Top row — high energy */}
               <View style={styles.canvasRow}>
                 <QuadrantSection
@@ -480,6 +507,7 @@ const styles = StyleSheet.create({
   },
   sheet: {
     position: 'absolute',
+    top: 0,
     bottom: 0,
     left: 0,
     right: 0,
@@ -545,12 +573,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.16 * 8,
   },
   viewport: {
-    height: VIEWPORT_H,
+    flex: 1,
     overflow: 'hidden',
   },
   canvas: {
     width: CANVAS_W,
-    height: CANVAS_H,
   },
   canvasRow: {
     flexDirection: 'row',
@@ -574,6 +601,7 @@ const styles = StyleSheet.create({
   wordRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
+    borderBottomWidth: 1,
   },
   wordSpine: {
     width: 3,

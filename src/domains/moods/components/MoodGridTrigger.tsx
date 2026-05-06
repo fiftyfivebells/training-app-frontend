@@ -21,9 +21,8 @@ const ZONE_LABEL: Record<MoodCategoryKey, string> = {
   'low-pleasant':     'LOW · GOOD',
 }
 
-// Note: 'high-challenging' copy confirmed as 'Fired up & grinding' — flagged for Project Owner review.
 const ZONE_SUBTITLES: Record<MoodCategoryKey, string> = {
-  'high-challenging': 'Fired up & grinding',
+  'high-challenging': 'Hard work & grit',
   'high-pleasant':    'Energized & thriving',
   'low-challenging':  'Drained & heavy',
   'low-pleasant':     'Calm & restorative',
@@ -46,6 +45,8 @@ export function MoodGridTrigger({ selectedMood, onZoneTap, onChangeTap }: MoodGr
 
   return (
     <View style={styles.container}>
+      <Dateline style={{ marginBottom: 10 }}>HOW DID IT FEEL?</Dateline>
+
       {/* Selected / placeholder card */}
       {selectedMood && selectedColor && selectedBg ? (
         <TouchableOpacity
@@ -62,7 +63,7 @@ export function MoodGridTrigger({ selectedMood, onZoneTap, onChangeTap }: MoodGr
         >
           <View style={styles.selectedCardLeft}>
             <Text style={[styles.selectedWord, { color: selectedColor }]}>
-              {selectedMood.label}
+              {selectedMood.label}.
             </Text>
             {selectedMood.description ? (
               <Text style={[styles.selectedDef, { color: selectedColor }]}>
@@ -99,14 +100,14 @@ export function MoodGridTrigger({ selectedMood, onZoneTap, onChangeTap }: MoodGr
               style={[
                 styles.zoneCard,
                 {
-                  backgroundColor: isActive ? moodBg[colorKey] : 'transparent',
-                  borderColor: isActive ? moodColor : rule.subtle,
+                  backgroundColor: isActive ? moodColor + '24' : moodColor + '0A',
+                  borderColor: isActive ? moodColor : rule.default,
                   borderWidth: isActive ? 2 : 1,
-                  borderRadius: radius.sm,
+                  borderRadius: 4,
                 },
               ]}
             >
-              <Dateline style={{ color: isActive ? moodColor : text.tertiary }}>
+              <Dateline style={{ color: isActive ? moodColor : text.tertiary, marginBottom: 2 }}>
                 {ZONE_LABEL[quadrant]}
               </Dateline>
               <Text
@@ -120,7 +121,7 @@ export function MoodGridTrigger({ selectedMood, onZoneTap, onChangeTap }: MoodGr
               <View
                 style={[
                   styles.zoneColorBar,
-                  { backgroundColor: isActive ? moodColor : rule.subtle },
+                  { backgroundColor: isActive ? moodColor : moodColor + '40' },
                 ]}
               />
             </TouchableOpacity>
@@ -195,19 +196,18 @@ const styles = StyleSheet.create({
     width: '47.5%',
     paddingTop: 14,
     paddingHorizontal: 12,
-    paddingBottom: 0,
+    paddingBottom: 12,
     gap: 4,
-    overflow: 'hidden',
   },
   zoneSubtitle: {
     fontFamily: 'Fraunces_400Regular_Italic',
     fontSize: 18,
     lineHeight: 22,
-    marginBottom: 10,
   },
   zoneColorBar: {
     height: 2,
-    marginHorizontal: -12,
+    borderRadius: 1,
+    marginTop: 4,
   },
   // Axis
   axisRow: {
