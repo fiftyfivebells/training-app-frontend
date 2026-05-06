@@ -18,6 +18,7 @@ export type VolumeVsMoodResult = {
   sub: string
   sentiment: Sentiment
   hasEnoughData: boolean
+  avgKm: number
 }
 
 function pearsonCorrelation(xs: number[], ys: number[]): number {
@@ -51,6 +52,7 @@ export function computeVolumeVsMood(
       sub: '',
       sentiment: 'neutral',
       hasEnoughData: false,
+      avgKm: 0,
     }
   }
 
@@ -91,6 +93,9 @@ export function computeVolumeVsMood(
       sub: `Based on your last ${populated.length} ${populated.length === 1 ? 'week' : 'weeks'}`,
       sentiment: 'neutral',
       hasEnoughData: false,
+      avgKm: populated.length > 0
+        ? Math.round(populated.reduce((sum, w) => sum + w.distanceKm, 0) / populated.length)
+        : 0,
     }
   }
 
@@ -113,6 +118,8 @@ export function computeVolumeVsMood(
     sentiment = 'neutral'
   }
 
+  const avgKm = Math.round(populated.reduce((sum, w) => sum + w.distanceKm, 0) / populated.length)
+
   return {
     weeklyData,
     correlation: Math.round(correlation * 100) / 100,
@@ -120,5 +127,6 @@ export function computeVolumeVsMood(
     sub: `Based on your last ${populated.length} weeks`,
     sentiment,
     hasEnoughData: true,
+    avgKm,
   }
 }

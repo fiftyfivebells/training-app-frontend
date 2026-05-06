@@ -7,6 +7,7 @@ import type { Sentiment, TimeRange } from './types'
 export type RunTypeBreakdown = {
   runType: string
   total: number
+  goodRuns: number
   counts: Record<MoodCategoryKey, number>
   percentages: Record<MoodCategoryKey, number>
 }
@@ -17,6 +18,7 @@ export type MoodByRunTypeResult = {
   sub: string
   sentiment: Sentiment
   hasEnoughData: boolean
+  pctGood: number
 }
 
 function emptyQuadrantCounts(): Record<MoodCategoryKey, number> {
@@ -63,6 +65,7 @@ export function computeMoodByRunType(
       sub: '',
       sentiment: 'neutral',
       hasEnoughData: false,
+      pctGood: 0,
     }
   }
 
@@ -71,6 +74,7 @@ export function computeMoodByRunType(
     .map(([runType, { counts, total }]) => ({
       runType,
       total,
+      goodRuns: counts['high-pleasant'] + counts['low-pleasant'],
       counts,
       percentages: {
         'high-pleasant': total > 0 ? Math.round((counts['high-pleasant'] / total) * 100) : 0,
@@ -109,11 +113,16 @@ export function computeMoodByRunType(
     sentiment = 'neutral'
   }
 
+  const totalGoodRuns = byType.reduce((sum, t) => sum + t.goodRuns, 0)
+  const totalAllRuns = byType.reduce((sum, t) => sum + t.total, 0)
+  const pctGood = totalAllRuns > 0 ? Math.round((totalGoodRuns / totalAllRuns) * 100) : 0
+
   return {
     byType,
     headline,
     sub: `Based on ${totalRuns} runs`,
     sentiment,
     hasEnoughData: true,
+    pctGood,
   }
 }

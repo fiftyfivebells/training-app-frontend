@@ -10,6 +10,7 @@ export type MoodTrendsResult = {
   sub: string
   sentiment: Sentiment
   hasEnoughData: boolean
+  pctGood: number
 }
 
 function emptyQuadrantCounts(): Record<MoodCategoryKey, number> {
@@ -30,7 +31,7 @@ export function computeMoodTrends(
   const buckets = getWeekBuckets(timeRange, runs)
 
   if (buckets.length === 0) {
-    return { weeklyData: [], headline: 'Not enough data yet', sub: '', sentiment: 'neutral', hasEnoughData: false }
+    return { weeklyData: [], headline: 'Not enough data yet', sub: '', sentiment: 'neutral', hasEnoughData: false, pctGood: 0 }
   }
 
   const weeklyData = buckets.map((b) => ({ weekLabel: b.weekLabel, counts: emptyQuadrantCounts() }))
@@ -46,7 +47,7 @@ export function computeMoodTrends(
   const weeksWithRuns = weeklyData.filter((w) => Object.values(w.counts).some((c) => c > 0))
 
   if (weeksWithRuns.length < 2) {
-    return { weeklyData, headline: 'Not enough data yet', sub: '', sentiment: 'neutral', hasEnoughData: false }
+    return { weeklyData, headline: 'Not enough data yet', sub: '', sentiment: 'neutral', hasEnoughData: false, pctGood: 0 }
   }
 
   // Evaluate last 3 populated weeks for headline
@@ -100,5 +101,15 @@ export function computeMoodTrends(
     sub = `Based on your last ${weeksWithRuns.length} weeks`
   }
 
-  return { weeklyData, headline, sub, sentiment, hasEnoughData: true }
+  const totalAllRuns = weeklyData.reduce(
+    (sum, w) => sum + Object.values(w.counts).reduce((a, b) => a + b, 0),
+    0,
+  )
+  const goodAllRuns = weeklyData.reduce(
+    (sum, w) => sum + w.counts['high-pleasant'] + w.counts['low-pleasant'],
+    0,
+  )
+  const pctGood = totalAllRuns > 0 ? Math.round((goodAllRuns / totalAllRuns) * 100) : 0
+
+  return { weeklyData, headline, sub, sentiment, hasEnoughData: true, pctGood }
 }
