@@ -53,7 +53,7 @@ export interface paths {
         };
         /**
          * Email Verification
-         * @description Verify email address with token from email
+         * @description Verify email address with token from email. Redirects to the client app on success.
          */
         get: operations["getApiV1AuthVerify-email"];
         put?: never;
@@ -171,6 +171,66 @@ export interface paths {
         /** @description Updates the current user's preferences */
         put: operations["putApiV1UsersMePreferences"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Google Sign-In
+         * @description Sign in or register using a Google ID token.
+         */
+        post: operations["postApiV1AuthGoogle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/apple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Apple Sign-In
+         * @description Sign in or register using an Apple identity token.
+         */
+        post: operations["postApiV1AuthApple"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/strava": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Strava Sign-In
+         * @description Sign in or register using a Strava authorization code.
+         */
+        post: operations["postApiV1AuthStrava"];
         delete?: never;
         options?: never;
         head?: never;
@@ -414,6 +474,13 @@ export interface components {
             blockType: string;
             blockName: string;
         };
+        /** AppleLoginRequest */
+        AppleLoginRequest: {
+            identityToken: string;
+            firstName?: string;
+            lastName?: string;
+            deviceInfo: components["schemas"]["DeviceInfo"];
+        };
         /** AuthResponse */
         AuthResponse: {
             accessToken: string;
@@ -489,6 +556,11 @@ export interface components {
         /** Forbidden */
         Forbidden: {
             message: string;
+        };
+        /** GoogleLoginRequest */
+        GoogleLoginRequest: {
+            idToken: string;
+            deviceInfo: components["schemas"]["DeviceInfo"];
         };
         /** InternalServerError */
         InternalServerError: {
@@ -593,6 +665,11 @@ export interface components {
         ServiceUnavailable: {
             service: string;
         };
+        /** StravaLoginRequest */
+        StravaLoginRequest: {
+            code: string;
+            deviceInfo: components["schemas"]["DeviceInfo"];
+        };
         /** StravaWebhookEvent */
         StravaWebhookEvent: {
             object_type: string;
@@ -663,7 +740,7 @@ export interface components {
             firstName: string;
             lastName: string;
             /** Format: date */
-            dateOfBirth: string;
+            dateOfBirth?: string;
             timeZone: string;
             /**
              * @example active
@@ -876,13 +953,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            200: {
+            303: {
                 headers: {
+                    Location: string;
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["SuccessResponse"];
-                };
+                content?: never;
             };
             400: {
                 headers: {
@@ -1567,6 +1643,267 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserPreferencesResponse"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequest"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unauthorized"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forbidden"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFound"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conflict"];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerError"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceUnavailable"];
+                };
+            };
+        };
+    };
+    postApiV1AuthGoogle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoogleLoginRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequest"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unauthorized"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forbidden"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFound"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conflict"];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerError"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceUnavailable"];
+                };
+            };
+        };
+    };
+    postApiV1AuthApple: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppleLoginRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequest"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unauthorized"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forbidden"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFound"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conflict"];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerError"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceUnavailable"];
+                };
+            };
+        };
+    };
+    postApiV1AuthStrava: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StravaLoginRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
                 };
             };
             400: {
