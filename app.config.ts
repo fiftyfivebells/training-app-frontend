@@ -55,6 +55,7 @@ export default {
       googleOAuthClientIdIos: process.env.GOOGLE_OAUTH_CLIENT_ID_IOS,
       googleOAuthClientIdAndroid: process.env.GOOGLE_OAUTH_CLIENT_ID_ANDROID,
       googleOAuthClientIdWeb: process.env.GOOGLE_OAUTH_CLIENT_ID_WEB,
+      stravaClientId: process.env.STRAVA_CLIENT_ID,
     },
   },
 }

@@ -4,6 +4,7 @@ import { BaseApiClient } from '@lib/api/base'
 export type CreateUserRequest = components['schemas']['CreateUserRequest']
 export type LoginRequest = components['schemas']['LoginRequest']
 export type GoogleLoginRequest = components['schemas']['GoogleLoginRequest']
+export type StravaLoginRequest = components['schemas']['StravaLoginRequest']
 export type RefreshRequest = components['schemas']['RefreshRequest']
 export type ResendVerificationRequest = components['schemas']['ResendVerificationRequest']
 export type SuccessResponse = components['schemas']['SuccessResponse']
@@ -24,6 +25,10 @@ export class AuthClient extends BaseApiClient {
 
   async loginWithGoogle(body: GoogleLoginRequest) {
     return this.post<LoginResponse>(`${this.baseAuthRoute}/google`, body)
+  }
+
+  async loginWithStrava(body: StravaLoginRequest) {
+    return this.post<LoginResponse>(`${this.baseAuthRoute}/strava`, body)
   }
 
   async refreshMobile(body: RefreshRequest) {

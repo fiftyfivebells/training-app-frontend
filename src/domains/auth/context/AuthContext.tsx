@@ -17,6 +17,7 @@ type AuthContextType = {
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   loginWithGoogle: (idToken: string) => Promise<void>
+  loginWithStrava: (code: string) => Promise<void>
   logout: () => Promise<void>
   refetchUser: () => Promise<void>
 }
@@ -96,6 +97,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     router.replace('/')
   }, [])
 
+  const loginWithStrava = useCallback(async (code: string) => {
+    const { accessToken, refreshToken, user, preferences } = await authClient.loginWithStrava({
+      code,
+      deviceInfo: getDeviceInfo(),
+    })
+
+    await tokenStorage.setAccessToken(accessToken)
+    setUser(userResponseToUser(user))
+
+    if (Platform.OS !== 'web') {
+      await tokenStorage.setRefreshToken(refreshToken)
+    }
+
+    queryClient.setQueryData(usersKeys.me(), user)
+    queryClient.setQueryData(usersKeys.preferences(), preferences)
+
+    router.replace('/')
+  }, [])
+
   const logout = useCallback(async () => {
     await tokenStorage.deleteAccessToken()
     queryClient.clear()
@@ -120,6 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading: isLoading,
         login,
         loginWithGoogle,
+        loginWithStrava,
         logout,
         refetchUser,
       }}
