@@ -1,5 +1,6 @@
 import { tokenStorage } from '@domains/auth/utils/tokenStorage'
 import { useGetCurrentUser } from '@domains/users/hooks'
+import { usersKeys } from '@domains/users/users.constants'
 import { type User, userResponseToUser } from '@domains/users/users.types'
 import { useQueryClient } from '@tanstack/react-query'
 import { router } from 'expo-router'
@@ -15,6 +16,7 @@ type AuthContextType = {
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
+  loginWithGoogle: (idToken: string) => Promise<void>
   logout: () => Promise<void>
   refetchUser: () => Promise<void>
 }
@@ -70,7 +72,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await tokenStorage.setRefreshToken(refreshToken)
     }
 
-    queryClient.setQueryData(['users', 'me'], user)
+    queryClient.setQueryData(usersKeys.me(), user)
+
+    router.replace('/')
+  }, [])
+
+  const loginWithGoogle = useCallback(async (idToken: string) => {
+    const { accessToken, refreshToken, user, preferences } = await authClient.loginWithGoogle({
+      idToken,
+      deviceInfo: getDeviceInfo(),
+    })
+
+    await tokenStorage.setAccessToken(accessToken)
+    setUser(userResponseToUser(user))
+
+    if (Platform.OS !== 'web') {
+      await tokenStorage.setRefreshToken(refreshToken)
+    }
+
+    queryClient.setQueryData(usersKeys.me(), user)
+    queryClient.setQueryData(usersKeys.preferences(), preferences)
 
     router.replace('/')
   }, [])
@@ -98,6 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading: isLoading,
         login,
+        loginWithGoogle,
         logout,
         refetchUser,
       }}

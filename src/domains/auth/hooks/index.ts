@@ -1,3 +1,5 @@
+export { useGoogleAuth } from './useGoogleAuth'
+export { useGoogleSignIn } from './useGoogleSignIn'
 export { useLogin } from './useLogin'
 export { useLogout } from './useLogout'
 export { useRegister } from './useRegister'

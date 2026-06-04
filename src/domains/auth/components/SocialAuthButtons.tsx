@@ -6,14 +6,14 @@ import { useTheme } from '@/theme/useTheme'
 interface SocialAuthButtonsProps {
   onStravaPress?: () => void
   onGooglePress?: () => void
-  onApplePress?: () => void
+  // onApplePress?: () => void
   label?: string
 }
 
 export function SocialAuthButtons({
   onStravaPress,
   onGooglePress,
-  onApplePress,
+  // onApplePress,
   label = 'Or continue with',
 }: SocialAuthButtonsProps) {
   const { bg, text, rule, radius } = useTheme()
@@ -43,6 +43,7 @@ export function SocialAuthButtons({
           <Text style={[styles.btnText, { color: text.primary }]}>Google</Text>
         </TouchableOpacity>
 
+        {/* Apple — post-MVP
         <TouchableOpacity
           onPress={onApplePress}
           style={[styles.socialBtn, { backgroundColor: bg.surface, borderColor: rule.default, borderRadius: radius.sm }]}
@@ -50,6 +51,7 @@ export function SocialAuthButtons({
           <Ionicons name="logo-apple" size={18} color={text.primary} />
           <Text style={[styles.btnText, { color: text.primary }]}>Apple</Text>
         </TouchableOpacity>
+        */}
       </View>
     </View>
   )

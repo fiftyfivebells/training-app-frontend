@@ -21,7 +21,7 @@ export default {
     },
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.trainingapp.app',
+      bundleIdentifier: 'com.basephase.app',
     },
     android: {
       adaptiveIcon: {
@@ -30,22 +30,31 @@ export default {
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
-      package: 'com.trainingapp.app',
+      package: 'com.basephase.app',
     },
     web: {
       favicon: './assets/favicon.png',
       bundler: 'metro',
     },
-    plugins: ['expo-localization', 'expo-router', 'expo-secure-store'],
-    scheme: 'trainingapp',
+    plugins: [
+      'expo-localization',
+      'expo-router',
+      'expo-secure-store',
+      'expo-web-browser',
+      '@react-native-google-signin/google-signin',
+    ],
+    scheme: 'basephase',
     extra: {
       eas: {
-        projectId: '4481c69f-9524-4ddb-98cf-aaf4020b0fae'  
+        projectId: '4481c69f-9524-4ddb-98cf-aaf4020b0fae'
       },
       router: {
         origin: false,
       },
       apiBaseUrl: process.env.API_BASE_URL || 'https://api.basephase.app',
+      googleOAuthClientIdIos: process.env.GOOGLE_OAUTH_CLIENT_ID_IOS,
+      googleOAuthClientIdAndroid: process.env.GOOGLE_OAUTH_CLIENT_ID_ANDROID,
+      googleOAuthClientIdWeb: process.env.GOOGLE_OAUTH_CLIENT_ID_WEB,
     },
   },
 }

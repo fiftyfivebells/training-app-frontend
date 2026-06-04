@@ -18,6 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '@/theme/useTheme'
 
 import { useAuthContext } from '../context/AuthContext'
+import { useGoogleSignIn } from '../hooks'
 import { SocialAuthButtons } from '../components/SocialAuthButtons'
 
 interface LoginFormData extends LoginRequest {
@@ -30,6 +31,7 @@ export function LoginScreen() {
   const { alert } = useAlert()
   const [showPassword, toggleShowPassword] = useState(false)
   const { login } = useAuthContext()
+  const { handlePress: handleGooglePress } = useGoogleSignIn()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { bg, text, accent, space } = useTheme()
 
@@ -159,8 +161,8 @@ export function LoginScreen() {
 
             <SocialAuthButtons
               onStravaPress={() => alert('Strava Login', 'Integration coming soon.')}
-              onGooglePress={() => alert('Google Login', 'Integration coming soon.')}
-              onApplePress={() => alert('Apple Login', 'Integration coming soon.')}
+              onGooglePress={handleGooglePress}
+              // onApplePress={() => alert('Apple Login', 'Integration coming soon.')}
             />
 
             {/* Footer */}

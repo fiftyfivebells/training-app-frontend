@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '@/theme/useTheme'
 
 import type { CreateUserRequest } from '../api/authClient'
-import { useRegister } from '../hooks'
+import { useRegister, useGoogleSignIn } from '../hooks'
 import { SocialAuthButtons } from '../components/SocialAuthButtons'
 
 interface RegisterFormData {
@@ -48,6 +48,8 @@ export function RegisterScreen() {
       dateOfBirth: new Date(2000, 0, 1),
     },
   })
+
+  const { handlePress: handleGooglePress } = useGoogleSignIn()
 
   const registerMutation = useRegister({
     onSuccess: (data, variables) => {
@@ -276,8 +278,8 @@ export function RegisterScreen() {
           <SocialAuthButtons
             label="Or sign up with"
             onStravaPress={() => alert('Strava Registration', 'Integration coming soon.')}
-            onGooglePress={() => alert('Google Registration', 'Integration coming soon.')}
-            onApplePress={() => alert('Apple Registration', 'Integration coming soon.')}
+            onGooglePress={handleGooglePress}
+            // onApplePress={() => alert('Apple Registration', 'Integration coming soon.')}
           />
 
           <View style={styles.footer}>

@@ -5,7 +5,7 @@ export type User = {
   email: string
   firstName: string
   lastName: string
-  dateOfBirth: string // TODO: should I make this a Date type?
+  dateOfBirth?: string
   timeZone: string
   accountStatus: 'active' | 'inactive' | 'suspended'
   isVerified: boolean
