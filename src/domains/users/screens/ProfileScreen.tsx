@@ -426,18 +426,7 @@ export function ProfileScreen() {
     ])
   }
 
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete account?',
-      'All your runs, blocks, and data will be permanently deleted. This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => {} },
-      ],
-    )
-  }
-
-  const ac = accent.default
+const ac = accent.default
 
   return (
     <View style={[styles.screen, { backgroundColor: bg.base }]}>
@@ -552,12 +541,6 @@ export function ProfileScreen() {
         {/* Account */}
         <SettingsSection label="Account">
           <SettingsRow label="Sign out" onPress={handleSignOut} topBorder={false} />
-          <SettingsRow
-            label="Delete account"
-            danger
-            showChevron={false}
-            onPress={handleDeleteAccount}
-          />
         </SettingsSection>
       </ScrollView>
     </View>
