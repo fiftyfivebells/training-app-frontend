@@ -61,6 +61,10 @@ export class RunsClient extends BaseApiClient {
   async completePendingRun(pendingRunId: string, body: CompletePendingRunRequest): Promise<RunResponse> {
     return this.post<RunResponse>(`${this.basePendingRunRoute}/${pendingRunId}/complete`, body)
   }
+
+  async deletePendingRun(pendingRunId: string): Promise<void> {
+    return this.delete<void>(`${this.basePendingRunRoute}/${pendingRunId}`)
+  }
 }
 
 export const runsClient = new RunsClient()

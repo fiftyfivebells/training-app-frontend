@@ -243,9 +243,12 @@ function PendingRunsBanner() {
   const { data: pendingRuns = [] } = usePendingRuns()
   if (pendingRuns.length === 0) return null
   const count = pendingRuns.length
+  const destination = count === 1
+    ? `/(modals)/complete-run/${pendingRuns[0].id}` as const
+    : '/(modals)/pending-runs' as const
   return (
     <TouchableOpacity
-      onPress={() => router.push(`/(modals)/complete-run/${pendingRuns[0].id}`)}
+      onPress={() => router.push(destination)}
       activeOpacity={0.75}
       style={[
         styles.pendingBanner,
