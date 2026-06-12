@@ -19,6 +19,10 @@ import { useGetUserPreferences } from '@/domains/users/hooks/useGetUserPreferenc
 import { useUpdatePreferences } from '@/domains/users/hooks/useUpdatePreferences'
 import { useDistanceUnitPreference } from '@/domains/users/hooks/useDistanceUnitPreference'
 import { useLogout } from '@/domains/auth/hooks/useLogout'
+import { useStravaStatus } from '@/domains/strava/hooks/useStravaStatus'
+import { useStravaConnect } from '@/domains/strava/hooks/useStravaConnect'
+import { useStravaDisconnect } from '@/domains/strava/hooks/useStravaDisconnect'
+import { STRAVA_ORANGE } from '@/domains/strava/strava.constants'
 import { Dateline, DoubleRule } from '@/components/ui'
 import { useTheme } from '@/theme/useTheme'
 import { AppearanceControl } from '../components/AppearanceControl'
@@ -330,8 +334,39 @@ function NotificationsScreen({ onBack }: { onBack: () => void }) {
 // ─── Connections sub-screen ───────────────────────────────────────────────────
 
 function ConnectionsScreen({ onBack }: { onBack: () => void }) {
-  const { bg, text, rule, accent } = useTheme()
-  const STRAVA_ORANGE = '#FC4C02'
+  const { bg, text, rule, semantic } = useTheme()
+  const { data: status } = useStravaStatus()
+  const { mutate: connect, isPending: isConnecting } = useStravaConnect()
+  const { mutate: disconnect, isPending: isDisconnecting } = useStravaDisconnect()
+
+  const isConnected = status?.connected ?? false
+
+  const handleConnect = () => {
+    connect(undefined, {
+      onError: (err) => {
+        if (err.message === 'cancelled') return
+        Alert.alert('Connection failed', err.message)
+      },
+    })
+  }
+
+  const handleDisconnect = () => {
+    Alert.alert(
+      'Disconnect Strava?',
+      'Your runs will no longer sync automatically.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Disconnect',
+          style: 'destructive',
+          onPress: () =>
+            disconnect(undefined, {
+              onError: () => Alert.alert('Error', 'Could not disconnect. Please try again.'),
+            }),
+        },
+      ],
+    )
+  }
 
   return (
     <SubScreen title="CONNECTIONS" onBack={onBack}>
@@ -342,7 +377,6 @@ function ConnectionsScreen({ onBack }: { onBack: () => void }) {
         </Text>
       </View>
 
-      {/* Strava card — not yet connected */}
       <View style={[styles.stravaCard, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
         <View style={styles.stravaHeader}>
           <View style={[styles.stravaLogo, { backgroundColor: STRAVA_ORANGE }]}>
@@ -351,18 +385,38 @@ function ConnectionsScreen({ onBack }: { onBack: () => void }) {
           <View style={{ flex: 1 }}>
             <Text style={[styles.stravaName, { color: text.primary }]}>Strava</Text>
             <View style={styles.stravaStatus}>
-              <View style={[styles.statusDot, { backgroundColor: text.tertiary }]} />
-              <Text style={[styles.statusText, { color: text.tertiary }]}>Not connected</Text>
+              <View
+                style={[
+                  styles.statusDot,
+                  { backgroundColor: isConnected ? semantic.success : text.tertiary },
+                ]}
+              />
+              <Text style={[styles.statusText, { color: isConnected ? semantic.success : text.tertiary }]}>
+                {isConnected ? 'Connected' : 'Not connected'}
+              </Text>
             </View>
           </View>
-          <View
-            style={[
-              styles.stravaConnectBtn,
-              { backgroundColor: STRAVA_ORANGE },
-            ]}
-          >
-            <Text style={styles.stravaConnectLabel}>Connect</Text>
-          </View>
+          {isConnected ? (
+            <TouchableOpacity
+              onPress={handleDisconnect}
+              disabled={isDisconnecting}
+              style={[styles.stravaConnectBtn, { borderWidth: 1, borderColor: semantic.error }]}
+            >
+              <Text style={[styles.stravaConnectLabel, { color: semantic.error }]}>
+                {isDisconnecting ? 'Disconnecting…' : 'Disconnect'}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={handleConnect}
+              disabled={isConnecting}
+              style={[styles.stravaConnectBtn, { backgroundColor: isConnecting ? STRAVA_ORANGE + '80' : STRAVA_ORANGE }]}
+            >
+              <Text style={styles.stravaConnectLabel}>
+                {isConnecting ? 'Connecting…' : 'Connect'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -391,6 +445,7 @@ export function ProfileScreen() {
   const { data: prefs } = useGetUserPreferences()
   const { unit } = useDistanceUnitPreference()
   const { mutate: logout } = useLogout()
+  const { data: stravaStatus } = useStravaStatus()
 
   const [screen, setScreen] = useState<Screen>('main')
   const navigation = useNavigation()
@@ -514,7 +569,7 @@ const ac = accent.default
         <SettingsSection label="Connections">
           <SettingsRow
             label="Connected apps"
-            value="None"
+            value={stravaStatus?.connected ? 'Strava' : 'None'}
             onPress={() => setScreen('connections')}
             topBorder={false}
           />
