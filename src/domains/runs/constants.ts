@@ -13,6 +13,8 @@ export const runsKeys = {
   details: () => [...runsKeys.all, 'detail'] as const,
 
   detail: (runId: string) => [...runsKeys.details(), runId] as const,
+
+  pending: () => [...runsKeys.all, 'pending'] as const,
 }
 
 export const RUN_TYPE_GROUPS = [

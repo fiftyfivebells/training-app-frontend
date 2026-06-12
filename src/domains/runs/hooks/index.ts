@@ -1,5 +1,7 @@
+export { useCompletePendingRun } from './useCompletePendingRun'
 export { useDeleteRun } from './useDeleteRun'
 export { useLogRun } from './useLogRun'
+export { usePendingRuns } from './usePendingRuns'
 export { useRun } from './useRun'
 export { useRuns } from './useRuns'
 export { useUpdateRun } from './useUpdateRun'

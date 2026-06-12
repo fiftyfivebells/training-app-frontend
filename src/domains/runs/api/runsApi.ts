@@ -5,9 +5,12 @@ import type { components } from '@/generated/api/types'
 export type RunResponse = components['schemas']['RunResponse']
 export type LogRunRequest = components['schemas']['LogRunRequest']
 export type UpdateRunRequest = components['schemas']['UpdateRunRequest']
+export type PendingRunResponse = components['schemas']['PendingRunResponse']
+export type CompletePendingRunRequest = components['schemas']['CompletePendingRunRequest']
 
 export class RunsClient extends BaseApiClient {
   private baseRunRoute = 'runs'
+  private basePendingRunRoute = 'pending-runs'
 
   async logRun(body: LogRunRequest): Promise<RunResponse> {
     return this.post<RunResponse>(this.baseRunRoute, body)
@@ -49,6 +52,14 @@ export class RunsClient extends BaseApiClient {
 
   async deleteRun(runId: string): Promise<void> {
     return this.delete<void>(`${this.baseRunRoute}/${runId}`)
+  }
+
+  async getPendingRuns(): Promise<PendingRunResponse[]> {
+    return this.get<PendingRunResponse[]>(this.basePendingRunRoute)
+  }
+
+  async completePendingRun(pendingRunId: string, body: CompletePendingRunRequest): Promise<RunResponse> {
+    return this.post<RunResponse>(`${this.basePendingRunRoute}/${pendingRunId}/complete`, body)
   }
 }
 
