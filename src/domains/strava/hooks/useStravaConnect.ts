@@ -2,6 +2,7 @@ import * as Linking from 'expo-linking'
 import * as WebBrowser from 'expo-web-browser'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
+import { runsKeys } from '@/domains/runs/constants'
 import { stravaClient } from '../api/stravaClient'
 import { stravaKeys, STRAVA_ERROR_MESSAGES } from '../strava.constants'
 
@@ -29,6 +30,7 @@ export function useStravaConnect() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: stravaKeys.status() })
+      queryClient.invalidateQueries({ queryKey: runsKeys.pending() })
     },
   })
 }

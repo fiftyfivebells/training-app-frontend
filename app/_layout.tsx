@@ -1,11 +1,11 @@
 import '@/lib/api/setup'
-import { View } from 'react-native'
+import { AppState, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import { AlertProvider } from '@components/ui'
 import { AuthProvider } from '@domains/auth/context/AuthContext'
 import { Fraunces_400Regular, Fraunces_400Regular_Italic } from '@expo-google-fonts/fraunces'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
@@ -15,6 +15,13 @@ import { useBlockThemeSync } from '@/domains/blocks/hooks/useBlockThemeSync'
 import { useTheme } from '@/theme/useTheme'
 import { BaseThemeProvider } from '@/theme/ThemeContext'
 import { AuthGate } from '@/domains/auth/context/AuthGate'
+
+focusManager.setEventListener((handleFocus) => {
+  const subscription = AppState.addEventListener('change', (state) => {
+    handleFocus(state === 'active')
+  })
+  return () => subscription.remove()
+})
 
 const queryClient = new QueryClient({
   defaultOptions: {
