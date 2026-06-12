@@ -13,6 +13,7 @@ import { useGetAllMoods } from '@/domains/moods/hooks/useGetAllMoods'
 import type { MoodCategoryKey } from '@/domains/moods/moods.types'
 import type { RunResponse } from '@/domains/runs/api/runsApi'
 import { RunRow } from '@/domains/runs/components/RunRow'
+import { usePendingRuns } from '@/domains/runs/hooks/usePendingRuns'
 import { useRuns } from '@/domains/runs/hooks/useRuns'
 import { formatDistanceParts } from '@/domains/runs/utils/distance'
 import { computeWeeklyStats } from '@/domains/runs/utils/weeklyStats'
@@ -237,6 +238,41 @@ function WeekMoodRow() {
   )
 }
 
+function PendingRunsBanner() {
+  const { text, rule, accent } = useTheme()
+  const { data: pendingRuns = [] } = usePendingRuns()
+  if (pendingRuns.length === 0) return null
+  const count = pendingRuns.length
+  return (
+    <TouchableOpacity
+      onPress={() => router.push(`/(modals)/complete-run/${pendingRuns[0].id}`)}
+      activeOpacity={0.75}
+      style={[
+        styles.pendingBanner,
+        {
+          backgroundColor: accent.default + '12',
+          borderTopColor: rule.subtle,
+          borderRightColor: rule.subtle,
+          borderBottomColor: rule.subtle,
+          borderLeftColor: accent.default,
+        },
+      ]}
+    >
+      <View style={styles.pendingBannerText}>
+        <Text style={[styles.pendingBannerTitle, { color: text.primary }]}>
+          {count === 1 ? '1 run to log' : `${count} runs to log`}
+        </Text>
+        <Text style={[styles.pendingBannerSub, { color: text.secondary }]}>
+          {count === 1
+            ? 'A Strava run is waiting for your mood and effort.'
+            : `${count} Strava runs are waiting for your mood and effort.`}
+        </Text>
+      </View>
+      <Text style={[styles.pendingBannerCta, { color: accent.default }]}>Log →</Text>
+    </TouchableOpacity>
+  )
+}
+
 type RecentRunsCardProps = {
   runs: RunResponse[]
 }
@@ -391,10 +427,13 @@ export function HomeScreen() {
           />
         </View>
 
-        {/* 5. Week mood */}
+        {/* 5. Pending runs from Strava */}
+        <PendingRunsBanner />
+
+        {/* 6. Week mood */}
         <WeekMoodRow />
 
-        {/* 6. Recent runs */}
+        {/* 7. Recent runs */}
         <RecentRunsCard runs={recentRuns} />
       </ScrollView>
     </View>
@@ -640,5 +679,35 @@ const styles = StyleSheet.create({
   emptyStateCta: {
     fontFamily: 'ManropeSemiBold',
     fontSize: 13,
+  },
+  // Pending runs banner
+  pendingBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    padding: 14,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 3,
+    borderRadius: 4,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    gap: 12,
+  },
+  pendingBannerText: { flex: 1, gap: 2 },
+  pendingBannerTitle: {
+    fontFamily: 'ManropeSemiBold',
+    fontSize: 13,
+  },
+  pendingBannerSub: {
+    fontFamily: 'Fraunces_400Regular_Italic',
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  pendingBannerCta: {
+    fontFamily: 'ManropeSemiBold',
+    fontSize: 12,
+    flexShrink: 0,
   },
 })
