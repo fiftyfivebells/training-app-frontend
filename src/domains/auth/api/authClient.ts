@@ -5,6 +5,7 @@ export type CreateUserRequest = components['schemas']['CreateUserRequest']
 export type LoginRequest = components['schemas']['LoginRequest']
 export type GoogleLoginRequest = components['schemas']['GoogleLoginRequest']
 export type StravaLoginRequest = components['schemas']['StravaLoginRequest']
+export type StravaAuthorizeResponse = components['schemas']['StravaAuthorizeResponse']
 export type RefreshRequest = components['schemas']['RefreshRequest']
 export type ResendVerificationRequest = components['schemas']['ResendVerificationRequest']
 export type SuccessResponse = components['schemas']['SuccessResponse']
@@ -25,6 +26,10 @@ export class AuthClient extends BaseApiClient {
 
   async loginWithGoogle(body: GoogleLoginRequest) {
     return this.post<LoginResponse>(`${this.baseAuthRoute}/google`, body)
+  }
+
+  async getStravaAuthorizeUrl() {
+    return this.get<StravaAuthorizeResponse>(`${this.baseAuthRoute}/strava/authorize`)
   }
 
   async loginWithStrava(body: StravaLoginRequest) {
