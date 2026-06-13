@@ -1,5 +1,5 @@
 import '@/lib/api/setup'
-import { AppState, View } from 'react-native'
+import { AppState } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import { AlertProvider } from '@components/ui'
@@ -15,6 +15,7 @@ import { useBlockThemeSync } from '@/domains/blocks/hooks/useBlockThemeSync'
 import { useTheme } from '@/theme/useTheme'
 import { BaseThemeProvider } from '@/theme/ThemeContext'
 import { AuthGate } from '@/domains/auth/context/AuthGate'
+import { OnboardingStatusProvider } from '@/domains/onboarding/context/OnboardingStatusContext'
 
 focusManager.setEventListener((handleFocus) => {
   const subscription = AppState.addEventListener('change', (state) => {
@@ -49,11 +50,13 @@ export default function RootLayout() {
     <BaseThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <AuthGate>
-            <AlertProvider>
-              <ThemedAppShell />
-            </AlertProvider>
-          </AuthGate>
+          <OnboardingStatusProvider>
+            <AuthGate>
+              <AlertProvider>
+                <ThemedAppShell />
+              </AlertProvider>
+            </AuthGate>
+          </OnboardingStatusProvider>
         </AuthProvider>
       </QueryClientProvider>
     </BaseThemeProvider>
@@ -76,6 +79,7 @@ function ThemedAppShell() {
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
         <Stack.Screen name="(modals)/log" options={{ presentation: 'fullScreenModal', headerShown: false }} />
         <Stack.Screen name="(modals)/mood-picker" options={{ presentation: 'fullScreenModal', headerShown: false }} />
         <Stack.Screen name="(modals)/block-create" options={{ presentation: 'fullScreenModal', headerShown: false }} />
@@ -85,4 +89,3 @@ function ThemedAppShell() {
     </GestureHandlerRootView>
   )
 }
-

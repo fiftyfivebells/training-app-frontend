@@ -29,6 +29,10 @@ export class UserClient extends BaseApiClient {
   async updatePreferences(body: UpdatePreferencesRequest): Promise<UserPreferencesResponse> {
     return this.put<UserPreferencesResponse>(`${this.baseUsersRoute}/me/preferences`, body)
   }
+
+  async completeOnboarding(): Promise<UserResponse> {
+    return this.post<UserResponse>(`${this.baseUsersRoute}/me/complete-onboarding`)
+  }
 }
 
 export const userClient = new UserClient()

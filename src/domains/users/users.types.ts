@@ -9,6 +9,7 @@ export type User = {
   timeZone: string
   accountStatus: 'active' | 'inactive' | 'suspended'
   isVerified: boolean
+  onboardingCompleted: boolean
 }
 
 export function userResponseToUser(ur: UserResponse): User {
@@ -21,5 +22,6 @@ export function userResponseToUser(ur: UserResponse): User {
     timeZone: ur.timeZone,
     accountStatus: ur.accountStatus,
     isVerified: ur.emailVerified,
+    onboardingCompleted: ur.onboardingCompleted,
   }
 }

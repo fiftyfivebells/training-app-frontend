@@ -2,7 +2,7 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker'
 import { addDays, differenceInDays, format } from 'date-fns'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
@@ -43,6 +43,7 @@ function formatStartDate(date: Date, today: Date): string {
 export function BlockCreateScreen() {
   const { bg, text, rule, accent } = useTheme()
   const insets = useSafeAreaInsets()
+  const { returnTo } = useLocalSearchParams<{ returnTo?: string }>()
   const [isManuallySubmitting, setIsManuallySubmitting] = useState(false)
   const { data: activeBlock, isLoading: activeLoading } = useActiveBlock()
   const { data: blocks = [], isLoading: blocksLoading } = useBlocks()
@@ -155,7 +156,7 @@ export function BlockCreateScreen() {
           endDate: format(endDate, 'yyyy-MM-dd'),
         },
         {
-          onSuccess: () => router.replace('/blocks'),
+          onSuccess: () => router.replace((returnTo as any) ?? '/blocks'),
           onSettled: () => setIsManuallySubmitting(false),
         },
       )
