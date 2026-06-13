@@ -27,6 +27,7 @@ export function SocialAuthButtons({
       </View>
 
       <View style={styles.buttonCol}>
+        {/* TODO: implement Strava login
         <TouchableOpacity
           onPress={onStravaPress}
           style={[styles.socialBtn, { backgroundColor: bg.surface, borderColor: rule.default, borderRadius: radius.sm }]}
@@ -34,6 +35,7 @@ export function SocialAuthButtons({
           <Ionicons name="flash-outline" size={18} color="#FC6100" />
           <Text style={[styles.btnText, { color: text.primary }]}>Strava</Text>
         </TouchableOpacity>
+        */}
 
         <TouchableOpacity
           onPress={onGooglePress}
