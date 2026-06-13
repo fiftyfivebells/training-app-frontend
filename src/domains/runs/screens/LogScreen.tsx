@@ -417,6 +417,8 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 4,
+    paddingBottom: 8,
+    zIndex: 1,
   },
   headerRow: {
     flexDirection: 'row',
@@ -439,7 +441,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Fraunces_400Regular',
     fontSize: 32,
     letterSpacing: -0.02 * 32,
-    lineHeight: 35,
+    lineHeight: 40,
   },
   dateLabel: {
     fontFamily: 'Fraunces_400Regular_Italic',
