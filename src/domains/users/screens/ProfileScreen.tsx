@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Alert,
   BackHandler,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -434,9 +436,76 @@ function ConnectionsScreen({ onBack }: { onBack: () => void }) {
   )
 }
 
+// ─── Feedback sub-screen ──────────────────────────────────────────────────────
+
+function FeedbackScreen({ onBack }: { onBack: () => void }) {
+  const { bg, text, rule, accent } = useTheme()
+  const [body, setBody] = useState('')
+  const inputRef = useRef<TextInput>(null)
+
+  const handleSubmit = () => {
+    const trimmed = body.trim()
+    if (!trimmed) return
+    const encoded = encodeURIComponent(trimmed)
+    Linking.openURL(`mailto:stephen@basephase.app?subject=Base%20Phase%20Feedback&body=${encoded}`)
+  }
+
+  return (
+    <SubScreen title="FEEDBACK" onBack={onBack}>
+      <View style={styles.feedbackIntro}>
+        <Text style={[styles.connTitle, { color: text.primary }]}>Share your thoughts.</Text>
+        <Text style={[styles.connSub, { color: text.secondary }]}>
+          What's working? What isn't? We read everything.
+        </Text>
+      </View>
+
+      <View style={styles.feedbackInputWrap}>
+        <TextInput
+          ref={inputRef}
+          value={body}
+          onChangeText={setBody}
+          placeholder="Write your feedback here…"
+          placeholderTextColor={text.tertiary}
+          multiline
+          textAlignVertical="top"
+          style={[
+            styles.feedbackInput,
+            {
+              backgroundColor: bg.input,
+              borderColor: rule.default,
+              color: text.primary,
+            },
+          ]}
+          autoFocus
+        />
+      </View>
+
+      <View style={styles.feedbackActions}>
+        <TouchableOpacity
+          onPress={handleSubmit}
+          disabled={!body.trim()}
+          style={[
+            styles.feedbackSubmitBtn,
+            { backgroundColor: body.trim() ? accent.default : rule.strong },
+          ]}
+        >
+          <Text
+            style={[
+              styles.feedbackSubmitLabel,
+              { color: body.trim() ? '#F4EFE4' : text.disabled },
+            ]}
+          >
+            Send feedback
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SubScreen>
+  )
+}
+
 // ─── Main settings screen ─────────────────────────────────────────────────────
 
-type Screen = 'main' | 'notifications' | 'connections'
+type Screen = 'main' | 'notifications' | 'connections' | 'feedback'
 
 export function ProfileScreen() {
   const { bg, text, rule, accent } = useTheme()
@@ -468,6 +537,9 @@ export function ProfileScreen() {
   }
   if (screen === 'connections') {
     return <ConnectionsScreen onBack={() => setScreen('main')} />
+  }
+  if (screen === 'feedback') {
+    return <FeedbackScreen onBack={() => setScreen('main')} />
   }
 
   const initials = user
@@ -575,10 +647,7 @@ const ac = accent.default
           />
         </SettingsSection>
 
-        {/* Data */}
-        <SettingsSection label="Data">
-          <SettingsRow label="Export logbook" value="CSV / JSON" topBorder={false} />
-        </SettingsSection>
+        {/* TODO: add data export (CSV / JSON) when ready */}
 
         {/* About */}
         <SettingsSection label="About">
@@ -588,9 +657,8 @@ const ac = accent.default
             showChevron={false}
             topBorder={false}
           />
-          <SettingsRow label="Privacy policy" onPress={() => {}} />
-          <SettingsRow label="Terms of service" onPress={() => {}} />
-          <SettingsRow label="Give feedback" onPress={() => {}} accent />
+          {/* TODO: add privacy policy and terms of service links once pages are ready */}
+          <SettingsRow label="Give feedback" onPress={() => setScreen('feedback')} accent />
         </SettingsSection>
 
         {/* Account */}
@@ -828,4 +896,31 @@ const styles = StyleSheet.create({
   },
   comingSoonTitle: { fontFamily: 'Manrope', fontSize: 13, fontWeight: '500' },
   comingSoonSub: { fontFamily: 'Manrope', fontSize: 11, marginTop: 1 },
+
+  // Feedback
+  feedbackIntro: { padding: 20, paddingBottom: 4 },
+  feedbackInputWrap: { paddingHorizontal: 16, paddingTop: 20 },
+  feedbackInput: {
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 14,
+    fontFamily: 'Manrope',
+    fontSize: 15,
+    lineHeight: 22,
+    minHeight: 180,
+  },
+  feedbackActions: { paddingHorizontal: 16, paddingTop: 16 },
+  feedbackSubmitBtn: {
+    borderRadius: 4,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  feedbackSubmitLabel: {
+    fontFamily: 'Manrope',
+    fontWeight: '700',
+    fontSize: 13,
+    letterSpacing: 0.04 * 13,
+    textTransform: 'uppercase',
+  },
 })
