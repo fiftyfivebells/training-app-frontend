@@ -125,51 +125,6 @@ function ToggleRow({
   )
 }
 
-// ─── Accent swatch picker ─────────────────────────────────────────────────────
-
-const ACCENT_OPTIONS = [
-  { key: 'default', label: 'Terracotta', color: '#D5854F' },
-  { key: 'brick',   label: 'Brick',      color: '#A33B2A' },
-  { key: 'forest',  label: 'Forest',     color: '#4E7356' },
-  { key: 'slate',   label: 'Slate',      color: '#6A8E9E' },
-  { key: 'amber',   label: 'Amber',      color: '#B5743A' },
-  { key: 'plum',    label: 'Plum',       color: '#7A5A8A' },
-]
-
-function AccentPickerRow({ topBorder = true }: { topBorder?: boolean }) {
-  const { text, rule } = useTheme()
-  const [sel, setSel] = useState('default')
-  return (
-    <View style={[styles.accentRow, topBorder && { borderTopWidth: 1, borderTopColor: rule.subtle }]}>
-      <Text style={[styles.rowLabel, { color: text.primary, marginBottom: 12 }]}>Accent color</Text>
-      <View style={styles.swatchRow}>
-        {ACCENT_OPTIONS.map((opt) => {
-          const isActive = sel === opt.key
-          return (
-            <Pressable key={opt.key} onPress={() => setSel(opt.key)} style={styles.swatchItem}>
-              <View
-                style={[
-                  styles.swatch,
-                  { backgroundColor: opt.color },
-                  isActive && { borderWidth: 2, borderColor: text.primary },
-                ]}
-              />
-              <Text
-                style={[
-                  styles.swatchLabel,
-                  { color: isActive ? text.primary : text.tertiary, fontWeight: isActive ? '600' : '400' },
-                ]}
-              >
-                {opt.label}
-              </Text>
-            </Pressable>
-          )
-        })}
-      </View>
-    </View>
-  )
-}
-
 // ─── Distance unit control ────────────────────────────────────────────────────
 
 function DistanceUnitControl() {
@@ -624,7 +579,6 @@ const ac = accent.default
             showChevron={false}
             right={<AppearanceControl />}
           />
-          <AccentPickerRow />
         </SettingsSection>
 
         {/* Notifications */}
@@ -783,18 +737,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope',
     fontSize: 12,
     letterSpacing: 0.04 * 12,
-  },
-
-  // Accent swatch
-  accentRow: { padding: 16 },
-  swatchRow: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
-  swatchItem: { alignItems: 'center', gap: 5 },
-  swatch: { width: 32, height: 32, borderRadius: 16 },
-  swatchLabel: {
-    fontFamily: 'Manrope',
-    fontSize: 9,
-    letterSpacing: 0.08 * 9,
-    textTransform: 'uppercase',
   },
 
   // Notifications
