@@ -275,15 +275,16 @@ function NotificationsScreen({ onBack }: { onBack: () => void }) {
         ))}
       </SettingsSection>
 
-      {/* iOS permissions note */}
-      <View style={styles.notifNote}>
-        <View style={[styles.notifNoteInner, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
-          <Text style={[styles.notifNoteText, { color: text.tertiary }]}>
-            Notifications are managed by iOS. To change system-level permissions, go to{' '}
-            <Text style={{ color: text.secondary, fontWeight: '500' }}>Settings → Base Phase</Text>.
-          </Text>
+      {Platform.OS === 'ios' && (
+        <View style={styles.notifNote}>
+          <View style={[styles.notifNoteInner, { backgroundColor: bg.surface, borderColor: rule.subtle }]}>
+            <Text style={[styles.notifNoteText, { color: text.tertiary }]}>
+              Notifications are managed by iOS. To change system-level permissions, go to{' '}
+              <Text style={{ color: text.secondary, fontWeight: '500' }}>Settings → Base Phase</Text>.
+            </Text>
+          </View>
         </View>
-      </View>
+      )}
     </SubScreen>
   )
 }
