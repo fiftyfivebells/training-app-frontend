@@ -1,3 +1,4 @@
+export { useForgotPassword } from './useForgotPassword'
 export { useGoogleAuth } from './useGoogleAuth'
 export { useGoogleSignIn } from './useGoogleSignIn'
 export { useLogin } from './useLogin'

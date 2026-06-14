@@ -8,6 +8,7 @@ export type StravaLoginRequest = components['schemas']['StravaLoginRequest']
 export type StravaAuthorizeResponse = components['schemas']['StravaAuthorizeResponse']
 export type RefreshRequest = components['schemas']['RefreshRequest']
 export type ResendVerificationRequest = components['schemas']['ResendVerificationRequest']
+export type ForgotPasswordRequest = components['schemas']['ForgotPasswordRequest']
 export type SuccessResponse = components['schemas']['SuccessResponse']
 export type AuthResponse = components['schemas']['AuthResponse']
 export type LoginResponse = components['schemas']['LoginResponse']
@@ -46,6 +47,10 @@ export class AuthClient extends BaseApiClient {
 
   async resendVerification(body: ResendVerificationRequest) {
     return this.post<SuccessResponse>(`${this.baseAuthRoute}/resend-verification`, body)
+  }
+
+  async forgotPassword(body: ForgotPasswordRequest) {
+    return this.post<SuccessResponse>(`${this.baseAuthRoute}/forgot-password`, body)
   }
 
   async logout(refreshToken?: string | null) {

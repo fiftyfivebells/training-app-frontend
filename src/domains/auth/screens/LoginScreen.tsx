@@ -151,7 +151,7 @@ export function LoginScreen() {
               </Button>
 
               <Pressable
-                onPress={() => alert('Forgot Password', 'Not implemented yet.')}
+                onPress={() => router.push('/(auth)/forgot-password')}
                 style={styles.forgotBtn}
               >
                 <Text style={[styles.forgotText, { color: text.secondary }]}>
