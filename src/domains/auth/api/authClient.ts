@@ -47,6 +47,17 @@ export class AuthClient extends BaseApiClient {
   async resendVerification(body: ResendVerificationRequest) {
     return this.post<SuccessResponse>(`${this.baseAuthRoute}/resend-verification`, body)
   }
+
+  async logout(refreshToken?: string | null) {
+    const headers: Record<string, string> = {}
+    if (refreshToken) {
+      headers['Cookie'] = `refresh_token=${refreshToken}`
+    }
+    return this.makeRequest<SuccessResponse>(`${this.baseAuthRoute}/logout`, {
+      method: 'POST',
+      headers,
+    })
+  }
 }
 
 export const authClient = new AuthClient()
