@@ -649,6 +649,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/devices/push-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register Push Token
+         * @description Register or update an Expo push token for the authenticated user
+         */
+        post: operations["postApiV1DevicesPush-token"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postApiV1Feedback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -824,6 +860,12 @@ export interface components {
         RefreshRequest: {
             refreshToken: string;
         };
+        /** RegisterPushTokenRequest */
+        RegisterPushTokenRequest: {
+            token: string;
+            /** @enum {string} */
+            platform?: "android" | "ios" | "web";
+        };
         /** ResendVerificationRequest */
         ResendVerificationRequest: {
             email: string;
@@ -896,6 +938,14 @@ export interface components {
             /** Format: int64 */
             subscription_id?: number;
         };
+        /** SubmitFeedbackRequest */
+        SubmitFeedbackRequest: {
+            category: string;
+            message: string;
+            appVersion?: string;
+            /** @enum {string} */
+            platform?: "android" | "ios" | "web";
+        };
         /** SuccessResponse */
         SuccessResponse: {
             message: string;
@@ -915,6 +965,10 @@ export interface components {
             preferredUnits?: string;
             weekStartDay?: string;
             dailyPushEnabled?: boolean;
+            /** Format: int32 */
+            notificationHour?: number;
+            /** Format: int32 */
+            notificationMinute?: number;
         };
         /** UpdateProfileRequest */
         UpdateProfileRequest: {
@@ -944,6 +998,10 @@ export interface components {
             preferredUnits: string;
             weekStartDay: string;
             dailyPushEnabled: boolean;
+            /** Format: int32 */
+            notificationHour: number;
+            /** Format: int32 */
+            notificationMinute: number;
         };
         /** UserResponse */
         UserResponse: {
@@ -4584,6 +4642,176 @@ export interface operations {
         };
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequest"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unauthorized"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forbidden"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFound"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conflict"];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerError"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceUnavailable"];
+                };
+            };
+        };
+    };
+    "postApiV1DevicesPush-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterPushTokenRequest"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequest"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unauthorized"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forbidden"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFound"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conflict"];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerError"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceUnavailable"];
+                };
+            };
+        };
+    };
+    postApiV1Feedback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmitFeedbackRequest"];
+            };
+        };
+        responses: {
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
