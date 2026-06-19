@@ -61,7 +61,7 @@ export abstract class BaseApiClient {
     }
 
     if (response.ok) {
-      if (response.status === 204) {
+      if (response.status === 204 || response.status === 202) {
         return undefined as T
       }
       return response.json()
@@ -73,12 +73,13 @@ export abstract class BaseApiClient {
     }
 
     let errorBody: any
+    const bodyText = await response.text().catch(() => '')
     try {
-      const raw = await response.json()
+      const raw = JSON.parse(bodyText)
       errorBody = raw?.error ?? raw
-    } catch (error) {
-      console.log(error)
-      errorBody = { message: 'Failed to parse error response' }
+    } catch {
+      console.log(`API error ${response.status} — non-JSON body:`, bodyText || '(empty)')
+      errorBody = { message: `Server error (${response.status})` }
     }
 
     throw new ApiError(response.status, errorBody)

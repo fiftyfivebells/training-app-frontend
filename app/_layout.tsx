@@ -83,6 +83,7 @@ function ThemedAppShell() {
         <Stack.Screen name="(modals)/log" options={{ presentation: 'fullScreenModal', headerShown: false }} />
         <Stack.Screen name="(modals)/mood-picker" options={{ presentation: 'fullScreenModal', headerShown: false }} />
         <Stack.Screen name="(modals)/block-create" options={{ presentation: 'fullScreenModal', headerShown: false }} />
+        <Stack.Screen name="(modals)/feedback" options={{ presentation: 'fullScreenModal', headerShown: false }} />
         <Stack.Screen name="(modals)/pending-runs" options={{ presentation: 'card', headerShown: false }} />
         <Stack.Screen name="(modals)/profile" options={{ presentation: 'card', headerShown: false }} />
       </Stack>
