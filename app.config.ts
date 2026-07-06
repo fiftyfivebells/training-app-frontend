@@ -1,11 +1,11 @@
 export default {
   expo: {
-    name: 'Base Phase App',
+    name: 'Base Phase',
     slug: 'base-phase-app',
     owner: 'fiftyfivebells',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/icon.png',
+    icon: './assets/app-icon/icon.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
     updates: {
@@ -22,11 +22,17 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.basephase.app',
+      icon: {
+        light: './assets/app-icon/icon-light.png',
+        dark: './assets/app-icon/icon-dark.png',
+        tinted: './assets/app-icon/icon-tinted.png',
+      },
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#FAF8F5',
+        foregroundImage: './assets/app-icon/adaptive-foreground.png',
+        monochromeImage: './assets/app-icon/adaptive-monochrome.png',
+        backgroundColor: '#141210',
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
